@@ -1,0 +1,3835 @@
+/*
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/CascadeStyleSheet.css to edit this template
+*/
+/* 
+    Created on : Sep 7, 2022, 10:02:26 AM
+    Author     : Yang Pao Thao
+    
+    //HEX color for menu bar bg-  #181818
+    //RGB color for menu bar bg-  rgb(24,24,24)
+    @ https://www.w3schools.com/colors/colors_shades.asp
+
+    //HEX color for text - #FFFFFF (white)
+    //RGB color for text - rgb(255,255,255) (white)
+
+ctrl + shift + - will collapse all
+*/
+body
+{
+    /*stay*/
+   font-size: 1em !important;
+   color: #FFFFFF !important;
+   font-family: Arial !important;
+}
+.white-space-no-wrap{
+    white-space: nowrap;
+}
+.width-auto{
+    width: auto;
+}
+.position-relative{
+    position: relative;
+}
+.index-div-float{
+    position: absolute; 
+    height: 620px; 
+    width: 620px; 
+    background-color: gray; 
+    top: 10%; 
+    left: 35%; 
+    opacity: .97; 
+    z-index: 99;
+    border: solid 1px black;
+}
+.btn-remove-logo-image{
+    height: 20px;
+    width: 20px;
+    background-color: darkred;
+    float: right;
+}
+.index-div-float-mgm{
+    height: 620px; 
+    width: 620px; 
+    background-color: gray; 
+    border: solid 1px black;
+}
+.index-close-div{
+    height: 40px;
+    width: 40px;
+}
+.index-div-about-data{
+    margin-top: 42px;
+    width: 100%;
+    height: 85%;
+    background-color: white;
+    color: black;
+}
+.datepicker {
+  z-index: 1001 !important;
+  position: fixed;
+  margin-top: 7px;
+}
+.datepicker-mgmbarbers-tabs {
+  z-index: 1001 !important;
+  position: relative;
+}
+.float-left{
+    float: left;
+}
+.fed-tip-tax-data{
+    color: darkred;
+}
+.promo-disc{
+    color: darkgreen;
+}
+.pre-pay-promo-disc{
+    color: lightgreen;
+}
+.pre-pay-promo-disc-noslt{
+    color: darkgreen;
+}
+.div-time-holder{
+    width: 90%;
+}
+.tip-div-holder{
+    height: 665px; 
+    width: 675px; 
+    position: absolute; 
+    background-color: lightgray; 
+    opacity: .95; 
+    top: 140px;
+    z-index: 100;
+}
+.visibility-hidden{
+    visibility: hidden;
+}
+.tip-div-data-holder{
+    height: 222px; 
+    width: 100%; 
+    position: relative; 
+    top: 40%;
+}
+.tip-div-data{
+    height: 35px; 
+    font-size: 2em;
+}
+.tip-div-lbl{
+    width: 45%; 
+    font-size: 2em; 
+    height: 40px;
+}
+.tip-div-data-input{
+    height: 40px;
+}
+.buton-ok-tip{
+    height: 45px;
+    width: 50px;
+    margin-top: -3px;
+}
+.buton-close-div{
+    width: 40px;
+    height: 40px;
+    z-index: 100;
+}
+.float-right{
+    float: right;
+}
+.overflow-y{
+    overflow-y: scroll;
+}
+button{
+    /*stay*/
+    /*Make the button round at the corners, more mobile friendly*/
+    border-radius: 15px;
+}
+.no-bubble{
+    font-size: 12point;
+}
+.no-bubble:hover{
+    font-size: 14point;
+    font-weight: bold;
+}
+.input-width{
+    width: 100%;
+}
+.display-none{
+    display: none;
+}
+.center{
+    /*stay*/
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+.align-center{
+    text-align: center !important;
+}
+.align-right{
+    text-align: right !important;
+}
+.float-left{
+    float: left;
+}
+.float-right{
+    float: right;
+}
+.align-left{
+    text-align: left  !important;
+}
+.main-div{
+    /*Take the whole screen, viewpoint.*/
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-width: 410px;
+}
+.main-div-codefetch{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+}
+.main-div-apifetch{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+}
+.main-div-paynow{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+}
+.main-div-dashboard{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+
+}
+.main-div-login{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+
+}
+.main-div-index{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+
+}
+.main-div-registration{
+    /*stay*/
+    width:  100%;
+    height: 90%;
+
+}
+.main-logo{
+    background-image: url(../images/headers/papayaheader.png);
+    background-repeat: no-repeat;
+    height: 30%; 
+    width: 92%;
+}
+.main-logo-img{
+    width: 100%;
+}
+.btn-tip{
+    background-color: RGB(73, 255, 41);
+    height: 80px;
+    color: black;
+    position: relative;
+    z-index: 99;
+}
+.btn-cancel{
+    background-color: darkred;
+    color: white;
+    height: 40px;
+    width: 40px;
+    position: relative;
+    z-index: 99px;
+}
+.btn-cancel-promox{
+    background-color: darkred;
+    color: white;
+    height: 20px;
+    width: 20px;
+    position: relative;
+    z-index: 99px;
+}
+.tr-register-btn-container{
+    width: 100%; 
+    text-align: center;
+}
+.tr-codefetch-btn-container{
+    width: 100%; 
+}
+.tr-cancelpayment-btn-container{
+    width: 100%; 
+    text-align: center;
+}
+.main-nev-menu{
+    color: black;
+    position: relative;
+    display: inline;
+    top: -260px;
+}
+.tbl-service-daily{
+    overflow-y: auto; 
+    height: 400px; 
+    display: block;
+}
+.main-nev-menu-noheader{
+    color: black;
+    position: relative;
+    display: inline;
+    z-index: 1001;
+}
+.div-body-container{
+    /*stay*/
+    height: 100%;
+    /*
+    width: 30%;
+    float: left;
+    margin-left: -30px;
+    top: 10px;
+    position: fixed;
+    z-index: 1000;*/
+}
+.tr-manageuser-add-new-barber-header{
+    font-weight: bold;
+    font-size: 2em;
+    border-bottom: 1px solid;
+    margin-top: 20px;
+}
+.div-body-dashbord-createevent-container{
+    height: 600px;
+    width: 700px;
+    position: fixed;
+}
+.event{
+    margin-top: -15px;
+}
+.div-body-admin-mgmcomp-attach-container{  
+    position: fixed;
+    top: 13%;
+    left: 333px;
+    margin-top: -110px;
+    margin-left: -100px;
+    height: 800px; 
+    width: 612px; 
+    background-color: gray;
+    opacity: .9;
+    z-index: 999;
+}
+.div-body-profile-attach-container{  
+    position: fixed;
+    top: 13%;
+    left: 333px;
+    margin-top: -110px;
+    margin-left: -110px;
+    height: 820px; 
+    width: 820px; 
+    background-color: gray;
+    opacity: .9;
+    z-index: 9999;
+}
+.div-body-admin-mgmcomp-attach-sub-container{
+    position: fixed;
+    top: 49%;
+    left: 500px;
+    margin-top: -100px;
+    margin-left: -100px;
+}
+.div-body-profile-attach-sub-container{
+    position: fixed;
+    top: 49%;
+    left: 500px;
+    margin-top: -100px;
+    margin-left: -100px;
+}
+.navmenu{
+    margin-top: -20px;
+}
+ul.ul-parent{ 
+  display: flex;
+  justify-content: right;
+  align-items: center; 
+  list-style-type: none;
+} 
+ul.ul-child{
+    display: none;
+    list-style-type: none; /*if you do not want any image to the left of the list*/
+    padding: 20px;
+}
+ul.ul-child > li{
+    float: left;
+}
+.ul-child-sub{
+    margin-left: -54px;
+}
+li{
+    display: inline-block;
+    padding: 10px; 
+    cursor: pointer;
+}
+.li-menu{
+    font-size: .8em;
+
+}
+.li-menu:hover .ul-child{
+    display: block;
+    position: absolute;
+    background-color: white;
+    padding: 0px;
+    color: black;
+    white-space: nowrap;
+    margin-left: -35px;
+    margin-top: 50px;
+    z-index:10;
+    width: 100px;
+}
+.li-menu-sub {
+    background-color: #181818;
+    border: 1px solid white;
+    color: white;
+    width: 100%;
+    font-size: .9em;
+}
+.li-menu-sub:hover {
+    background-color: #2E86C1; /*a blue for when user hover mouse over submenus*/
+}
+.header-flightpath{
+    float: left;
+    display: block;
+    width: 100%;
+    height: 60px;
+    background-size: 200px 80px;
+    background-image: url("../images/headers/flightpath.webp");
+}
+.header-main-logo{
+    float: left;
+    display: block;
+    width: 12%;
+    height: 100%;
+    background-size: 200px 80px;
+    background-image: url("../images/headers/qantasmainlogo.svg");
+    background-repeat: no-repeat;
+    margin-top: -20px;
+}
+.div-header-logo-container{
+    width: 100%;
+}
+.div-header-main-container{
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    font-size: 24pt;
+    color: black;
+    font-weight: bold;
+    margin-left: 150px;
+}
+.prepay-div-header-main-container-title{
+    width: 100%;
+    height: 5%;
+    font-size: 2em;
+    font-weight: bold;
+    text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+}
+.add-a-new-card{
+    width: 100%;
+    height: 5%;
+    font-size: 3em;
+    font-weight: bold;
+    text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+}
+.prepay-div-header-main-container{
+    width: 100%;
+    height: 5%;
+    font-size: 1em;
+    color: black;
+    font-weight: bold;
+}
+.div-header-main-container-schedule{
+    width: 100%;
+    height: 20%;
+    text-align: center;
+    font-size: 24pt;
+    color: black;
+    font-weight: bold;
+}
+.footer-container{
+    width: 100%;
+    height: 5%;
+}
+.header-time-bar, .header-time-bar-date{
+    width: 30%; 
+    height: 100%; 
+    float: left;
+    text-align: center;
+    margin-top: 10px;
+}
+.header-time-bar-date{
+    font-size: 1.6em;
+    font-weight: bold;
+    margin-top: 0px !important;
+}
+.body-div-menu{
+    height: 2%;
+    width: 71.5%;
+    color: white;  
+}
+.body-div-menu-content{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    height: 100%;
+    width: 10%;
+    cursor: pointer;
+    float: left;
+    color: black;
+    min-width: 120px;
+    padding-bottom: 5px;
+}
+.div-content-holder{
+    width: 100%;
+    height: 100%;
+}
+.div-content-holder-flex{
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    color: black;
+    width: 100%;
+    height: 520px;
+    min-height: 350px;
+    align-items: flex-start;
+    /* Hide scrollbar for IE and older Edge */
+    -ms-overflow-style: none;
+}
+.div-content-holder-flex-div{
+    flex-grow: 1;
+}
+.div-content-holder-flex-data-container{
+    padding: 20px; 
+    width: 13%; 
+    min-width: 240px;
+}
+.schedule-slot-content-holder-flex{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    width: 100%;
+    color: black;
+}
+.td-login-btn{
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+.tr-login-lbl{
+    width: 60%;
+    text-align: right;
+}
+.td-login-lbl{
+    width: 25%;
+}
+.td-login-input{
+    width: 75%;
+    text-align: left;
+}
+.div-announcement{ 
+    border-left: 0px !important;
+}
+.div-message{ 
+    border-left: 0px !important;
+}
+.div-news{ 
+    border-left: 0px !important;
+}
+.div-namelbl {
+    padding: 5px;
+    color: black;
+    width: 30%;
+    text-align: right;
+    flex: 1;
+}
+.div-user {
+    text-align: left;
+    width: 70%;
+    flex: 1;
+}
+.div-passwordlbl {
+    padding: 5px;
+    color: black;
+    width: 100px;
+    text-align: right;
+    flex: 1;
+}
+.div-password {
+    text-align: left;
+    flex: 1;
+    width: 300px
+}
+.btn-add-tip{
+    width: 30px;
+    height: 20px;
+}
+button{
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    margin-right: 10px;
+    background-color: #1D89D1;
+    width: 100px; 
+    height: 40px;
+    border: 1px solid;
+}
+.div-loginname{
+    width: 100%; 
+    height: 10%; 
+    white-space: nowrap; 
+    display: flex;
+}
+.div-loginpassword{
+    width: 300px; 
+    height: 40px; 
+    white-space: nowrap; 
+    display: flex;
+}
+.div-regpasword{
+    width:300px; 
+    height: 40px; 
+    margin: 0px auto;
+}
+.div-buttons{
+    text-align: center;
+}
+.btn-retrieve{
+    /*stay*/
+    width: auto;
+    cursor: pointer;
+}
+.btn-submit{
+    /*stay*/
+    width: auto;
+    cursor: pointer;
+}
+.btn-register{
+    /*stay*/
+    width: auto;
+    cursor: pointer;
+}
+.div-twofactor-container{
+    display: none;
+}
+.div-register{
+    width: 48%; 
+    float: left; 
+    text-align: center;
+    border-right: 1px solid black; 
+    padding-right: 5px; 
+    color: black
+}
+.div-retrievepassword{
+    width: 100%; 
+    text-align: left;
+    padding-top: 5px; 
+    color: black;
+}
+.registration-header{
+    text-align: center; 
+    width: 100%; 
+    height: 40px; 
+    font-weight: bold; 
+    font-size: 1.2em; 
+    color: black; 
+    font-weight: bold;
+}
+.registrationlbl{
+    padding: 5px;
+    color: black;
+    width: 50%;
+    text-align: right;
+    flex: 1;
+}
+.div-required-param{
+    width: 100%;
+    background-color: white;
+}
+.div-verifexpiredheader{
+    width: 100%;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 2em;
+    text-align: center;
+    color: black !important;
+    position: fixed;
+}
+.div-veriheader{
+    width: 100%;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 2em;
+    text-align: center;
+    color: black !important;
+}
+.div-confirmpassword{
+    width: 450px; 
+    height: 40px; 
+    white-space: nowrap; 
+    display: flex;
+}
+.div-confirmbuttons{
+    width:450px; 
+    height: 40px; 
+    text-align: center;
+}
+.div-verify-pwmin{
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    text-align: left;
+    color: black !important;
+    margin-left: 100px;
+}
+.asterisk{
+    color: red;
+    font-weight: bold;
+    font-size: 16pt;
+}
+.main-div-body-profile{
+    height: 80%;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+.main-div-body-order{
+    background-color: #FFFFFF;
+    height: 80%;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+
+.main-div-body-announcement{
+    background-color: #FFFFFF;
+    height: 80%;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+.main-div-body-admin{
+    background-color: #FFFFFF;
+    height: 80%;
+    width: 100%;
+    border-bottom: 1px solid black;
+    margin-top: -20px;
+}
+.main-div-body-dashboard{
+    background-color: #FFFFFF;
+    height: 90%;
+    width: 100%;
+}
+.main-div-body-profile-header{
+    width: 100%;  
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left;
+    color: white;
+}
+.main-div-body-admin-header{
+    width: 100%; 
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left;
+    color: white;
+    padding: 10px;
+}
+.main-div-body-profile-left{
+    width: 210px;
+    min-width: 210px;
+    float: left; 
+    font-size: .8em; 
+    color: white; 
+    resize: none;
+    height: 820px;
+    text-align: left;
+    border-right: 1px solid black;
+    background-color: #1079B1;
+}
+.main-div-body-profile-right-container{
+   width: 100%;
+   min-height: 820px;
+   reize: none;
+   text-align: center;
+   float: left;
+   height: 820px;
+}
+.main-div-body-admin-left{
+    width: 210px; 
+    min-width: 210px;
+    float: left; 
+    font-size: .8em; 
+    color: white; 
+    resize: none;
+    height: 820px;
+    text-align: left;
+    border-right: 1px solid black;
+    background-color: #1079B1;
+}
+.main-div-body-admin-right-container{
+   width: 100%; 
+   height: 100%; 
+   min-width: 560px;
+   min-height: 820px;
+   resize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+   top: 10px;
+}
+.main-div-body-dashboard-right-container{
+   width: 100%; 
+   height: 100%; 
+   min-width: 560px;
+   min-height: 800px;
+   resize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+}
+.main-div-body-codefetch-hint-container{
+   width: 100%; 
+   height: 100%; 
+   min-width: 560px;
+   min-height: 800px;
+   resize: none;
+   margin-top: 4%;
+   margin-left: 30%;
+   position: fixed;
+}
+.main-div-body-order-right-container{
+   height: 800px;
+   min-height: 800px;
+   min-width: 1360px;
+   resize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+   margin-top: -50px;
+   overflow-y: auto;
+}
+.main-div-body-order-right-container-data{
+   height: 400px;
+   min-height: 400px;
+   min-width: 600px;
+   resize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+   margin-top: -50px;
+   overflow-y: auto;
+   display: none;
+   position: fixed;
+}
+.main-div-body-order-right-container-search{
+   height: 700px;
+   min-height: 700px;
+   min-width: 1340px;
+   resize: none;
+   text-align: center;
+   float: left;
+   overflow-y: auto;
+}
+.main-div-footer{
+    /*stay*/
+    width: 100%; 
+    text-align: center;
+    color: black;
+    height: 5%;
+}
+.announcement-input{
+    width: 300px;
+}
+.user-profile-input{
+    width: 300px;
+}
+.user-dashboard-input{
+    width: 98%;
+}
+.announcement-lbl{
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.user-profile-lbl{
+    text-align: right;
+    color: black;
+}
+.main-div-body-retrieve-header{
+    width: 100%; 
+    height: 5%; 
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left; 
+    margin-top: -20px;
+}
+.nav li{
+    background-color: white;
+    color: black;
+}
+.nav li:hover{
+    background-color: #87BFDD;
+}
+.nav li:focus{
+    background-color: #181818;
+    color: white;
+}
+.div-menu-profile{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.div-menu-profile:hover{
+    text-align: right;
+    background-color: #181818; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+ 
+}
+.div-menu-admin{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.div-menu-admin:hover{
+    text-align: right;
+    background-color: white;
+    color: black; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+ 
+}
+.div-menu-dashboard{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.div-menu-dashboard:hover{
+    text-align: right;
+    background-color: white;
+    color: black; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+ 
+}
+.tbl-announcement{
+    background-color: #838383;
+}
+.tbl-profile{
+    background-color: #838383;
+}
+.tbl-orders{
+    background-color: white;
+    border: 1px solid black;
+}
+.tbl-profile-lbl{
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-admin-mgm-user-lbl{
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-dashboard-user-lbl{
+    background-color: #393C3E; 
+    color: white;
+    width: 200px;
+}
+.tbl-dashboard-user-lbl-span{
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-order-lbl{
+    background-color: white; 
+    color: black;
+    text-align: right;
+    width: 110px;
+}
+.no-wrap{
+    white-space: nowrap;
+}
+.no-resize{
+    resize: none;
+}
+.tbl-admin-register{
+    /*stay*/
+    width: 30%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-admin-register-lbl{
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-admin-mgm-schedule-header{
+    width: 100%;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-dashboard-mgm-schedule-header{
+    width: 100%;
+    background-color: #393C3E; 
+    color: white;
+}
+.admin-company-input{
+    width: 98%;
+    text-align: left;
+}
+.dashboard-company-input{
+    width: 98%;
+    text-align: left;
+}
+.tbl-dashboard-sc-lbl{
+    width: 160px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-dashboard-search_user{
+    width: 100%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-admin-register-user{
+    width: 100%;
+    background-color: lightgray;
+}
+.tbl-admin-mgm-schedule{
+    width: 90%;
+    background-color: lightgray;
+    margin-top: 10px;
+}
+.tbl-dashboard-mgm-schedule{
+    width: 90%;
+    background-color: lightgray;
+    margin-top: 10px;
+    resize: none;
+}
+.admin-mgmservice-table-holder{
+    width: 100%; 
+    height: 820px;
+}
+.tbl-guest-register{
+    /*stay*/
+    width: 22%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-refund-payment{
+    /*stay*/
+    width: 30%;
+    background-color: #393C3E;
+    margin-left: 20%; 
+    margin-top: 8%;
+}
+.tbl-cancel-payment-payment{
+    /*stay*/
+    width: 30%;
+    background-color: #393C3E;
+    margin-left: 20%; 
+    margin-top: 8%;
+}
+.tbl-refund{
+    /*stay*/
+    width: 22%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-cancelpayment{
+    /*stay*/
+    width: 22%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-cancepayment{
+    /*stay*/
+    width: 22%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.div-refund-display{
+    height: 460px; 
+    width: 680px; 
+    background-color: #393C3E;  
+    position: fixed;
+    border: 1px solid black;
+    margin-left: 30%;
+    margin-top: -15%;
+    z-index: 99;
+    opacity: .97;
+}
+.div-cancelpayment-display{
+    height: 460px; 
+    width: 680px; 
+    background-color: #393C3E;  
+    position: fixed;
+    border: 1px solid black;
+    margin-left: 30%;
+    margin-top: -15%;
+    z-index: 99;
+    opacity: .97;
+}
+.tbl-register{
+    /*stay*/
+    width: 30%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-codetech{
+    /*stay*/
+    width: 50%;
+    background-color: lightgray;
+    margin: 0px auto;
+}
+.tbl-admin-service{
+    /*stay*/
+    width: 600px;
+    background-color: lightgray;
+}
+.tbl-dashboard-service{
+    /*stay*/
+    width: 800px;
+    background-color: lightgray;
+    margin-top: 10px;
+}
+.dashboard-tb-tr-service{
+    background-color: darkgray;
+}
+.tbl-admin-mgmschedule{
+    /*stay*/
+    width: 600px;
+    background-color: lightgray;
+}
+.tbl-modify-event{
+    /*stay*/
+    background-color: lightgray;
+    width: 100%;
+    border: 1px solid;
+    table-layout: fixed;
+}
+.dashboard-tbl-history{
+    background-color: lightgray;
+    width: 100%;
+    overflow: auto;
+    border: 1px solid;
+    table-layout: fixed;
+}
+.dashboard-tbl-history-search{
+    background-color: lightgray;
+    width: 50%;
+    overflow: auto;
+    border: 1px solid;
+    table-layout: fixed;
+    position: fixed;
+    resize: none;
+    min-width: 840px;
+}
+thead tr:first-child th {
+    position: sticky;
+    z-index: 12;
+    top: 0;
+}
+tbody tr:last-child {
+    position: sticky;
+    z-index: 12;
+    bottom: 0;
+}
+.tbl-show-event{
+    /*stay*/
+    background-color: lightgray;
+    width: 100%;
+    border: 1px solid;
+    margin-top: 10px;
+    table-layout: fixed;
+}
+.tbl-show-event-tr{
+    /*stay*/
+    height: 40px;
+}
+.tbl-show-event-td-lbl{
+    /*stay*/
+    width: 40px;
+    background-color: #1079B1;
+    margin-right: 5px;
+}
+.tbl-show-event-td-data{
+    /*stay*/
+    width: 600px;
+}
+.tbl-modify-event-th{
+    white-space: nowrap; 
+    border-right: 1px solid;
+}
+.tbl-history-dashboardpay-th{
+    white-space: nowrap; 
+    border-right: 1px solid;
+}
+.history-table-comment-txtarea{
+    width: 97%; 
+    resize: none; 
+    height: 99%;
+}
+.tbl-modify-event-td{
+    white-space: nowrap; 
+    border-right: 1px solid;
+    border-color: white;
+}
+.tbl-history-td{
+    white-space: nowrap; 
+    border-right: 1px solid;
+    border-color: white;
+    height: 40px;
+    padding-right: 5px;
+}
+.tbl-history-last-td{
+    white-space: nowrap; 
+    border: 1px solid white;
+    height: 40px;
+    background-color: darkgray;
+    padding-right: 5px;
+}
+.tbl-admin-company{
+    /*stay*/
+    width: 600px;
+    background-color: lightgray;
+}
+.tbl-dashboard-company{
+    /*stay*/
+    width: 600px;
+    background-color: lightgray;
+}
+.tbl-passwordreset{
+    /*stay*/
+    width: 100%;
+    background-color: #838383;
+    float: left;
+    color: white;
+}
+.bg-color-white{
+    background-color: white;
+}
+.tbl-event-lbl{
+    /*stay*/
+    width: 40%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.eventinput{
+    width: 60%;
+    text-align: left;
+    background-color: lightgray;
+}
+.div-mgm-user-content{
+    width: 100%;
+    height: 100%;
+}
+.div-mgm-search{
+    float: left;
+    width: 100%;
+    height: 5%;
+}
+.txt-search-admin{
+    float: left;
+    height: 30px;
+    margin-top: 2px; 
+    font-size: .8em; 
+    width: 190px;
+    text-align: left;
+}
+.txt-search-admin-schedule{
+    float: left;
+    height: 30px;
+    margin-top: 2px; 
+    font-size: .8em; 
+    width: 190px;
+    text-align: left;
+}
+.submit-search-user{
+    float: left;
+    width: 30px;
+    height: 30px;
+}
+.div-flowdata-containter{
+    height: 100%;
+    width: 100%;
+    margin-top: -32px;
+}
+.div-searchflowdata-containter{
+    height: 100%;
+    width: 100%;
+}
+.div-flow-legend{
+    float: left; 
+    height: 100%; 
+    width: 100%; 
+    margin-top: -30;
+    background-color: #4B697D;
+    cursor: pointer;
+}
+.div-flow-note{
+    float: left; 
+    height: 20px;
+    line-height: 20px;
+    width: 100%; 
+    background-color: #4B697D;
+    cursor: pointer;
+}
+.div-fid-note{
+    float: left; 
+    height: 20px;
+    line-height: 20px;
+    width: 100%; 
+    background-color: #4B697D;
+}
+.status-scheduled{
+    float: left;
+    background-color: white;
+    height: 100%;
+    width: 100px;
+    color: black;
+    text-align: center;
+    border: solid 1px black;
+    
+}
+.status-ata{
+    float: left;
+    background-color: green;
+    height: 100%;
+    width: 100px;
+    color: black;
+    text-align: center;
+    border: solid 1px black;
+}
+.status-eta{
+    float: left;
+    background-color: yellow;
+    height: 100%;
+    width: 100px;
+    color: black;
+    text-align: center;
+    border: solid 1px black;
+}
+.status-cancelled{
+    float: left;
+    background-color: MediumOrchid;
+    height: 100%;
+    width: 160px;
+    color: white;
+    text-align: center;
+    border: solid 1px black;
+}
+.status-delayed{
+    float: left;
+    background-color: darkred;
+    height: 100%;
+    width: 200px;
+    color: white;
+    text-align: center;
+    border: solid 1px black;
+}
+.div-flow-body-container{
+    height: 99%; 
+    width: 100%; 
+    overflow-y: scroll; 
+    float: left;
+}
+.schedule-service-tbl{
+    padding: 5px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.table-h100{
+    height: 100%;
+}
+.table-w100{
+    width: 100%;
+}
+table{
+    border-collapse: collapse;
+}
+table th{
+    width: auto;
+    height: 30px;
+    white-space: nowrap;
+    background-color: #173346;
+    color: white;
+}
+table td{
+    height: 20px;
+    color: black;
+}
+.tbl-flow-data{
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.tbl-flow-data tr{
+    height: 100%;
+    width: 100%;
+    height: 20px;
+}
+.tbl-flow-data th{
+    text-align: center;
+    height: 30px;
+    width: 35px;
+    font-size: 1em;
+}
+.tbl-flow-data td{
+    height: 100%;
+    text-align: left;
+    border: 1px solid black;
+}
+.input-flows{
+    height: 40px;
+    width: 89%;
+    border: 0px none;
+}
+.flow-txtarea-note{
+    width: 98%; 
+    height: 80%;
+    resize: none;
+}
+.flow-slt-status{
+    height: 100%; 
+    width: 100%;
+}
+.flow-button-depart{
+    width: 90%;
+    height: 40px;
+    text-align: center;
+}
+.flow-button-delete{
+    width: 90%;
+    height: 40px;
+    text-align: center;
+}
+.announcement-button-acknowledge{
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    cursor: pointer;
+}
+.serviceorder-button-delete{
+    width: 90%;
+    height: 40px;
+    text-align: center;
+}
+.select2-results { 
+    background-color: gray;
+}
+.flow-slt-engineer-wrapper{
+  width: 100%;
+  margin: auto;
+}
+.flow-slt-admin-wrapper{
+  max-width: 100%;
+  margin: auto;
+}
+.select2-results__options{
+   /*if we do not do this the Engineer drop down will not show properly, it will show in horizontal.*/
+   width: 100px;
+    
+} 
+.tbl-note-header{
+    text-align: center;
+    background-color: #173346; 
+    color: white;
+    font-size: 2em;
+}
+.tbltr-note-lbl{
+    height: 20px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.noteinput{
+    width: 80%;
+    text-align: left;
+}
+.tbl-new-note{
+    width: 30%;
+    background-color: #838383;
+    margin: 0 auto;
+}
+.main-div-body-manageaircraft{
+    background-color: #FFFFFF;
+    height: 80%;
+    width: 100%;
+    border-bottom: 1px solid black;
+}
+.div-menu-manageaircraft{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.div-menu-manageaircraft:hover{
+    text-align: right;
+    background-color: #181818; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+ 
+}
+.main-div-body-manageaircraft-left{
+    width: 210px;
+    min-width: 210px;
+    float: left; 
+    font-size: .8em; 
+    color: white; 
+    resize: none;
+    height: 820px;
+    text-align: left;
+    border-right: 1px solid black;
+    background-color: #1079B1;
+}
+.main-div-body-manageaircraft-header{
+    width: 100%;  
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left;
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+.main-div-body-manageaircraft-right-container{
+   width: 1500px;
+   min-width: 1500px;
+   min-height: 820px;
+   reize: none;
+   text-align: center;
+   float: left;
+   height: 820px;
+   padding-left: 10px;
+   margin-top: -30px;
+}
+.add-flight-input{
+    width: 300px;
+}
+.manage-flight-input{
+    width: 400px;
+    height: 90%;
+}
+.manage-flight-btn{
+    width: 70px;
+    font-size: .6em;
+    text-align: left;
+    background-color: #181818; 
+    float: left;
+    cursor: pointer;
+}
+.manage-flight-lbl{
+    width: 400px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+    height: 40px;
+}
+.manage-flight-btn-clear-dates{
+    height: 20px; 
+    width: 60px; 
+    background-color: #181818;
+    cursor: pointer;
+}
+.div-calendar-holder-body{
+    width: 100%;
+    height: 80%; 
+
+}
+.slt-manage-flight-month{
+    height: 30px;
+    width: 80px;
+    margin-top: 5px;
+}
+.tbl-manage-flight-calendar-dates{
+    cursor: pointer;
+    background-color: white;
+}
+.tbl-manage-flight-calendar-dates:hover{
+    font-size: 1.3em;
+    font-weight: bold;
+}
+.div-header-legend{
+    width: 100%;
+}
+.tbl-order-data{
+    height: 100%;
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.tbl-order-data tr{
+    height: 100%;
+    width: 100%;
+    height: 20px;
+}
+.tbl-order-data th{
+    text-align: center;
+    height: 30px;
+    width: 35px;
+    font-size: 1em;
+}
+.tbl-order-data td{
+    height: 100%;
+    text-align: left;
+    border: 1px solid black;
+}
+.user-order-input{
+    width: 80px;
+    border: none;
+    border-bottom: 1px solid black;
+}
+.service-order-inputs{
+    width: 100%; 
+    height: 90%; 
+    border: none; 
+    border-bottom: 1px solid black;
+}
+.div-service-order-data-container{
+    width: 650px; 
+    height: 30px;
+}
+.div-service-order-emplbl{
+    width: 140px; 
+    height: 20px; 
+    float: left; 
+    padding-left: 20px; 
+    vertical-align: bottom;
+}
+.div-service-order-emplbl-print{
+    width: 140px; 
+    height: 20px; 
+    float: left; 
+    padding-left: 20px; 
+    vertical-align: bottom;
+}
+.div-service-order-empinput{
+    float: left; 
+    width: 200px; 
+    height: 20px; 
+    padding-left: 10px; 
+    text-align: left; 
+    vertical-align: bottom;
+    border-bottom: 1px solid black;
+}
+.div-service-order-flightlbl{
+    height: 100%; 
+    float: left; 
+    padding-right: 10px; 
+    vertical-align: bottom;
+}
+.div-service-order-servicelbl{
+    float: left; 
+    padding-right: 10px; 
+    vertical-align: bottom;
+    width: 80px;
+    font-size: .8em;
+    text-align: right;
+    height: 20px;
+}
+.div-service-order-service-input-container{
+    float: left; 
+    width: 40px; 
+    height: 20px; 
+    text-align: left; 
+    vertical-align: bottom;
+    border-bottom: 1px solid black;
+}
+.div_service-order-data-service-container{
+    width: 160px; 
+    height: 100%; float: left;
+}
+.div-signature{
+    margin-left: 30px; 
+    width: 240px; 
+    height: 60px; 
+    text-align: left; 
+    vertical-align: bottom;
+    border-bottom: 1px solid black; 
+    background-color: lightgray;
+}
+.div-signature-line{
+    float: left; 
+    width: 110px;
+    height: 20px;
+    text-align: left; 
+    vertical-align: bottom; 
+    border-bottom: 1px solid black;
+}
+.div-signature-lbl{
+    width: 100px;
+    height: 20px; 
+    float: left; 
+    vertical-align: bottom; 
+    padding-right: 10px;
+}
+.div-menu-service-orders{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.search-service-orders{
+    height: 100%; 
+    width: 160px; 
+    float: left; 
+    white-space: nowrap; 
+    text-align: left;
+    padding-right: 20px;
+    background-color: #173346;
+    color: white;
+}
+.div-select-header{
+    height: 50px; 
+    width: 1540px;
+}
+.div-select-body-container{
+    width: 1360px;
+    height: 98%;
+}
+.tbl-fid-data-mini{
+
+    width: 100%;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+.tbl-fid-data-mini tr{
+
+    width: 100%;
+    height: 20px;
+}
+.tbl-fid-data-mini th{
+    text-align: center;
+    height: 30px;
+    width: 35px;
+    font-size: 1em;
+}
+.tbl-fid-data-mini td{
+
+    text-align: left;
+    border: 1px solid black;
+}
+.main-div-body-searchflight-right-container-search{
+   height: 760px;
+   min-height: 760px;
+   min-width: 1360px;
+   reize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+   overflow-y: auto;
+}
+.main-div-body-announcement-right-container-search{
+   height: 780px;
+   min-height: 780px;
+   min-width: 1360px;
+   reize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+   margin-top: -50px;
+   overflow-y: auto;
+}
+.div-menu-service-announcement{
+    text-align: right;
+    background-color: #1079B1; 
+    color: white; 
+    width: 189px; 
+    height: 20px;
+    padding: 10px;
+    cursor: pointer;
+}
+.main-div-body-order-header{
+    width: 100%; 
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left;
+    color: white;
+    padding: 10px;
+}
+.main-div-body-announcement-header{
+    width: 100%; 
+    font-size: 2em; 
+    font-weight: bold; 
+    color: black; 
+    text-align: center; 
+    float: left;
+    color: white;
+    padding: 10px;
+}
+.main-div-body-announcement-left{
+    width: 210px; 
+    min-width: 210px;
+    float: left; 
+    font-size: .8em; 
+    color: white; 
+    resize: none;
+    height: 820px;
+    text-align: left;
+    border-right: 1px solid black;
+    background-color: #1079B1;
+}
+.main-div-body-order-left{
+    width: 210px; 
+    min-width: 210px;
+    float: left; 
+    font-size: .8em; 
+    color: white; 
+    resize: none;
+    height: 820px;
+    text-align: left;
+    border-right: 1px solid black;
+    background-color: #1079B1;
+}
+.img-edit-service-order{
+    height: 25px; 
+    width: 25px; 
+    float: left; 
+    margin-left: 10px;
+}
+.service-order-catheader{
+    height: 40px; 
+    width: 100%; 
+    float: left; 
+    text-align: center; 
+    cursor: pointer; 
+    color: black; 
+    font-size: 1.5em; 
+    font-weight: bold; 
+    padding-bottom: 10px;
+}
+.main-div-body-schedule-right-container{
+   min-width: 1880px;
+   width: 90%;
+   min-height: 830px;
+   resize: none;
+   text-align: center;
+   float: left;
+   padding-left: 10px;
+}
+.main-div-body-history-dashpay-container-holder{
+   min-width: 1880px;
+   width: 90%;
+   resize: none;
+   text-align: center;
+   min-height: 830px;
+   padding-left: 10px;
+   background-color: gray;
+   z-index: 100;
+   position: fixed;
+   opacity: .85;
+   display: none; 
+}
+.main-div-body-dashboard-container-holder{
+   min-width: 1880px;
+   width: 90%;
+   resize: none;
+   text-align: center;
+   min-height: 830px;
+   padding-left: 10px;
+   background-color: gray;
+   z-index: 100;
+   position: fixed;
+   opacity: .85;
+   display: none; 
+}
+.main-div-body-schedule-right-container-holder{
+   min-width: 1880px;
+   width: 90%;
+   resize: none;
+   text-align: center;
+   min-height: 830px;
+   padding-left: 10px;
+   background-color: gray;
+   z-index: 100;
+   position: fixed;
+   opacity: .85;
+   display: none;
+}
+.div-calendar-holder{
+    width: 100%;
+    height: 90%;
+    background-color: white;
+    color: black;
+}
+.tbl-manage-schedule-calendar-header{
+    background-color: #181818; 
+    color: white;
+    cursor: pointer;
+    width: 10%;
+}
+.btn-manage-schedule-date{
+    width: 80px;
+    height: 30px;
+    text-align: center;
+    margin-left: 10px;
+    margin-top: 5px;
+    background-color: #181818;
+}
+.slt-manage-flight-month{
+    height: 30px;
+    width: 80px;
+}
+.tbl-manage-schedule-calendar-dates{
+    background-color: #f2f2f2;
+    height: 100px;
+    width: 120px;
+    padding: 0px;
+}
+.tbl-manage-schedule-calendar-dates-td-div{
+   width: 100%;
+   height: 80px;
+   padding-bottom: 0px;
+}
+.tbl-manage-schedule-calendar-dates-td-div-weekly{
+   width: 100%;
+   height: 610px;
+   padding-bottom: 0px;
+}
+.tbl-manage-schedule-calendar-dates-td-div-daily{
+   width: 100%;
+   height: 40px;
+   padding-bottom: 0px;
+}
+.tbl-manage-schedule-calendar-dates-nxt{
+    cursor: pointer;
+    background-color: #cccccc;
+}
+.tbl-manage-schedule-calendar-dates-nxt:hover{
+    background-color: lightblue;
+}
+.tbl-manage-schedule-calendar-dates-td-div-nxt{
+   width: 100%;
+   height: 80px;
+   padding-bottom: 0px;
+}
+.tbl-manage-schedule-calendar-dates-pre{
+    background-color: #181818;
+}
+.tbl-manage-schedule-calendar-dates-pre:hover{
+
+}
+.tbl-manage-schedule-calendar-dates-td-div-pre{
+   width: 100%;
+   height: 80px; 
+   padding-bottom: 0px;
+}
+.tbl-manage-schedule-calendar{
+    width: 80%; 
+    height: 100%; 
+    margin: 0px auto; 
+    table-layout:fixed;
+
+}
+.circle-me-text{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-weekly{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-daily{
+    display: block;
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    -moz-border-radius: 30px; /* or 50% */
+    border-radius: 30px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+.daily-slot-color-lesserday{
+    background-color: #006080;
+}
+.daily-slot-color-curday{
+    background-color: #008000;
+}
+.daily-slot-color-greaterday{
+    background-color: #b3b300;
+}
+.circle-me-text-lesserday{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #006080;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-lesserday-weekly{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #006080;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-lesserday-daily{
+    display: block;
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    -moz-border-radius: 30px; /* or 50% */
+    border-radius: 30px; /* or 50% */
+
+    background-color: #006080;
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+.circle-me-text-curday{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #008000;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-curday-weekly{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #008000;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-curday-daily{
+    display: block;
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    -moz-border-radius: 30px; /* or 50% */
+    border-radius: 30px; /* or 50% */
+
+    background-color: #008000;
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+.circle-me-text-greaterday{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #b3b300;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-greaterday-weekly{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #b3b300;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-greaterday-daily{
+    display: block;
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    -moz-border-radius: 30px; /* or 50% */
+    border-radius: 30px; /* or 50% */
+
+    background-color: #b3b300;
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+.circle-me-text-holidayoff{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #990000;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-holidayoff-weekly{
+    display: block;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #990000;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-holidayoff-daily{
+    display: block;
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+
+    -moz-border-radius: 30px; /* or 50% */
+    border-radius: 30px; /* or 50% */
+
+    background-color: #990000;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-off{
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 120px;
+    line-height: 30px;
+    margin-left: 10px;
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-off-weekly{
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 120px;
+    line-height: 30px;
+    margin-left: 10px;
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-off-daily{
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 120px;
+    line-height: 30px;
+    margin-left: 10px;
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-back{
+
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 20px;
+    line-height: 30px;
+    margin-top: 5px;
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-forward{
+ 
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 20px;
+    line-height: 30px;
+    margin-top: 5px;
+    margin-left: 10px;
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+    margin-right: -3px;
+    background-color: #181818;
+    color: white;
+    text-align: center;
+    font-size: 1em;
+}
+.circle-me-text-view-options-on{
+    cursor: pointer;
+    display: block;
+    height: 30px;
+    width: 120px;
+    line-height: 30px;
+
+    -moz-border-radius: 15px; /* or 50% */
+    border-radius: 15px; /* or 50% */
+
+    background-color: #f2f2f2;
+    color: black;
+    text-align: center;
+    font-size: 1em;
+}
+.fontcolor-black{
+    color: black;
+}
+.div-pickedday-slot{
+    width: 665px;
+    height: 700px;
+    background-color: lightgray;
+    border: 2px solid black;
+    position: fixed;
+    z-index: 10;
+    opacity: .95;
+    display: fixed;
+    top: 80px;
+    margin-left: 700px;
+    padding: 5px;
+    
+}
+.div-pickedday-slot-daily{
+    width: 665px;
+    height: 660px;
+    background-color: lightgray;
+    border: 2px solid black;
+    position: fixed;
+    z-index: 10;
+    opacity: .95;
+    display: fixed;
+    top: 150px;
+    padding: 5px;
+    
+}
+.div-pickedday-container{
+    width: 600px;
+    height: 700px;
+    background-color: lightgray;
+    border: 2px solid black;
+    position: fixed;
+    z-index: 10;
+    opacity: .95;
+    top: 50px;
+    margin-left: 700px;
+    padding: 5px;
+    
+}
+.div-pickedday-container-header{
+    height: 40px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 2em;
+    background-color: #404040;
+}
+.div-pickedday-container-header-btn{
+    width: 40px;
+    float: right;
+    background-color: #0d0d0d;
+}
+.div-pickedday-container-header-btn-set{
+    width: 80px;
+    background-color: #0d0d0d;
+}
+.div-pickedday-container-header-body{
+    height: 40px;
+    border-bottom: 1px solid;
+    
+}
+.div-pickedday-container-header-body-slots{
+    width: 100px;
+    height: 100%;
+    background-color: #404040;
+    line-height: 40px;
+    float: left;
+    text-align: right;
+    padding-right: 10px;
+}
+.div-pickedday-container-header-body-app{
+    width: 400px;
+    line-height: 40px;
+}
+.div-pickedday-container-header-body-app-ava{
+    width: 100%;
+    line-height: 40px;
+    background-color: #a6a6a6;
+}
+.div-pickedday-container-header-body-app-full{
+    width: 100%;
+    backgrond-color: #660000;
+    line-height: 40px;
+    cursor: pointer;
+}
+.btn-del-profile-img{
+    height: 20px;
+    width: 20px;
+    background-color: darkred;
+}
+.frontimage{
+    height: 120px;
+    width: 90px;
+    cursor: pointer;
+    padding: 2px;
+}
+.schedule-thumbnail{
+    height: 70px;
+    width: 60px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.span-front-login{
+    float: left;
+    cursor: pointer;
+    position: absolute;
+    margin-top: 110px;
+    margin-left: -90px;
+    background-color: white;
+    opacity: .7;
+    font-size: .6em;
+}
+.span-schedule-login{
+    text-align: left;
+    cursor: pointer;
+    font-size: .6em;
+}
+.schedule-div-thumbnail-container{
+    width: 300px; 
+}
+.schedule-div-thumbnail-container-image{
+    height: 100px; 
+    text-align: center;
+    float: left;
+    margin: 10px;
+}
+.schedule-div-navbar-container{
+    width: 420px; 
+    text-align: left; 
+    height: 110px; 
+    float: left;
+}
+.schedule-opac{
+    opacity: .5;
+    background-color: #b3b300;
+}
+.div-nev-holder{
+    margin: 0px auto;
+    width: 80%;
+    height: 120px;
+}
+.div-input-appoint{
+    height: 20px;
+    color: black;
+}
+.div-input-payment{
+    height: 20px;
+    color: black;
+}
+.prepay-div-input-payment{
+    height: 20px;
+    color: black;
+}
+.prepay-div-input-payment{
+    height: 20px;
+    color: black;
+}
+.btn-ok-payment{
+    width: 150px;
+    height: 40px;
+    background-color: #404040;
+}
+.div-payment-holder{
+    width: 98%;
+    height: 830px;
+    background-color: gray;
+    z-index: 99;
+    opacity: .92;
+    top: .5%; 
+    position: fixed;
+}
+.div-payment-subholder{
+    position: relative;
+    width: 100%;
+    height: 800px;
+    z-index: 101;
+    top: 1%; 
+    left: 35%; 
+}
+.div-payment-table-holder{
+   width: 35%; 
+   top: 40%; 
+   left: 35%; 
+   border: 1px solid black; 
+   position: absolute; 
+   background-color: lightgray;
+   min-width: 550px;
+   z-index: 102;
+}
+.prepay-div-payment-table-holder{
+   width: 80%; 
+   left: 35%; 
+   background-color: lightgray;
+   min-width: 980px;
+   z-index: 102;
+   margin: 0px auto;
+   color: black;
+}
+.tbl-payment-table{
+    margin: 0px auto; 
+    resize: none;
+}
+.btn-ok-appointment{
+    width: 150px;
+    height: 40px;
+    background-color: #404040;
+}
+.btn-cancel-appointment{
+    width: 40px;
+    height: 40px;
+    background-color: #404040;
+}
+.spn-app-cursor{
+    cursor: pointer;
+}
+.btn-filled-app-close{
+    background-color: #404040;
+    height: 40px;
+    line-height: 40px;
+    font-size: 1.5em;
+}
+.div-text-appoint{
+    background-color: red;
+    line-height: 30px;
+    width: 100px;
+    color: black;
+}
+.schedule-service-tbl-tr-bg{
+    cursor: pointer;
+    height: 40px; 
+    background-color: #f2f2f2; 
+}
+.fill-slots{
+    font-size: .5em;
+}
+.fill-slots-weekly{
+    font-size: 1em;
+}
+.fill-slots-daily{
+    font-size: 1em;
+}
+.hol-type{
+    font-size: .8em;
+}
+.hol-type-weekly{
+    font-size: 1em;
+}
+.hol-type-daily{
+    font-size: 1em;
+}
+.schedule-span-padding-left{
+    padding-left: 10px;
+    width: 30px;
+    text-align: right;
+}
+.schedule-span-padding-left-daily{
+    margin-top: 10px;
+    margin-left: 10px;
+    width: 200px;
+    text-align: left;
+    background-color: #f2f2f2;
+}
+.div-weekly-min-height{
+    min-height: 140px; 
+}
+.div-weekly-min-height:hover{
+    background-color: lightblue;
+}
+.div-weekly-servicelist{
+    font-size: .8em; 
+    margin-left: 10px;
+}
+.div-weekly-daily{
+    margin-left: 10px;
+    font-size: .8em; 
+    min-height: 110px;
+    width: 200px;
+    border-bottom: 1px solid;
+    background-color: #f2f2f2;
+}
+.div-weekly-daily-selected{
+    margin-left: 10px;
+    font-size: .8em; 
+    min-height: 110px;
+    width: 200px;
+    border-bottom: 1px solid;
+    background-color: lightblue;
+}
+.div-weekly-date-lbl{
+    width: 190px; 
+    padding: 5px;
+}
+.div-daily-container{
+    width: 90%; 
+    height: 100%; 
+    min-height: 660px;
+    margin: 0px auto; 
+    border: 1px solid;
+}
+.div-info-container-daily{
+    width: 40%; 
+    background-color: #f2f2f2; 
+    margin-top: -60px; 
+    height: 655px;
+}
+.doApp-selected-service{
+    background-color: rgb(0, 153, 0);
+}
+.cursor-pointer{
+    cursor: pointer;
+}
+.div-daily-rightpan-header-container{
+
+}
+.div-daily-rightpan-header{
+    height: 30px;
+    width: 120px;
+    float: left;
+    border-right: 1px solid;
+    border-bottom: 1px solid;
+    border-color: white;
+    line-height: 30px;
+}
+.div-daily-rightpan-header-selected{
+    background-color: #008000;
+    color: white;
+}
+.div-daily-rightpan-header-selected-notselected{
+    background-color: gray;
+}
+.daily-span-appointment-lbl{
+    height: 30px;
+    width: 80px;
+    line-height: 30px;
+}
+.daily-span-appointment-lbl-no{
+    height: 30px;
+    width: 80px;
+    color: black;
+}
+.daily-span-appointment-disc{
+    height: 30px;
+    width: 560px;
+    line-height: 30px;
+}
+.daily-span-appointment-disc-no{
+    height: 30px;
+    width: 560px;
+}
+.daily-right-container-data{
+    width: 100%;
+
+    z-index: 98;
+}
+.div-daily-rightpan-container{
+    width: 100%;
+    display: in-block;
+    height: 660px;
+    border-left: solid 1px;
+}
+.btn-paid{
+    background-color: #00b300; /*green*/
+}
+.btn-prepaid{
+    background-color: #ccefff; /*light blue*/
+}
+.daily-span-appointment-disc-service{
+    font-weight: bold;
+    font-size: 16pt;
+}
+.daily-div-btn-complete{
+    width: 650px;
+    height: 40px;
+}
+.daily-div-total{
+    width: 650px;
+    height: 30px;
+}
+.daily-div-total-label{
+    width: 100px;
+    padding-left: 150px;
+}
+.schedule-div-label{
+    width: 100px;
+    padding-left: 150px;
+    padding-right: 12px;
+}
+.pre-pay-schedule-div-label{
+    width: 140px;
+    padding-left: 20px;
+    padding-right: 12px;
+    font-size: .9em;
+}
+.daily-div-total-val{
+    width: 550px;
+}
+.pre-pay-daily-div-total-val{
+    width: 98%;
+}
+.daily-td-add-service{ 
+    font-weight: bold; 
+    font-size: 1.2em;
+    width: 50px;
+}
+.daily-td-edit-service{ 
+    font-weight: bold; 
+    font-size: 1.2em;
+    width: 50px;
+}
+.circle-me-text-remove-service{
+    display: block;
+    height: 20px;
+    width: 20px;
+    line-height: 10px;
+
+    -moz-border-radius: 10px; /* or 50% */
+    border-radius: 10px; /* or 50% */
+
+    background-color: red;
+    color: white;
+    text-align: center;
+    font-size: 3em;
+}
+.img-monthly-on{
+    width: 20px; 
+    height: 20px; 
+    margin-top: 10px; 
+    margin-left: 10px;
+    content: url("../images/others/on.png")
+}
+.img-weekly-on{
+    width: 25px; 
+    height: 25px; 
+    margin-top: -5px; 
+    margin-left: 10px;
+    content: url("../images/others/on.png")
+}
+.img-monthly-off{
+    width: 20px; 
+    height: 20px; 
+    margin-top: 10px; 
+    margin-left: 10px;
+    content: url("../images/others/off.png")
+}
+.schedule-main-div{
+    margin-top: -70px;
+}
+.profile-img-size{
+    height: 190px;
+    width: 160px;
+    border: 1px solid;
+    margin: 5px;
+    padding: 5px;
+    border-collapse: collapse;
+}
+.div-profile-image-container{
+    /*stay*/
+    overflow: auto;
+    height: 50%;
+    width: 100%;
+    display: flex;    
+    flex-wrap: wrap;
+    justify-content: left;
+}
+.div-admin-image-container{
+    /*stay*/
+    overflow: auto;
+    height: 500px;
+    width: 100%;
+    display: flex;    
+    flex-wrap: wrap;
+    justify-content: left;
+}
+.div-dashboard-image-container{
+    /*stay*/
+    overflow: auto;
+    height: 450px;
+    width: 100%;
+    display: flex;    
+    flex-wrap: wrap;
+    justify-content: left;
+}
+.profilebucketimage{
+    height: 220px;
+    width: 180px;
+    cursor: pointer;
+    border: 1px solid;
+    padding: 5px;
+    margin: 5px;
+}
+.admin-bucket-image{
+    height: 220px;
+    width: 420px;
+    cursor: pointer;
+    border: 1px solid;
+    padding: 5px;
+    margin: 5px;
+}
+.dashboard-bucket-image{
+    height: 220px;
+    width: 420px;
+    cursor: pointer;
+    border: 1px solid;
+    padding: 5px;
+    margin: 5px;
+}
+.profile-span-image-disc{
+    text-align: left;
+    cursor: pointer;
+    font-size: .6em;
+}
+.admin-span-image-disc{
+    text-align: left;
+    cursor: pointer;
+    font-size: .6em;
+}
+.profile-image-bucket-selected{
+    border-collapse: collapse;
+    border-color: #00cccc;
+}
+.dashboard-image-bucket-selected{
+    border-collapse: collapse;
+    border-color: #00cccc;
+}
+.company-image-bucket-selected{
+    border-collapse: collapse;
+    border-color: #00cccc !important;
+}
+.get-users:hover{
+    background-color: white;
+}
+.admin-search-user:hover{
+    background-color: lightblue;
+}
+.dashboard-search-user:hover{
+    background-color: lightblue;
+}
+.dashboard-history-search-guest:hover{
+    background-color: lightblue;
+}
+.div-admin-mc-container{
+    overflow-y: auto; 
+    height: 800px; 
+    margin-top: 10px;
+}
+.tbl-admin-company-lbl{
+    width: 160px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+    white-space: nowrap;
+}
+.tbl-dashboard-company-lbl{
+    width: 160px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+    white-space: nowrap;
+}
+.adminuserinput{
+    width: 70%;
+    text-align: left;
+}
+.admin-slt-search-user{
+    z-index: 999; 
+    width: 200px; 
+    height: 200px; 
+    text-align: left; 
+    float: left;
+    position: relative;
+}
+.div-search-containter{
+    width: 100%; 
+    min-width: 810px; 
+    text-align: left; 
+}
+.div-search-containter-slt{
+    width: 100%; 
+    width: 410px; 
+    text-align: left;
+}
+.div-search-containter-schedule{
+    width: 100%; 
+    min-width: 810px; 
+    text-align: left; 
+    margin-top: 10px; 
+}
+.tbl-admin-service-tbody-tr{
+    height: 40px;
+}
+.tbl-admin-service-th-td{
+    border-right: 1px solid white;
+}
+.tbl-admin-service-tbody-td{
+    border-right: 1px solid white;
+    border-bottom: 1px solid white;
+    padding-right: 5px;
+}
+.tbl-admin-mgmschedule-tbody-td{
+    border-right: 1px solid white;
+    border-bottom: 1px solid white;
+    padding-right: 5px;
+}
+.tbl-admin-service-th-tr{
+    height: 40px;
+    line-height: 40px;
+}
+.tbl-admin-mgmschedule-th-td{
+    border-right: 1px solid white;
+}
+.tbl-admin-mgmschedule-th-tr{
+    height: 40px;
+    line-height: 40px;
+}
+.admin-mgmservices-radio-container{
+    width: 810px;    
+    background-color: red;
+}
+.div-chk-active{
+    margin-right: 30px;
+}
+.admin-chkbox-active{
+    height: 30px;
+    width: 30px;
+}
+.admin-chkbox-terminate{
+    height: 30px;
+    width: 30px;
+}
+.td-num-rows{
+    width: 20px;
+}
+admin-service-add{
+    width: 20px !important;
+    height: 20px !important;
+}
+.hamburger-menu {
+  width: 35px;
+  height: 5px;
+  background-color: black;
+  margin: 2px 0;
+}
+.div-frontimage-containter{
+    width: 81.5%;
+    height: 580px;
+    background-color: #f2f2f2;
+}
+.div-front-event{
+    height: 65%;
+}
+.add-attachment{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+
+}
+.history-table-tr{
+    border-bottom: 1px solid;
+}
+.remove-attachment{
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background-color: darkred;
+}
+.span-event-numbered{
+    padding-right: 2px;
+}
+.show-event-option-status-option-selected{
+    background-color: #173346;
+    height: 40px;
+    width: 120px;
+    line-height: 40px;
+    color: white;
+    border-right: 1px solid;
+    border-top: 1px solid; 
+}
+.show-event-option-status-option-notselected{
+    background-color: lightgray;
+    height: 40px;
+    width: 120px;
+    line-height: 40px;
+    color: black;
+    border-right: 1px solid;
+    border-top: 1px solid;
+}
+.show-event-option-status-container{
+    width: 100%;
+    border-left: 1px solid;
+}
+.show-event-option-status-container-type{
+    width: 100%;
+    border-left: 1px solid;
+}
+.show-event-option-status-selected{
+    background-color: #173346;
+    height: 40px;
+    width: 120px;
+    line-height: 40px;
+    color: white;
+    border-right: 1px solid;
+    border-top: 1px solid;
+}
+.show-event-option-status-selected{
+    background-color: #173346;
+    height: 40px;
+    width: 120px;
+    line-height: 40px;
+    color: white;
+    border-right: 1px solid;
+    border-top: 1px solid;
+}
+.show-event-option-status-notselected{
+    background-color: lightgray;
+    height: 40px;
+    width: 120px;
+    line-height: 40px;
+    color: black;
+    border-right: 1px solid;
+    border-top: 1px solid;
+}
+.event-slide-container{
+    width: 320px;
+    padding: 5px;
+}
+.mySlidesevent .mySlidespromo .mySlidespostit{
+    transition: width 2s ease-in-out;
+}
+.fade-in {
+	opacity: 1;
+	animation-name: fadeInOpacity;
+	animation-iteration-count: 1;
+	animation-timing-function: ease-in;
+	animation-duration: 2s;
+}
+
+@keyframes fadeInOpacity {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+.next{
+    position: relative;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    left: 40%;
+    bottom: 10%;
+    font-size: 2em;
+}
+.prev{
+    position: relative;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    left: 48%;
+    top: -90%;
+    font-size: 2em;
+}
+.div-show-event-data-container{
+    height: 820px;
+    width: 1800px;
+    margin: 0px auto;
+}
+.div-show-history-data-container{
+    height: 780px; 
+    overflow: auto;
+}
+.where-is-home-div{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: left;
+    color: black;
+}
+.where-is-home-image{
+    height: 20px; 
+    width: 20px; 
+    float: left;
+}
+.where-is-magglass-image{
+    height: 25px; 
+    width: 25px; 
+    float: left;
+}
+.main-div-drop-from-top-anime{
+    /* Set initial properties */
+  position: relative; /* or relative/fixed as needed */
+  top: -20px;
+  width: 100%; /* Or desired width */
+  animation-name: slideInAndFadeOut;
+  animation-duration: 8s; /* Total animation duration */
+  animation-timing-function: ease-in-out; /* Optional: adjust the speed curve */
+  animation-fill-mode: forwards; /* Keep the final state after the animation ends */
+  background-color: darkred;
+  height: 120px;
+  color: white;
+  z-index: 999;
+}
+@keyframes slideInAndFadeOut {
+  0% {
+    transform: translateY(-100%); /* Start position above the viewport */
+    opacity: 0;
+  }
+  12.5% { /* 1 second into the 8 second animation (1/8 * 100%) */
+    transform: translateY(0); /* Slide into view */
+    opacity: 1;
+  }
+  87.5% { /* 7 seconds into the 8 second animation (7/8 * 100%) */
+    opacity: 1; /* Maintain full opacity */
+  }
+  100% {
+    opacity: 0; /* Fade out completely */
+    visibility: hidden; /* Hide the element after fading out */
+  }
+}
+.div-prepay{
+    position: fixed; 
+    width: 100%; 
+    margin-top: 20px;
+    font-size: 2em;
+}
+.schedule-promo-list-div{
+    height: 120px;
+    width: 35%;
+    border: solid 1px black;
+    font-size: .8em;
+    margin-top: -100px;
+}
+.schedule-promo-list-div-header{
+    width: 100%; 
+    height: 25px;
+    background-color: #173346; 
+    color: white;
+    line-height: 25px;
+}
+.schedule-promo-list-div-data{
+    padding-left: 5px;
+}
+.schedule-promo-list-div-addpromo-btn{
+    width: 20px;
+    height: 20px;
+}
+.schedule-promo-delete{
+    width: 19px;
+    height: 19px;
+    background-color: darkred;
+}
+.schedule-add-discount-slt{
+    position: fixed;
+}
+.registrationinput{
+    width: 90%;
+    text-align: left;
+}
+.fetchcodeinput{
+    width: 90%;
+    text-align: left;
+}
+.tbl-register-lbl{
+    /*stay*/
+    width: 30%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-fetchcode-lbl{
+    /*stay*/
+    width: 30%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.registration{
+    color: black !important;
+    width: 100%;
+    height: 40px; 
+    white-space: nowrap; 
+    display: flex;
+}
+.tbl-pw-reset-lbl{
+    /*stay*/
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.pw-reset-input{
+    width: 100%;
+    text-align: left;
+}
+.registration-guest-input{
+    width: 100%;
+    text-align: left;
+}
+.tbl-register-guest-lbl{
+    /*stay*/
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-cancelpayment-lbl{
+    /*stay*/
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-refund-guest-lbl{
+    /*stay*/
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.div-refund-lbl{
+    /*stay*/
+    width: 140px; 
+    height: 40px; 
+    line-height: 40px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.div-cancelpayment-lbl{
+    /*stay*/
+    width: 140px; 
+    height: 40px; 
+    line-height: 40px;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.div-refund-input{
+    height: 40px; 
+    width: 40px; 
+    line-height: 40px;
+    text-align: left;
+}
+.div-cancelpayment-input{
+    height: 40px; 
+    width: 40px; 
+    line-height: 40px;
+    text-align: left;
+}
+.div-cancelpayment-input-font{
+    color: white;
+}
+.div-refund-input-font{
+    color: white;
+}
+.chkbox-refund{
+    height: 40px; 
+    width: 40px; 
+    line-height: 40px; 
+    margin-top: -1px;
+}
+.input-refund{
+    height: 37px; 
+    line-height: 40px; 
+    margin-top: -5px; 
+    font-size: 1em; 
+}
+.input-refund-bg{
+    background-color: darkred;
+    color: white;
+}
+.input-cancelpayment{
+    height: 37px; 
+    line-height: 40px; 
+    margin-top: -5px; 
+    font-size: 1em; 
+}
+.input-cancelpayment-bg{
+    background-color: darkred;
+    color: white;
+}
+.retrieve-input{
+    width: 100%;
+    text-align: left;
+}
+.tbl-retrieve-lbl{
+    /*stay*/
+    width: 100%;
+    text-align: right;
+    background-color: #393C3E; 
+    color: white;
+}
+.get-user-schedule-slot-div-holder{
+    width: 120px;
+    height: 40px;
+    border: 1px solid white;
+    line-height: 40px;
+    padding-left: 30px;
+}
+.img-admin-mgm-schedule-header{
+    width: 15px;
+    height: 15px;
+}
+.img-dashboard-mgm-schedule-header{
+    width: 15px;
+    height: 15px;
+}
+.img-admin-mgm-schedule-header-bgdarkgreen{
+    background-color: darkgreen;
+    border-right: 1px solid white;
+}
+.img-dashboard-mgm-schedule-header-bgdarkgreen{
+    background-color: darkgreen;
+    border-right: 1px solid white;
+}
+.img-admin-mgm-schedule-header-bgdarkred{
+    background-color: darkred;
+    border-right: 1px solid white;
+}
+.img-dashboard-mgm-schedule-header-bgdarkred{
+    background-color: darkred;
+    border-right: 1px solid white;
+}
+.div-admin-mgm-user{
+    width: 100%; 
+    height: 400px;
+}
+.div-dashboard-mgm-user{
+    width: 100%; 
+    min-width: 1050px;
+    height: 100%;
+    background-color: lightgray;
+}
+.td-dashboard-search-lbl{
+    width: 20%;
+    height: 40px;
+    padding-right: 10px;
+    border-right: 1px solid black;
+    border-bottom: 1px solid black;
+    background-color: #173346;
+    color: white;
+}
+.tr-dashboard-search-val{
+    width: 90%;
+    height: 40px;
+    padding-left: 1px;
+}
+.td-dashboard-search-val{
+    width: 90%;
+    height: 40px;
+    padding-left: 1px;
+}
+.td-dashboard-search-val-inp{
+    height: 38px;
+}
+.slt-dashboard-search-guest{
+    z-index: 999; 
+    width: auto; 
+    height: 200px; 
+    position: fixed; 
+    text-align: left; 
+    margin-top: 133px; 
+    margin-left: -100px;
+}
+.pay-now-div-card-holder{
+    width: 100%;  
+    margin-top: 20px;
+}
+.pre-pay-div-payment-container{
+    border: 1px solid black; 
+    height: 800px; 
+    width: 1000px; 
+    margin: 0px auto; 
+    background-color: lightgray;
+    margin-top: -40px;
+}
+.pre-pay-div-real-balance-left{
+    background-color: darkred; 
+    color: white;
+}
+.pre-pay-div-data-container-slt{
+    width: 400px; 
+    border: 1px solid black; 
+    height: 260px; 
+    background-color: #1D89D1; 
+    color: white;
+    margin: 0px auto;
+}
+.pre-pay-div-data-container{
+    width: 380px;
+    border: 1px solid black; 
+    height: 260px; 
+    color: black;
+}
+.payment-loader-container{
+    width: 60%; 
+    height: 92%; 
+    background-color: gray; 
+    opacity: .8; 
+    position: fixed; 
+    margin-top: 2%; 
+    margin-left: 20%;
+    z-index: 1111;
+}
+.api-loader-container{
+    width: 96%; 
+    height: 92%; 
+    background-color: gray; 
+    opacity: .8; 
+    position: fixed; 
+    margin-top: 1%; 
+    z-index: 1111;
+}
+.refund-loader-container{
+    width: 60%; 
+    height: 92%; 
+    background-color: gray; 
+    opacity: .8; 
+    position: fixed; 
+    margin-top: -14%; 
+    margin-left: 20%;
+    z-index: 999;
+}
+.refund-loader-img{
+    position: fixed; 
+    margin-top: 12%; 
+    margin-left: 25%;
+}
+.cancelpayment-loader-img{
+    position: fixed; 
+    margin-top: 12%; 
+    margin-left: 25%;
+}
+.payment-loader-img{
+    position: fixed; 
+    margin-top: 12%; 
+    margin-left: 25%;
+}
+.image-where-is-refund{
+    padding-right: 2px;
+    width: 25px;
+    height: 25px;
+}
+.btn-close-refund{
+    height: 40px; 
+    width: 40px;
+}
+.div-refund-txtarea{
+    width: 285px; 
+    background-color: white;
+    height: 37px; 
+    margin-top: -2px;
+}
+.refund-reason-txtarea{
+    border: none; 
+    outline: none;
+}
+.nav-displayname{
+    margin-top: 20px;
+    margin-right: 140px;
+}
+.main-top-icon-menu{
+    height: auto; 
+}
+.font-size-pt5em{
+    /*pt = point or period, pt5em is .5em*/
+    font-size: .5em;
+}
+.font-size-pt6em{
+    /*pt = point or period, pt5em is .5em*/
+    font-size: .6em;
+}
+.font-size-pt7em{
+    /*pt = point or period, pt5em is .5em*/
+    font-size: .7em;
+}
+.font-size-pt8em{
+    /*pt = point or period, pt5em is .5em*/
+    font-size: .8em;
+}
+.font-size-pt9em{
+    /*pt = point or period, pt5em is .5em*/
+    font-size: .9em;
+}
+.font-size-1em{
+    font-size: 1em;
+}
+.font-size-1p5em{
+    font-size: 1.5em;
+}
+.font-size-2em{
+    font-size: 2em;
+}
+.margin-top-neg15px{
+    margin-top: -20px;
+}
+.btn-cancelpayment-cancel{
+    width: 220px;
+}
+.chk-cancelpayment{
+    height: 30px;
+    width: 30px;
+}
+.chk-refund{
+    height: 30px;
+    width: 30px;
+}
+.dashboard-slt-mgm-person{
+    z-index: 999; 
+    width: 200px; 
+    height: 200px; 
+    background-color: lightgray;
+    text-align: left;  
+    
+}
+.btn-dashboard-add-service{
+    width: 30px; 
+    height: 30px;
+}
+.dashboard-chk-boxes{
+    width: 30px;
+    height: 30px;
+    padding-right: 10px;
+}
+.dashboard-div-chkbox-container{
+    padding-right: 20px;
+}
+.txt-search-dashboard{
+    height: 30px;
+}
+.dashboard-create-event-question{
+    height: 15px; 
+    width: 15px;
+}
+.dashboard-tbl-chkbox{
+    width: 30px;
+    height: 30px;
+}
+.tbl-dashbard-mgm-user{
+    width: 980px;
+}
+.dashboard-mgmcompany-renew-api{
+    width: 400px;
+}
+.dashboard-mgmbarber-renew-api{
+    width: 400px;
+}
+.dashboard-mgmbarber-renew-api-btn{
+    width: 440px;
+    height: 80px;
+}
+.dashboard-mgmbarber-revoke-api-btn{
+    width: 240px;
+    height: 80px;
+    background-color: darkred;
+}
+.dashboard-mgmbarber-refresh-api-btn{
+    width: 500px;
+    height: 80px;
+}
+.dashboard-mgmbarbers-question{
+    height: 15px; width: 15px; 
+}
+.dashboard-mgm-barbers-tabs{
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;
+}
+.dashboard-mgm-barbers-tabs-selected{
+    background-color: #1079B1;
+    color: white;
+}
+.dashboard-mgm-permission-tabs{
+    width: 140px;
+    height: 40px;
+    display: flex;
+    justify-content: center; /* Centers horizontally */
+    align-items: center;
+    background-color: gray;
+    color: white;
+}
+.dashboard-mgm-permission-tabs-selected{
+    background-color: #1079B1;
+    color: white;
+}
+.dashboard-mgm-barbers-tabs-noselect{
+    background-color: gray;
+    color: white;
+}
+.dashboard-mgm-barbers-tabs-border-left{
+    border-left: 1px solid black;
+}
+.dashboard-mgm-barbers-tabs-border-top{
+    border-top: 1px solid black;
+}
+.dashboard-mgm-barbers-tabs-border-right{
+    border-right: 1px solid black;
+}
+.codefetch-seeing-eye-container{
+    
+    height: 20px;
+    width: 30px;
+}
+.codefetch-seeing-eye{
+    background-image: url("../images/others/seeingeye.png");
+    background-repeat: no-repeat;
+}
+.codefetch-seeing-eye-not{
+    background-image: url("../images/others/seeingeyenot.png");
+    background-repeat: no-repeat;
+}
+.div-dashboard-mgm_barbers-permissions{
+    width: 100%;
+    height: auto;
+}
+.dashboard-barber-square-permissions{
+    width: 100%;
+    height: 40px;
+}
+.display-inline-block{
+    display: inline-block;
+    height: 40px;
+}
+.div-dashboard-barber-container{
+    height: 100%;
+    width: 100%;
+}
+.dashboard-barber-permission{
+    height: 30px;
+}
+.div-barber-permission-data-container{
+    width: 1000px; 
+    height: 710px;
+}
+.div-data-container-list{
+    height: 94%;
+    width: 45%;
+}
+.div-data-container-arrow{
+    height: 100%;
+    width: 5%;
+}
+.border-right-1px{
+    border-right: 1px solid black;
+}
+.border-left-1px{
+    border-left: 1px solid black;
+}
+.border-top-1px{
+    border-top: 1px solid black;
+}
+.border-bottom-1px{
+    border-bottom: 1px solid black;
+}
+.btn-dashboard-barber-add{
+    background-color: #1079B1;
+}
+.div-dashboard-barber-addmod-header{
+    width: 100%;
+    background-color: #1079B1;
+    color: white;
+}
+.width-100{
+    width: 100%;
+}
+.div-avail-list{
+    display: flex;
+    justify-content: flex-end; /* Pushes content to the bottom */
+    height: 20px;
+}
+.div-avail-list:hover{
+   background-color: #1079B1;
+   color: white;
+   font-size: 1em;
+   font-weight: bold;
+}
+.div-approved-list{
+    display: flex;
+    justify-content: flex-end; /* Pushes content to the bottom */
+    height: 20px;
+}
+.div-approved-list:hover{
+   background-color: #1079B1;
+   color: white;
+   font-size: 1em;
+   font-weight: bold;
+}
+.div-permission-list-no{
+    flex-grow: 1;
+    position: relative;
+    width: 2%;
+    margin-bottom: 0px;
+}
+.div-approved-list-no{
+    flex-grow: 1;
+    position: relative;
+    width: 10%;
+    margin-bottom: 0px;
+}
+.div-avail-list-selected{
+    background-color: #7290a1;
+    color: white;
+}
+.div-approved-list-selected{
+    background-color: #7290a1;
+    color: white;
+}
+.div-avail-list-data{
+    position: relative;
+    width: 88%;
+    margin-bottom: 0px;
+}
+.div-permission-list-data{
+    position: relative;
+    width: 95%;
+    margin-bottom: 0px;
+}
+.div-approved-list-data{
+    position: relative;
+    width: 88%;
+    margin-bottom: 0px;
+}
+.div-available-container{
+    overflow-y: auto;
+    height: 94%;
+}
+.div-permission-container{
+    overflow-y: auto;
+    height: 94%;
+}
+.div-approved-container{
+    overflow-y: auto;
+    height: 94%;
+}
+.div-dashboard-barbers-rightarrow{
+    top: 35%; 
+    position: relative;
+}
+.div-dashboard-barbers-rightarrow:hover{
+    background-color: #1079B1;
+}
+.div-dashboard-barbers-leftarrow{
+    top: 40%; 
+    position: relative;
+}
+.div-dashboard-barbers-leftarrow:hover{
+    background-color: #1079B1;
+}
+.btn-add-new-card{
+    white-space: nowrap;
+}
+.div-profile-barber-image-container{
+   background-color: gray; 
+   position: absolute; 
+   opacity: .80; 
+   top: 0; 
+   left: 0; 
+   width: 100%; 
+   height: 100%;  
+}
+.width-100-percent{
+    width: 100%;
+}
+.profile-payment-green-check{
+    width: 30px;
+    height: 30px;
+    background-image: "./images/others/green_check.png"
+}
+.profile-payment-red-check{
+    width: 30px;
+    height: 30px;
+    background-image: "./images/others/redcheck.png"
+}
+.div-main-tabs-container{
+    width: 100%; 
+    display: inline-block;
+}
+.div-main-tabs{
+    padding: 5px;
+    width: 5%;
+    min-width: 80px;
+}
+.div-main-tabs:hover{
+    font-weight: bold;
+    font-style: italic;
+}
+.div-main-tab-slted{
+    background-color: #FF7431 ;
+}
+.div-main-tab-nonslted{
+    background-color: #4F8849;
+}
+
+
+.swing {
+    animation: swing ease-in-out 1s infinite alternate;
+    transform-origin: center -20px;
+    float:left;
+}
+@keyframes swing {
+    0% { transform: rotate(6deg); }
+    100% { transform: rotate(-6deg); }
+}
+.swing:after{
+    content: '';
+    position: absolute;  
+    width: 20px; height: 20px;  
+    border: 1px solid #999;
+    top: -10px; left: 50%;
+    z-index: 0;
+    border-bottom: none;
+    border-right: none;
+    transform: rotate(45deg);
+}
+.swing:before{
+    content: '';
+    position: absolute;
+    width: 5px; height: 5px;
+    top: -14px;left: 54%;
+    z-index: 5;
+    border-radius: 50% 50%;
+    background: #000;
+}
+
+
+
+.btn-disabled{
+    background-color: darkgray;
+}
+
+
+@keyframes swing {
+  0% { transform: translateX(-50%) rotate(-10deg); }
+  100% { transform: translateX(-50%) rotate(10deg); }
+}
+
+
+
+.flashing-background {
+    animation: flash-bg 1s infinite; /* 1s duration, repeats infinitely */
+}
+
+@keyframes flash-bg {
+    0% { background-color: #fff; color: black;} /* White at the start */
+    49% { background-color: #fff;  color: black;} /* Hold white */
+    50% { background-color: #ff0000; color: white;} /* Switch to Red instantly at midpoint */
+    99% { background-color: #ff0000; color: white } /* Hold Red */
+    100% { background-color: #fff;  color: black;} /* Switch back to White at the end */
+}

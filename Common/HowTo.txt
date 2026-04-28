@@ -1,0 +1,106 @@
+If website is not allow ajax, talk to hostgator and have them check the Modsecurity rule and whitelist the page.
+
+Javascript
+function saveAbout(thisrecno){
+	thisArray = [{
+			"this_recno": thisrecno, 
+			"this_val": $("#txtarea_about").val()
+	}];
+	$.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=SaveAbout&thisarray='+JSON.stringify(thisArray), function(result){
+		//alert(result);
+		if(result != 'Success'){
+			alert("Failed to update");
+			return(false);
+		}
+		else{
+			alert('Updated!');
+			return(false);
+		}
+	});
+}
+
+PHP
+$returnpost = $pt->AnalyzePosts();
+
+function AnalyzePosts($temppost)
+{
+	//All of the keys will come in with 'this_' or any pre 5 characters before the actual name for this function to work.
+	//We will remove the first 5 character and then be left with the actual name where we can manipulate.
+	//For example, 'this_recno' will become 'recno' and we will get the recno, another example is 'this_about. will become 'about'.
+	//Basically we are just trying to get the fields in the table to do updates or to do queries.
+	$tempdata = [];
+	$tempfield = "";
+	foreach(json_decode($temppost) as $key => $value)
+	{   
+		//file_put_contents("./dodebug/debug.txt", "thisarray = $key == $value \n", FILE_APPEND);
+		foreach($value as $key1 => $value2)
+		{
+			//file_put_contents("./dodebug/debug.txt", "thisarray = $key1 == $value2 \n", FILE_APPEND);
+			$tempfield = substr($key1, 5);
+			$tempdata[$tempfield] = $value2;
+		}
+	}
+}
+
+Ajax Jquery
+$.ajax({
+    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=GoToapifetch",
+    type: "POST"
+}).then(function(result) {
+    // Code here will execute *after* the AJAX request is successful
+    alert('in then');
+}).catch(function(error) {
+    alert(error);
+});
+
+AJAX javascript
+//IF IT GOES STRAIGHT TO CATCH, THAT MEANS THE SERVER IS BEING BLOCKED BY SECURITY AND WILL NEED TO CONTACT HOST TO WHITELIST
+function submitDeposit(){   
+    //example of creating array
+    let thisArray = [{
+            "cardtype": cardtype,
+            "thisamount": thisamount, 
+            "thiscard": $("#txt_cr_last4").val(), 
+            "thisexpmm": $("#txt_expiredate_mm").val(),
+            "thisexpyy": $("#txt_expiredate_yy").val(),
+            "thissecurity": $("#txt_security").val(),
+            "thisstatus": thisstatus
+        }];  
+
+    const thisData = JSON.stringify(thisArray);
+    fetchAjaxdatadeposit(thisData);
+    }
+    async function fetchAjaxdatadeposit(thisData){
+    try{
+        const result = await $.ajax({
+        url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=PHP-function-to-call&thisarray='+thisData,
+        type: 'POST',
+        contentType: "application/json"
+        });
+        if(result == "Success"){
+            //Do stuff
+        }
+        else
+        {
+            //Do stuff
+        }
+    }
+    catch(error){
+        alert("ERROR");
+    }
+}
+
+To simulate a loading
+Right below the main div, add this code
+<div name="div_loader" id="div_loader" class="payment-loader-container display-none">
+    <img class="payment-loader-img" src="/images/others/loading.gif" />
+</div>
+
+Then, in the javascript
+$("#div_loader").removeClass("display-none");
+$("#div_loader").addClass("display-none");
+
+Where appropriate
+
+namespace and autoload explained
+https://www.youtube.com/watch?v=YKpB0Sd3mGE
