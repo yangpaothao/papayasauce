@@ -1589,13 +1589,13 @@ class PromptClass
         return($realdata);
         //return($this->DebugAssociativearray($tempdata));
     }
-    function BarberOnline($barberrecno)
+    function BarberOnline($db, $barberrecno)
     {
         //Return true or false if the barber is Live or Sandbox.
         $isLive = false;
         $sql = "SELECT isLive FROM users WHERE recno = $barberrecno AND isLive = true";
-        $result = $this->db->PDOMiniquery($sql);
-        if($this->db->PDORowcount($result) > 0)
+        $result = $db->PDOMiniquery($sql);
+        if($db->PDORowcount($result) > 0)
         {
             $isLive = true;
         }

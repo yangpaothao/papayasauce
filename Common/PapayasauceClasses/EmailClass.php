@@ -1,10 +1,11 @@
 <?php
+namespace PapayasauceClasses;
 /**
  * Description of newDateClass
  *
  * @author Yang Pao Thao
  */
-class Email_Class {
+class EmailClass {
     public $cmail;
     public $isdate = false;
     function set_email($email)

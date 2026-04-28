@@ -1,18 +1,5 @@
-I am using yangpaothao@hotmail.com as the test account or seller's account
-I am using yang.thao@papayasauce.com as the developer's account.
+dashboard.php
 
-codefetch.php is where i left off...
-We need to also work on DeveloperMode() in prompt.php, want to swithc between production and sandbox for square accounts.
-The idea is to have a flag in the company's table call isDeveloper, a true/false field.  When it is false, we will be working
-with sandbox, when it's true, we will be working with production.
-
-
-EAAAl_XtoEsv2flw3ex4OQ1nwThRSgdOwfD_F3jXRYXO_IIp0UoiyRj9aotBMS7i
-sq0csp-6_dRrZNiAfZk6wFZ3iwaGmrjSTER9NBIMHqIylqVTYc
-
-
-
-
-We will need to also make a table that would be use as a testing that is a duplicate of the production table so we can test it with live data but
-not mess with the production data.
-   
+need to make main logo select from database
+need to x on the images so it can be removed
+make sure after upload, it closes and reload properly so we dont' have to manually reload.

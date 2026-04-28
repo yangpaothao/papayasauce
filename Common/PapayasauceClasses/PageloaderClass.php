@@ -103,14 +103,13 @@ class PageloaderClass {
                     <li class="li-menu"><?php
                         if(isset($_SESSION['fullname']))
                         {?>
-                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="HOME!" style="width: 50%; height: auto; min-width: 20px;" src="../../images/others/ripedpapaya.png"/><?php                        
+                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="<?php echo $_SESSION['fullname'] ?>" style="width: 50%; height: auto; min-width: 20px;" src="../../images/others/ripedpapaya.png"/><?php                        
                         }
                         else
                         {?>
                             <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="HOME!" style="width: 50%; height: auto; min-width: 20px;" src="../../images/others/greenpapaya.png"/><?php
                         }?>
-                        <ul class="ul-child">
-                            <?php
+                        <ul class="ul-child"><?php
                             if(isset($_SESSION['fullname']))
                             {?>                                    
                                 <li onclick="doProfile();" class="li-menu-sub">Profile</li><?php

@@ -3,18 +3,21 @@ require __DIR__ . '/common/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
+
+use PapayasauceClasses\PdoClass;
+use PapayasauceClasses\PageloaderClass;
+use PapayasauceClasses\PromptClass;
+use PapayasauceClasses\EmailClass;
+use PapayasauceClasses\PersonClass;
 require("./common/page.php");
-require("./common/pdocon.php");
-require("./common/classes/PageloaderClass.php");
 require_once("./common/sendmail.php");
-require("./common/classes/EmailClass.php");
-require("./common/classes/PersonClass.php");
-require_once("./common/prompt.php");
+
+
 $ps = new PersonClass();
-$pt = new PROMPT();
+$pt = new PromptClass();
 $load_headers = new PageloaderClass();
-$db = new PDOCON();
-$ne = new Email_Class();
+$db = new PdoClass();
+$ne = new EmailClass();
 
 $isDebug = true;
 //echo var_dump($_POST);
@@ -45,7 +48,7 @@ if(count($_GET) > 0)
             $temp_page = filter_input(INPUT_SERVER, 'PHP_SELF'); // will look like /index.php or /somedir/somepage.php
             $explode_page = explode("/", $temp_page); //This variable will now be an array and the page name is the last element of this array
             $this_page = end($explode_page); //this variable will hold the page name like index.php
-            $load_headers::Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
+            $load_headers->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
             //file_put_contents("./dodebug/debug.txt", 'menuresult: '.$thisauth[0], FILE_APPEND);
             //$thisauth now holds an array of 'Read', 'Write', 'Modify', and or 'Delete',
         ?>
@@ -63,11 +66,15 @@ if(count($_GET) > 0)
             });
             function dashboardMenuslt(obj){
                 $(".div-menu-dashboard").each(function(){
-                    $(this).css('background-color', '#1079B1');
-                    $(this).css('color', 'white');
+                    if($(obj).prop('id') == $(this).prop('id')){
+                        $(obj).removeClass("div-tab-nonslted").addClass("div-tab-slted");
+                    }
+                    else{
+                        $(this).removeClass("div-tab-slted");
+                        $(this).addClass("div-tab-nonslted");
+                    }
                 })
-                $(obj).css("background-color", "white");
-                $(obj).css('color', 'black');
+                $(obj).addClass("div-tab-slted");
             }
             function manageUsers(obj){
                 dashboardMenuslt(obj);
@@ -1319,6 +1326,44 @@ if(count($_GET) > 0)
                 alert(error);
             });
         }
+        function dashboardAttach(obj){
+                //thisrecno is the recno in the users table
+                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=DashboardAttach', function(result){
+                    //alert(result);
+                    $("#main_div_body_dashboard_right_container").append(result);
+                });
+        } 
+        function cancelDashboardattachment(){
+                $("#div_body_dashboard_attach_container").remove();
+        }
+        function submitDashboardattachment(thisrecno){
+                if($("#dashboardattachment").val() != ""){
+                    form_data = new FormData($('#frmsubmitattachment')[0]);
+                    $.ajax({
+                        type: 'POST',
+                        url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitDashboardattachment',
+                        data: form_data,
+                        processData: false,
+                        contentType: false,
+                        success: function(result) {
+                            if(result != "Success"){
+                                alert(result);
+                                preventDefault();
+                                return(false);
+                            }
+                            else{
+                                $("#main_div_body_dashboard_right_container").remove();
+                                alert("Attachment added successfully.");
+                                addCompany($("#dashboardMenuslt")[0]);
+                            }
+                        }
+                    });
+                }
+                else{
+                    alert("Please select a file before you attempt to submit.");
+                }
+                event.preventDefault();
+            }
         </script>
     </head>
     <body>
@@ -1328,6 +1373,67 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function SubmitDashboardattachment()
+{
+    global $db, $pt;
+    //file_put_contents("./dodebug/debug.txt", "admin company = here \n", FILE_APPEND);
+    //Assuming we are here, we want to now handle the upload.
+    //First we want to check if './images/others/$_SESSION['media_dir']/logo/ e xist, if not, we create it before we move file into it.
+    
+    $thisdir = strtolower("./images/headers/");
+    if (!file_exists($thisdir)) {
+        mkdir("./images/headers/", 0777, true);
+    }
+    
+    //First we want to get the type of file
+    
+    //Once we confirmed that it is there after, now we want to move the file or files there and also update the name of the file to the table.
+    //$msg = $pt ->UploadFile($thisdir, $_FILES["file"], $thistable, "mainlogo", $_POST['thisrecno'], NULL, 'company_info');
+    $countfiles = count($_FILES["file"]['name']); 
+    $typeisgood = "";
+
+    for($i=0;$i<$countfiles;$i++)
+    {
+        $thistempdir = $_FILES["file"]['tmp_name'][$i];
+        $filename = strtolower($_FILES["file"]['name'][$i]);
+        //file_put_contents('./dodebug/debug.txt', "profile filename - :".$_FILES["file"]['tmp_name'][$i]." \n", FILE_APPEND);
+        $pdfMimearray = array('application/pdf', 'application/doc', 'application/docx');
+        $thismime = mime_content_type($_FILES["file"]['tmp_name'][$i]);
+        //file_put_contents("./dodebug/debug.txt", "this mine ".$thismime, FILE_APPEND);
+        //Now that we have the $filename, we can check for the file type and size and all the goodies.
+        $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+        $detectedType = exif_imagetype($_FILES["file"]['tmp_name'][$i]);
+        
+        //For from = Event and company_info, we can only accept PNG, JPEG, GIF, because we will display this images on the front page
+        //and it requires images only.
+        if(in_array($detectedType, $allowedTypes))
+        {
+            move_uploaded_file($_FILES["file"]['tmp_name'][$i],"$thisdir/$filename");  
+            echo "Success";
+        }
+        else
+        {
+            echo "Bad file type.  File type must be PNG, JPEG, GIF, and OR PDF.";
+        }
+    }
+    
+}
+function DashboardAttach()
+{?>
+    <div class="div-body-profile-attach-container" id="div_body_dashboard_attach_container">
+        <div class="div-body-profile-attach-sub-container">
+            <form name="frmsubmitattachment" id="frmsubmitattachment" enctype="multipart/form-data" method="post">
+                <div class="align-left" style="width: 300px; height: 100px; background-color: gray;">
+                    <div>Upload Attachment</div>
+                    <div><input class="event-attachments" type="file" name="file[]" id="dashboardattachment" /></div>
+                    <div class="float-left">jpeg, gif, png ONLY</div><br/>
+                    <button id="btn_submit" name="btn_submit" onclick="submitDashboardattachment();">Submit</button>
+                    <button id=""btn_cancel" name=""btn_cancel" id=""btn_cancel" onclick="cancelDashboardattachment();">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div><?php
+}
 function MoveAPI()
 {
     global $db, $pt;
@@ -2277,9 +2383,9 @@ function About()
             $thisrecno = $rs['recno'];
         }
     }?>
-    <div id="div_float_about" class="index-div-float-mgm">
-        <textarea id="txtarea_about" name="txtarea_about" cols="83" rows="36" style="resize: none;"><?php echo $thisabout ?></textarea>
-        <button id="btn_save" onclick="saveAbout(<?php echo $thisrecno ?>);" style="margin: 0px auto;">Save</button>
+    <div id="div_float_about" class="index-div-float-mgm float-left">
+        <textarea id="txtarea_about" name="txtarea_about" cols="83" rows="24"><?php echo $thisabout ?></textarea>
+        <button id="btn_save" onclick="saveAbout(<?php echo $thisrecno ?>);" style="margin: 0px auto; display: block;">Save</button>
     </div><?php
 }
 function SearchGuest()
@@ -3368,7 +3474,7 @@ function AddCompany()
     $thisgooglemap = "";
     $thisfblink = "";
     $thisbutton = "style='display: none;'";
-    $sql = "SELECT * FROM company_info WHERE foreign_ur = '".$_SESSION['user_recno']."'";
+    $sql = "SELECT * FROM company_info";
     $result = $db ->PDOMiniquery($sql);
     if($db ->PDORowcount($result) > 0)
     {
@@ -3400,84 +3506,80 @@ function AddCompany()
         $thisbutton = "";
     }?>
     <form name="frmcompany" id="frmcompany" method="post" enctype="multipart/form-data">
-        <table id="tblservicedata" class="tbl-dashboard-company">
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Name Of Company: <span class="asterisk"> * </span></td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="name" name="name" <?php echo $usthisfunc ?> value="<?php echo $thisname ?>" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Discount Limit: <span class="asterisk"> * </span></td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="disc_limit" name="disc_limit" <?php echo $usthisfunc ?> value="<?php echo $thislimit ?>" required /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Google Map Location:</td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="googlemap_location" name="googlemap_location" <?php echo $usthisfunc ?> value="<?php echo $thisgooglemap ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Facebook Link:</td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="facebook_link" name="facebook_link" <?php echo $usthisfunc ?> value="<?php echo $thisfblink ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Payment Company: </td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="api_company" name="api_company" <?php echo $usthisfunc ?> value="<?php echo $thispaymentcompany ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Phone No.: </td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="phone_number" name="phone_number" <?php echo $usthisfunc ?> value="<?php echo $thisphonenumber ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Address: </td>
-                <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="address" name="address" <?php echo $usthisfunc ?> value="<?php echo $thisaddress ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">City: </td>
-                <td><input type="text" class="dashboard-company-input" id="city" name="city" <?php echo $usthisfunc ?> value="<?php echo $thiscity ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">State: </td>
-                <td><input type="text" class="dashboard-company-input" id="state" name="state" <?php echo $usthisfunc ?> value="<?php echo $thisstate ?>" /></td>
-            </tr>
-            <tr>
-                <td class="tbl-dashboard-company-lbl">Zipcode: </td>
-                <td><input type="text" class="dashboard-company-input" id="zipcode" name="zipcode" <?php echo $usthisfunc ?> value="<?php echo $thiszipcode ?>" /></td>
-            </tr><?php
-            if($thisname != "")
-            {?> 
+        <div class="float-left">
+            <table id="tblservicedata" class="tbl-dashboard-company">
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Active:</td>
-                    <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
+                    <td class="tbl-dashboard-company-lbl">Name Of Company: <span class="asterisk"> * </span></td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="name" name="name" <?php echo $usthisfunc ?> value="<?php echo $thisname ?>" required /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Deleted:</td>
-                    <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isShowcounter " name="isShowcounter" <?php echo $usthisfunc ?> disabled /></td>
+                    <td class="tbl-dashboard-company-lbl">Google Map Location:</td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="googlemap_location" name="googlemap_location" <?php echo $usthisfunc ?> value="<?php echo $thisgooglemap ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Counter:</td>
-                    <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isDeleted" name="isDeleted" title="Click to show counter on front page." <?php echo $usthisfunc ?> disabled /></td>
-                </tr><?php 
-            }
-            if($thisname == "")
-            {?> 
+                    <td class="tbl-dashboard-company-lbl">Facebook Link:</td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="facebook_link" name="facebook_link" <?php echo $usthisfunc ?> value="<?php echo $thisfblink ?>" /></td>
+                </tr>
                 <tr>
-                    <td colspan="2" class="align-center"><button name="btnsubmit" id="btnsubmit" onclick="submitNewcompany();">Submit</button></td>
-                </tr><?php
-            }
-            if($thisname != "")
-            {?>
+                    <td class="tbl-dashboard-company-lbl">Payment Company: </td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="api_company" name="api_company" <?php echo $usthisfunc ?> value="<?php echo $thispaymentcompany ?>" /></td>
+                </tr>
                 <tr>
-                   <td colspan="2" class="align-center">
-                        <div style="width: 100%; height: 30px; background-color: #1079B1;">    
-                           <div style="width: 120px; height: 100%; line-height: 30px; background-color: white; color: black;">Main Logo</div>
-                        </div>
-                        <div class="div-dashboard-image-container" id="div_dashboard_image_container"><?php
-                            $thisdir = "./images/others/".$_SESSION['media_dir']."/logo/*";
-                            $thispath = "./images/others/".$_SESSION['media_dir']."/logo";
-                            BuildCompanyimagecontainer('mainlogo', $thisdir, $thispath, $thislogo);?>
-                        </div>
-                   </td>
+                    <td class="tbl-dashboard-company-lbl">Phone No.: </td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="phone_number" name="phone_number" <?php echo $usthisfunc ?> value="<?php echo $thisphonenumber ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-dashboard-company-lbl">Address: </td>
+                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="address" name="address" <?php echo $usthisfunc ?> value="<?php echo $thisaddress ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-dashboard-company-lbl">City: </td>
+                    <td><input type="text" class="dashboard-company-input" id="city" name="city" <?php echo $usthisfunc ?> value="<?php echo $thiscity ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-dashboard-company-lbl">State: </td>
+                    <td><input type="text" class="dashboard-company-input" id="state" name="state" <?php echo $usthisfunc ?> value="<?php echo $thisstate ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-dashboard-company-lbl">Zipcode: </td>
+                    <td><input type="text" class="dashboard-company-input" id="zipcode" name="zipcode" <?php echo $usthisfunc ?> value="<?php echo $thiszipcode ?>" /></td>
                 </tr><?php
-            }?>
-        </table>
+                if($thisname != "")
+                {?> 
+                    <tr>
+                        <td class="tbl-dashboard-company-lbl">Active:</td>
+                        <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-dashboard-company-lbl">Deleted:</td>
+                        <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isShowcounter " name="isShowcounter" <?php echo $usthisfunc ?> disabled /></td>
+                    </tr>
+                    <tr>
+                        <td class="user-profile-lbl tbl-profile-lbl">Upload Attachment: </td>
+                        <td class="user-profile-input" id="tduploadattachment"><img class="cursor-pointer float-left" style="height: 50px;" src="./images/others/dummyattach.png" onclick="dashboardAttach(this);"/><div class="align-left font-size-pt8em">jpeg, gif, png ONLY</div></td>
+                    </tr>
+                    <?php 
+                }
+                if($thisname == "")
+                {?> 
+                    <tr>
+                        <td colspan="2" class="align-center"><button name="btnsubmit" id="btnsubmit" onclick="submitNewcompany();">Submit</button></td>
+                    </tr><?php
+                }?>
+                </table>
+            </div>
+            <div class="float-left"><?php
+                if($thisname != "")
+                {?>
+                    <div class="div-dashboard-image-container" id="div_dashboard_image_container"><?php
+                        $thisdir = "./images/headers/*";
+                        $thispath = "./images/headers";
+                        BuildCompanyimagecontainer('mainlogo', $thisdir, $thispath, $thislogo);?>
+                    </div>
+                       <?php
+                }?>
+            </div>
+        
     </form><?php 
 }
 function BuildCompanyimagecontainer($from, $thisdir, $thispath, $sltedimage)
@@ -4098,50 +4200,45 @@ function ManageBarbers()
 }
 function Main()
 {
-    global $load_headers;
-    $load_headers::Load_Header_Logo(false);?>
-    <div id="div_main" class="main-div-dashboard">
+    global $load_headers, $this_page;
+    $load_headers->Load_Header($this_page);?>
+    
+    <div class="main-div">
         <script type="text/javascript">
             $("body").data('searchguest', '');
         </script>
-        <div id="div_main_sub" class="main-div-body-dashboard">
-            <div name="div_loader" id="div_loader" class="api-loader-container display-none">
-                <img class="payment-loader-img" src="/images/others/loading.gif" />
+        <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
+            <div class="main-logo float-left">
+                <?php echo $load_headers->LoadLogo();?>
             </div>
-            <table>
-                <tr>
-                    <td>
-                        <div class="main-div-body-admin-left">
-                            <div class="main-div-body-admin-header">DashBoard</div>
-                            <div style="float: left;"><?php
-                                if($_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
-                                {?>
-                                    <div class="div-menu-dashboard" id="div_manageabout" onclick="about(this);">About</div>
-                                    <div class="div-menu-dashboard" id="div_manageintro" onclick="introduction(this);">Introduction</div>   
-                                    <!--<div class="div-menu-dashboard div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
-                                    <div class="div-menu-dashboard" id="div_managecompany" onclick="addCompany(this);">Manage Company</div><?php
-                                }
-                                if($_SESSION['isBarber'] == true || $_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
-                                {?>   
-                                    <div class="div-menu-dashboard" id="div_managebarbers" onclick="manageBarbers(this, <?php echo $_SESSION['user_recno'] ?>, 'Menu');">Manage Barbers</div>
-                                    <div class="div-menu-dashboard" id="div_manageuser" onclick="manageUsers(this);">Manage Guests</div>
-                                    <div class="div-menu-dashboard" id="div_manageSchedule" onclick="manageSchedule(this);">Manage Schedule</div> 
-                                    <div class="div-menu-dashboard" id="div_manageservices" onclick="manageServices(this);">Manage Services</div>                                 
-                                    <div class="div-menu-dashboard div-menu-dashboard" id="div_doevent" onclick="doEvent(this);">Create Event</div><?php
-                                }?>
-                                <div class="div-menu-dashboard div-menu-dashboard" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
-                                <div class="div-menu-dashboard div-menu-dashboard" id="div_history" onclick="showHistory(this);">Service Search</div><!--search active, history, cancelled service and a search.-->
-                                <!--<div class="div-menu-dashboard div-menu-dashboard" id="div_trash" onclick="showTrash(this);">Trash</div>-->
-                            </div> 
-                        </div>
-                    </td>
-                    <td>
-                        <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="float-left" style="width: 7%;"><?php echo $load_headers->LoginPanel();?></div>
+            <div class="div-main-tabs-container"><?php
+                if($_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
+                {?>
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageabout" onclick="about(this);">About</div>
+                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageintro" onclick="introduction(this);">Introduction</div>   -->
+                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_managecompany" onclick="addCompany(this);">Manage Company</div><?php
+                }
+                if($_SESSION['isBarber'] == true || $_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
+                {?>   
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_managebarbers" onclick="manageBarbers(this, <?php echo $_SESSION['user_recno'] ?>, 'Menu');">Manage Barbers</div>
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageuser" onclick="manageUsers(this);">Manage Guests</div>
+                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageSchedule" onclick="manageSchedule(this);">Manage Schedule</div> -->
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageServices(this);">Manage Products</div>                                 
+                    <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard" id="div_doevent" onclick="doEvent(this);">Create Event</div><?php
+                }?>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_history" onclick="showHistory(this);">Service Search</div><!--search active, history, cancelled service and a search.-->
+                <!--<div class="div-menu-dashboard div-menu-dashboard" id="div_trash" onclick="showTrash(this);">Trash</div>-->
+            
+            </div>
+            <div class="div-content-holder-flex align-center">
+                <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>
+            </div>
+            <div class="align-center" style="height: 5%;"><?php echo $load_headers->Load_Footer();?></div>
         </div>
-        <div class="main-div-body-dashboard-container-holder" id="main_div_body_history_dashpay_container_holder"></div>
+        
+
     </div><?php
-    $load_headers::Load_Footer();?><?php
 }?>

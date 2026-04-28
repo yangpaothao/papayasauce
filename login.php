@@ -3,14 +3,14 @@ ob_start();
 require __DIR__ . '/common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
+use PapayasauceClasses\EmailClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 require("./common/page.php");
 require("./common/sendmail.php");
-require("./common/PapayasauceClasses/EmailClass.php");
-$lh = new PageloaderClass();
-$ne = new Email_Class();
+$pc = new PageloaderClass();
 $db = new PdoClass();
+$ne = new EmailClass();
 
 if(count($_POST) > 0 && isset($_POST['hid_cmd']))
 {
@@ -25,7 +25,7 @@ if(count($_POST) > 0 && isset($_POST['hid_cmd']))
             $temp_page = filter_input(INPUT_SERVER, 'PHP_SELF'); // will look like /index.php or /somedir/somepage.php
             $explode_page = explode("/", $temp_page); //This variable will now be an array and the page name is the last element of this array
             $this_page = end($explode_page); //this variable will hold the page name like index.php
-            $lh::Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
+            $pc->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
         ?>
         <script type="text/javascript">
             $('body').data('thishost', '<?= $temp_host ?>');
@@ -40,9 +40,8 @@ if(count($_POST) > 0 && isset($_POST['hid_cmd']))
                 }
                 $.post('<?=$_SERVER['PHP_SELF']; ?>', $("#frmlogin").serialize(), function(result){
                     if(result !== "Success")
-                    {
-                        
-                        //location.reload();
+                    {                        
+                        //alert(result);
                     }
                 });
             }
@@ -57,7 +56,7 @@ if(count($_POST) > 0 && isset($_POST['hid_cmd']))
 <?php
 function SubmitLoginForm()
 {
-    global $db, $lh, $temp_host, $ne;
+    global $db, $pc, $temp_host, $ne;
     //file_put_contents("./dodebug/debug.txt", 'verify1', FILE_APPEND);
     $thisfields = array();
     $thiswhere = array();
@@ -70,7 +69,7 @@ function SubmitLoginForm()
         $thisfields = array('recno', 'firstname', 'lastname', 'email', 'login', 'media_dir', 'ispasswordchanged', 'isverified', 'isactive', 
             'isauthenticated', 'isauthenticatedverified', 'profile', 'isAdmin', 'isBarber', 'isLive', 'isDeveloper');
         $thistable = "users";
-        $getpasssword = $lh -> Hash_Me_Password($_POST['txtpassword']); //we hash user's entered pw.      
+        $getpasssword = $pc -> Hash_Me_Password($_POST['txtpassword']); //we hash user's entered pw.      
         
         //Now, we have to handle users or customers that uses their email as login, we have to check if it is an email or not and handle it accordingly
         $ne ->set_email($_POST['txtlogin']);
@@ -120,7 +119,7 @@ function SubmitLoginForm()
                     $reallastname = $row['lastname'];
                     $realemail = $row['email'];  
                     $temptime =  substr(time(), -5);
-                    $realtime = $lh -> Hash_Me_Password($temptime);
+                    $realtime = $pc -> Hash_Me_Password($temptime);
 
                     $thisdata = array('twofactorcode' => $realtime, 'isauthenticatedverified' => false);
                     $thiswhere = array('recno' => $row['recno']);
@@ -138,7 +137,7 @@ function SubmitLoginForm()
                 }
                 else
                 {
-                    $_SESSION['companyname'] = "Diversity Fade Barbershop"; //Hard coded but will be replace by the individual's company below.
+                    $_SESSION['companyname'] = "Ka's Papaya Sauce"; //Hard coded but will be replace by the individual's company below.
                     $_SESSION['companyname_recno'] = 0;
                     $sql = "SELECT * FROM company_info";
                     $result = $db ->PDOMiniquery($sql);
@@ -231,28 +230,48 @@ function SubmitLoginForm()
 }
 function Main()
 {
-    global $lh;?>
-    <div class="main-div">
-        <div style='height: 100%;'>
-            <div class="float-right"><?php echo $lh->LoginPanel();?></div>
-            <div class="div-content-holder-flex">
-            <form name="frmlogin" id="frmlogin" method="post">
-                <input type="hidden" name="hid_cmd" id="hid_cmd" value="SubmitLoginForm" />
-                <div id="logincontainer">
-                    <div class="div-loginname">
-                        <div class="div-namelbl">Login: </div>
-                        <div class="div-user"><input type="text" class="input-login-user required" id="txtlogin" name="txtlogin" value="" placeholder="Type in your login" required /></div>
-                    </div>
-                    <div class="div-loginname">
-                        <div class="div-passwordlbl">Password: </div>
-                        <div class="div-password"><input type="password" class="input-login-password required" id="txtpassword" name="txtpassword" value="" placeholder="Type in password" required /></div>
-                    </div>
-                    <div class="div-buttons">
-                        <button class="cursor-pointer align-center" onclick="submitIndexform();" value="Submit">Submit</button>
+    global $db, $pc;
+    if(!isset($_SESSION['fullname']))
+    {?>
+        <div class="main-div">
+            <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
+                <div class="main-logo float-left">
+                    <?php echo $pc->LoadLogo();?>
+                </div>
+                <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
+                <div class="div-main-tabs-container">
+                    <div class="float-left div-main-tabs div-main-tab-slted cursor-pointer align-center" id="div_main" onclick="mainTabs(this);">Main</div>
+                    <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_products" onclick="mainTabs(this);">Products</div>-->
+                    <div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_videos" onclick="mainTabs(this);">Videos</div>
+                    <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_recipe" onclick="mainTabs(this);">Recipe</div>-->
+                    <div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_about" onclick="mainTabs(this);">About</div>
+                </div>
+                <div class="div-content-holder-flex align-center">
+                    <div class="align-center" style="width: 80%;">
+                        <form name="frmlogin" id="frmlogin" method="post">
+                            <input type="hidden" name="hid_cmd" id="hid_cmd" value="SubmitLoginForm" />
+                            <div id="logincontainer">
+                                <div class="div-loginname">
+                                    <div class="div-namelbl">Login: </div>
+                                    <div class="div-user"><input type="text" class="input-login-user required" id="txtlogin" name="txtlogin" value="" placeholder="Type in your login" required /></div>
+                                </div>
+                                <div class="div-loginname">
+                                    <div class="div-passwordlbl">Password: </div>
+                                    <div class="div-password"><input type="password" class="input-login-password required" id="txtpassword" name="txtpassword" value="" placeholder="Type in password" required /></div>
+                                </div>
+                                <div class="div-buttons">
+                                    <button class="cursor-pointer align-center" onclick="submitIndexform();" value="Submit">Submit</button>
+                                </div>
+                            </div>
+                        </form>
                     </div>
                 </div>
-            </form>
-        </div>
-        <div class="float-left align-center" style="width: 100%; height: 5%;"><?php echo $lh::Load_Footer();?></div>
-    </div><?php
+                <div class="align-center" style="height: 5%;"><?php echo $pc->Load_Footer();?></div>
+            </div>
+        </div><?php
+    }
+    else
+    {
+        header('Location: ./index.php');
+    }
 }
