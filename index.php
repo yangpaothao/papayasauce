@@ -137,7 +137,7 @@ function Main()
     <div class="main-div">
         <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
             <div class="main-logo float-left">
-                <?php echo $pc->LoadLogo();?>
+                <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
             <div class="div-main-tabs-container">

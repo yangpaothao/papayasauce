@@ -1,5 +1,7 @@
 dashboard.php
 
-need to make main logo select from database
-need to x on the images so it can be removed
-make sure after upload, it closes and reload properly so we dont' have to manually reload.
+Manage Products
+need to make Active, In-Active work
+need to check the add product
+
+the codes may need to be updatd

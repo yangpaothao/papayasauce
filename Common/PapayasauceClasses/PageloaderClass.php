@@ -92,9 +92,23 @@ class PageloaderClass {
         $_SESSION = [];
         echo "Success";
     }
-    function LoadLogo()
-    {?>
-       <img class="float-left main-logo-img" src="../images/headers/papayaheader.png"><?php 
+    function LoadLogo($db)
+    {
+        //LOGO DETAIL BEST IN HEIGHT: 240, WIDTH: 1200
+        $sql = "SELECT mainlogo FROM company_info";
+        $result = $db->PDOminiquery($sql);
+        if($db->PDOrowcount($result) > 0)
+        {
+            foreach($result as $rs)
+            {?>
+                <img class="float-left main-logo-img" src="../images/headers/<?php echo $rs['mainlogo']?>" onerror="this.onerror=null; this.src='./images/headers/defaultimage.png'"><?php 
+            }
+        }
+        else
+        {?>
+            <img class="float-left main-logo-img" src="../images/headers/papayaheader.png" onerror="this.onerror=null; this.src='./images/headers/defaultimage.png'"><?php  
+        }
+        
     }
     function LoginPanel()
     {?>

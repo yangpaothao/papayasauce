@@ -230,3 +230,6 @@ function saveMydata(obj){
     $("body").data($(obj).prop('id')+"_data", $(obj).val());
     //alert($("body").data($(obj).prop('id')+"_data"));
 }
+function slicePrestring(thisstr, thisno){
+    return(thisstr.slice(thisno));
+}

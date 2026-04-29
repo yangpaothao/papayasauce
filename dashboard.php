@@ -12,7 +12,6 @@ use PapayasauceClasses\PersonClass;
 require("./common/page.php");
 require_once("./common/sendmail.php");
 
-
 $ps = new PersonClass();
 $pt = new PromptClass();
 $load_headers = new PageloaderClass();
@@ -76,11 +75,11 @@ if(count($_GET) > 0)
                 })
                 $(obj).addClass("div-tab-slted");
             }
-            function manageUsers(obj){
+            function manageGuests(obj){
                 dashboardMenuslt(obj);
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageUsers', function(result){
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageGuests', function(result){
                     $("#main_div_body_dashboard_right_container").html(result);
-                    //searchUser();
+                    //searchGuests();
                 });
             }
             function manageBarbers(obj, thisrecno, thisfrom){
@@ -92,7 +91,7 @@ if(count($_GET) > 0)
                     $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageBarbers', function(result){
                         if(result.indexOf("Barber|") == -1){
                             $("#main_div_body_dashboard_right_container").html(result);
-                            //searchUser();
+                            //searchGuests();
                         }
                         else{
                             //alert(result);
@@ -106,55 +105,16 @@ if(count($_GET) > 0)
                 if($("#sltsearchuser").length){
                     $("#sltsearchuser").remove();
                 }
-                searchUser($("#txtsearchuser")[0], 'Barbers');                   
+                searchGuests($("#txtsearchuser")[0], 'Barbers');                   
             }
-            function searchUser(obj, thisfrom){   
+            function searchGuests(obj){   
                 let thisArray = [];
                 let ischeck = false;
                 //from will be Users, Services, Schedules
                 if($("#txtsearchuser").val().length >= 3){        
-                    tempactive = false;
-                    tempinactive = false;
-                    tempterminated = false;
-                    if(thisfrom === "Barbers" || thisfrom === "Schedule"){
-                        if($("#chk_active").is(":checked")){
-                            tempactive = true;
-                            ischeck = true;
-                        }
-                        if($("#chk_inactive").is(":checked")){
-                            tempinactive = true;
-                            ischeck = true;
-                        }
-                        if($("#chk_terminated").is(":checked")){
-                            tempterminated = true;
-                            ischeck = true;
-                        }
-                        if(ischeck === false){
-                            alert("At least 1 checkbox must be checked.");
-                            $("#txtsearchuser").val("");
-                            $("#txtsearchuser").focus();
-                            return(false);
-                        }
-                        thisArray = [{
-                            "this_txtsearchuser": $("#txtsearchuser").val(),
-                            "this_thisfrom": thisfrom,
-                            "this_active": tempactive,
-                            "this_inactive": tempinactive,
-                            "this_terminated": tempterminated
-                        }];
-                    }
-                    else if(thisfrom === "Users"){
-                        thisArray = [{
-                            "this_txtsearchuser": $("#txtsearchuser").val(),
-                            "this_thisfrom": thisfrom
-                        }];
-                    }
-                    if(thisfrom === "Barbers" || thisfrom === "Schedule"){
-                        if(tempactive === true && tempinactive === true && tempterminated === true){
-                            alert('Please make sure at least one of the check boxes is checked.');
-                            return(false);
-                        }
-                    }
+                    thisArray = [{
+                        "this_txtsearchuser": $("#txtsearchuser").val()
+                    }];
                     const thisData = JSON.stringify(thisArray);
                     fetchAjaxdatasearchuser(thisData);
                     async function fetchAjaxdatasearchuser(thisData){
@@ -216,97 +176,17 @@ if(count($_GET) > 0)
                     }
                 }
             }
-            function updateUser(obj, recno){   
-                //alert($(obj).prop('id'));
-                if($(obj).prop('id') == "chkisTerminated" || $(obj).prop('id') == "chkisActive" || $(obj).prop('id') == "chkisAdmin"
-                        || $(obj).prop('id') == "chkisShowfb" || $(obj).prop('id') == "chkisShowcancel" || $(obj).prop('id') == "chkisShowrefund"
-                        || $(obj).prop('id') == "chkisBarber" || $(obj).prop('id') == "chkisLive"){
-                    if($(obj).prop('id') == "chkisTerminated"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                            $("#chkisActive").prop('checked', false);
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisActive"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisAdmin"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisShowfb"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisShowcancel"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisShowrefund"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisBarber"){
-                        if($(obj).is(":checked")){
-                            realval = 'true';
-                        }
-                        else{
-                            realval = 'false';
-                        }
-                    }
-                    if($(obj).prop('id') == "chkisLive"){
-                        if($(obj).is(":checked")){
-                            if(confirm("By Clicking 'OK', you will be ONLINE and LIVE.  Everything is about to get REAL!!!")){
-                                realval = 'true';
-                                $("#td_live").addClass("flashing-background");
-                            }
-                            else{
-                                $(obj).prop('checked', false);
-                                return(false);
-                            }
-                        }
-                        else{
-                            if(confirm("By Clicking 'OK', you will be OFFLINE and Working with a Sandbox.  You won't be able to take payments!!!")){
-                                realval = 'false';
-                                $("#td_live").removeClass("flashing-background");
-                            }
-                            else{
-                                $(obj).prop('checked', true);
-                                return(false);
-                            }
-                        }
-                    }
-                }
-                else{
-                    realval = $(obj).val();
-                }
-                //alert('thisfield='+$(obj).prop('id').slice(3)+' && thisvalue='+realval);
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=UpdateUser&thisrecno='+recno+'&thisfield='+$(obj).prop('id').slice(3)+'&thisvalue='+realval, function(result){
-                    //alert(result);
+            function updateUser(obj, thisrecno){   
+                thisArray = [{
+			"this_thisrecno": thisrecno, 
+                        "this_thisfield": slicePrestring($(obj).prop('id'), 4),
+			"this_thisval": $(obj).val()
+                }];
+                $.ajax({
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=UpdateUser&thisarray="+JSON.stringify(thisArray),
+                    type: "POST"
+                }).then(function(result) {
+                    // Code here will execute *after* the AJAX request is successful
                     if(result == "Success"){
                         alert('Updated');
                     }
@@ -321,6 +201,8 @@ if(count($_GET) > 0)
                         $(obj).val($("body").data($(obj).prop('id')));
                         $(obj).focus();
                     }
+                }).catch(function(error) {
+                    alert(error);
                 });
             }
             function getVal(obj){
@@ -339,14 +221,14 @@ if(count($_GET) > 0)
                 }
             }
             function reloadUser(from){
-                searchUser('Users');
+                searchGuests('Users');
                 
             }
             function reloadSchedule(){
                 if($("#sltsearchuser").length){
                     $("#sltsearchuser").remove();
                 }
-                searchUser($("#txtsearchuser")[0], 'Schedule'); 
+                searchGuests($("#txtsearchuser")[0], 'Schedule'); 
             }
             function showHistory(obj){
                 dashboardMenuslt(obj);
@@ -360,42 +242,11 @@ if(count($_GET) > 0)
                     $("#main_div_body_dashboard_right_container").html(result);
                 });
             }
-            function manageServices(obj){
+            function manageProducts(obj){
                 dashboardMenuslt(obj);
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageServices', function(result){
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts', function(result){
                     $("#main_div_body_dashboard_right_container").html(result);
-                    searchServices();
                 }); 
-            }
-            function searchServices(){    
-                rdoservice = "";
-                if($("#rdoserviceactive").is(":checked")){
-                    rdoservice = $("#rdoserviceactive").val();
-                }
-                if($("#rdoserviceinactive").is(":checked")){
-                    rdoservice = $("#rdoserviceinactive").val();
-                }
-                if($("#rdoservicedeleted").is(":checked")){
-                    rdoservice = $("#rdoservicedeleted").val();
-                }
-                //alert(rdoservice);
-                thisArray = [{"this_rdoservice": rdoservice}];
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=SearchServices&thisarray='+JSON.stringify(thisArray), function(result){
-                    if($("#tbl_dashboard_service").length > 0){
-                        $("#tbl_dashboard_service").remove();
-                    }
-                    $("#div_mgm_search").after(result);
-                    $("#tbl_dashboard_service").dataTable({
-                        paging: false,
-                        scrollCollapse: true,
-                        lengthChange: false,
-                        searching: false,
-                        sDom: "t"
-                    });
-                }); 
-            }
-            function reloadService(){
-                searchServices();
             }
             function getService(obj, recno){
                 thisArray = [{"this_recno": recno}];
@@ -436,7 +287,7 @@ if(count($_GET) > 0)
                        
                 }); 
             }
-            function addService(){
+            function addProducts(){
                 $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=AddService', function(result){
                     if($("#div_mgm_search").length){
                         $("#div_mgm_search").remove();  //We want to remove this select because we are rebuilding it with a new updated slt.
@@ -1352,9 +1203,8 @@ if(count($_GET) > 0)
                                 return(false);
                             }
                             else{
-                                $("#main_div_body_dashboard_right_container").remove();
                                 alert("Attachment added successfully.");
-                                addCompany($("#dashboardMenuslt")[0]);
+                                addCompany($("#div_managecompany")[0]);
                             }
                         }
                     });
@@ -1363,6 +1213,23 @@ if(count($_GET) > 0)
                     alert("Please select a file before you attempt to submit.");
                 }
                 event.preventDefault();
+            }
+            function deleteLogo(thisimage){
+                thisArray = [{
+                "this_mainlogo": thisimage
+            }];
+            const thisData = JSON.stringify(thisArray);
+            $.ajax({
+                url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=DeleteLogo&thisarray="+thisData,
+                type: "POST"
+            }).then(function(result) {
+                // Code here will execute *after* the AJAX request is successful
+                alert(result);
+                addCompany($("#div_managecompany")[0]);
+               
+            }).catch(function(error) {
+                alert(error);
+            });
             }
         </script>
     </head>
@@ -1373,6 +1240,32 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function DeleteLogo()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $thisimage = $returnpost['mainlogo'];
+    //First we must check to se if $thisimage that the user selected to delete is the main one, if it is, we can't, we will return an error.
+    $sql = "SELECT recno FROM company_info WHERE mainlogo = '$thisimage'";
+    $result = $db->PDOMiniquery($sql);
+    if($db->PDORowcount($result) > 0)
+    {
+        echo "You can't remove the main logo, you must select a main logo before you can remove this one.";
+    }
+    else
+    {
+        //WE will remote the file
+        $filepath = "./images/headers/$thisimage";
+        if(unlink($filepath))
+        {
+            echo "File removed succesfully";
+        }
+        else
+        {
+            echo "Failed to remove file.  Contact Administration.";
+        }
+    }
+}
 function SubmitDashboardattachment()
 {
     global $db, $pt;
@@ -1408,23 +1301,87 @@ function SubmitDashboardattachment()
         //and it requires images only.
         if(in_array($detectedType, $allowedTypes))
         {
-            move_uploaded_file($_FILES["file"]['tmp_name'][$i],"$thisdir/$filename");  
-            echo "Success";
+            $image_info = getimagesize($thistempdir);
+            if ($image_info !== false) {
+                $thiswidth = $image_info[0];
+                $thisheight = $image_info[1];
+                //$thistype = $image_info[2]; // Numeric constant for image type (e.g., IMAGETYPE_JPEG)
+                //$thisattr = $image_info[3]; // String containing width="X" height="Y" for HTML img tag
+                
+                //file_put_contents("./dodebug/debug.txt", "width?  $thiswidth \n", FILE_APPEND);
+                $new_width = 1200;
+                if($thiswidth > 900 && !isset($_POST['chk_originalimg']))
+                {
+                    list($thiswidth, $thisheight) = getimagesize($thistempdir);
+
+                    // Calculate new height to maintain aspect ratio
+                    $aspect_ratio = $thiswidth / $thisheight;
+                    //$new_height = intval($new_width / $aspect_ratio);
+                    $new_height = 240;
+                    //file_put_contents("./dodebug/debug.txt", "new width? $new_width && new height? $new_height \n", FILE_APPEND);
+                    switch($detectedType)
+                    {
+                        case IMAGETYPE_PNG:
+                            $source_image = imagecreatefrompng($thistempdir);
+                            break;
+                        case IMAGETYPE_JPEG:
+                            $source_image = imagecreatefromjpeg($thistempdir);
+
+                            break;
+                        case IMAGETYPE_GIF:
+                            $source_image = imagecreatefromgif($thistempdir);
+                            break;
+                        default:
+                            $source_image = imagecreatefrompng($thistempdir);
+                            break;
+                    }
+                    $destination_image = imagecreatetruecolor($new_width, $new_height);
+
+                    imagecopyresampled($destination_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, $thiswidth, $thisheight);
+
+                    // Save the resized image (with quality 90)
+                    switch($detectedType)
+                    {
+                        case IMAGETYPE_PNG:
+                            imagepng($destination_image, "$thisdir/$filename", 9);
+                            break;
+                        case IMAGETYPE_JPEG:
+                            imagejpeg($destination_image, "$thisdir/$filename", 90);
+
+                            break;
+                        case IMAGETYPE_GIF:
+                            imagegif($destination_image, "$thisdir/$filename", 90);
+                            break;
+                        default:
+                            imagepng($destination_image, "$thisdir/$filename", 90);
+                            break;
+                    }
+                }
+                else
+                {
+                    move_uploaded_file($_FILES["file"]['tmp_name'][$i],"$thisdir/$filename");
+                }
+                echo "Success";
+            } 
+            else 
+            {
+                $typeisgood = "Bad size.";
+            }
         }
         else
         {
             echo "Bad file type.  File type must be PNG, JPEG, GIF, and OR PDF.";
         }
-    }
-    
+    }    
 }
 function DashboardAttach()
 {?>
     <div class="div-body-profile-attach-container" id="div_body_dashboard_attach_container">
         <div class="div-body-profile-attach-sub-container">
             <form name="frmsubmitattachment" id="frmsubmitattachment" enctype="multipart/form-data" method="post">
-                <div class="align-left" style="width: 300px; height: 100px; background-color: gray;">
-                    <div>Upload Attachment</div>
+                <div class="align-left" style="width: 100%; height: 100px; background-color: gray; color: white;">
+                    <div><input type="checkbox" name="chk_originalimg" id="chk_originalimg" />Keep original upload</div>
+                    <div>Upload Attachment <span class="font-size-pt7em" style="color: darkred;">(Will convert to 1200h X 240w unless checked)</span></div>
                     <div><input class="event-attachments" type="file" name="file[]" id="dashboardattachment" /></div>
                     <div class="float-left">jpeg, gif, png ONLY</div><br/>
                     <button id="btn_submit" name="btn_submit" onclick="submitDashboardattachment();">Submit</button>
@@ -3568,10 +3525,10 @@ function AddCompany()
                 }?>
                 </table>
             </div>
-            <div class="float-left"><?php
+            <div class="div-dashboard-image-container float-left"><?php
                 if($thisname != "")
                 {?>
-                    <div class="div-dashboard-image-container" id="div_dashboard_image_container"><?php
+                    <div class="div-dashboard-image-container-flex" id="div_dashboard_image_container"><?php
                         $thisdir = "./images/headers/*";
                         $thispath = "./images/headers";
                         BuildCompanyimagecontainer('mainlogo', $thisdir, $thispath, $thislogo);?>
@@ -3602,8 +3559,9 @@ function BuildCompanyimagecontainer($from, $thisdir, $thispath, $sltedimage)
                     $usethistitle = "Selected";
                 }
             }?>
-            <div onclick="selectImage(this, 'mainlogo', '<?php echo basename($file) ?>');">
-                <img name="<?php echo basename($file) ?>" id="<?php echo basename($file) ?>" class="dashboard-bucket-image <?php echo $usethiscssborder ?>" title="<?php echo $usethistitle ?>" src="<?php echo $thispath ?>/<?php echo basename($file) ?>"></a>
+            <div class="dashboard-mgm-company-logo-container float-left">
+                <input class="btn-delete-logo float-right" type="button" name="btn_delete_<?php echo basename($file) ?>" id="btn_delete_<?php echo basename($file) ?>" onclick="deleteLogo('<?php echo basename($file) ?>');" title="Click to remove this image" value="X" />
+                <img name="<?php echo basename($file) ?>" id="<?php echo basename($file) ?>" class="dashboard-bucket-image <?php echo $usethiscssborder ?>" title="<?php echo $usethistitle ?>" src="<?php echo $thispath ?>/<?php echo basename($file) ?>" onclick="selectImage(this, 'mainlogo', '<?php echo basename($file) ?>');"></a>
                 <br/><span class="admin-span-image-disc"><?php echo basename($file) ?></span>
             </div><?php
         }
@@ -3764,314 +3722,108 @@ function GetService()
        }
     }
 }
-function ManageServices()
-{
-    ManageSearchmenus("Services");
-}
-function SearchServices()
+function ManageProducts()
 {    
     global $pt, $db;
     $temp_disc_limit = "";
     $returnpost = $pt->AnalyzePosts(); 
-    $sql = "SELECT * FROM service WHERE ";
-    //file_put_contents("./dodebug/debug.txt", "admin menu sql = ".$_POST['isDeleted']." and ". $_POST['isActive']." \n", FILE_APPEND);
-    if($returnpost['rdoservice'] == 'active')
-    {
-        $sql .= "isactive=true";
-    }
-    if($returnpost['rdoservice'] == 'inactive')
-    {
-        $sql .= "isactive=false AND isdeleted = false";
-    }
-    if($returnpost['rdoservice'] == 'deleted')
-    {
-        $sql .= "isdeleted=true";
-    }    
+    $sql = "SELECT * FROM Products WHERE isActive = true AND isDeleted = false ORDER BY name";
+   
     //file_put_contents("./dodebug/debug.txt", "admin menu sql = $sql \n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);?>
-    <table style="width: 800px; background-color: lightgray" id="tbl_dashboard_service" name="tbl_dashboard_service">
-        <thead>
-            <tr>
-                <th>No.</th>
-                <th style="line-height: 30px; width: 600px;">Service<button class="btn-dashboard-add-service float-right" title="Add Service" onclick="addService();">+</button></th>
-                <th>Time</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if($db ->PDORowcount($result) > 0)
-            {
-                $i = 1;
-                foreach($result as $rs)
-                {?>
-                    <tr class="cursor-pointer" onclick="getService(this, <?php echo $rs['recno']?>);">
-                        <td class="td-num-rows align-right"><?php echo $i ?>.</td>
-                        <td><?php echo $rs['title'] ?></td>
-                        <td><?php echo $rs['time'] ?></td>
-                        <td>$<?php echo number_format($rs['price'], 2) ?></td>
-                    </tr><?php
-                    $i++;
-                }
-            }?>
-        </tbody>
-    </table><?php
-}
-function ManageSearchmenus($from)
-{
-    //$from - Users
-    $usethisfunc = "reloadBarbers(this)";?>
-    <div id="div_search_containter" class="div-search-containter">
-        <div id="div_search_containter_slt" class="div-search-containter-slt">
-            <div class="float-left" id="div_mgm_search"> <?php
-            
-            if($from == "Barbers" || $from == "Schedule")
-            {
-                //file_put_contents("./dodebug/debug.txt", "is from? ".$from."\n", FILE_APPEND);
-                if($from == "Schedule")
+    <div class="dashboard-mgm-products-tabs-container float-left">
+        <div class="dashboard-mgm-products-tabs dashboard-mgm-products-tabs-slted float-left cursor-pointer">Active</div>
+        <div class="dashboard-mgm-products-tabs float-left dashboard-mgm-products-tabs-notslt cursor-pointer">In-Active</div>
+        <div class="dashboard-mgm-products-tabs float-left"><button class="btn-dashboard-add-products float-right cursor-pointer" title="Add Service" onclick="addProducts();">+</button></div>
+    </div>
+    <div class="float-left">
+        <table class="dashboard-mgm-products-tbl" border="1" id="tbl_dashboard_service" name="tbl_dashboard_service">
+            <thead>
+                <tr>
+                    <th style="width: 2%;">No.</th>
+                    <th style="width: 10%;">Name</th>
+                    <th style="width: 2%;">Price</th>
+                    <th style="width: 2%;">Att.</th>
+                    <th style="width: 2%;">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $isactive = "<img title='Active' src='./images/others/on.PNG' />";
+                $isdeleted = "<img title='Not Active' src='./images/others/off.PNG' />";
+                $isattachment = "<img title='Has 1 or more attachments' src='./images/others/blackattachmentpin.png' />";
+                if($db ->PDORowcount($result) > 0)
                 {
-                    $usethisfunc = "reloadSchedule();";
-                }
-                if($from == "Services")
-                {
-                   $usethisfunc = "reloadService();";
+                    $i = 1;
+                    foreach($result as $rs)
+                    {
+                        $isattachment = "<img title='".$rs['attachments']."' src='./images/others/blackattachmentpin.png' />";?>
+                        <tr class="cursor-pointer" onclick="getService(this, <?php echo $rs['recno']?>);">
+                            <td class="td-num-rows align-right"><?php echo $i ?>.</td>
+                            <td class="align-left" style="padding-left: 10px;"><?php echo strlen($rs['name']) > 25 ? substr($rs['name'], 0, 22)."..." : $rs['name'] ?></td>
+                            <td class="align-right">$<?php echo number_format($rs['price'], 2) ?></td>
+                            <td><?php echo empty($rs['attachments']) ? '' : $isattachment ?></td>
+                            <td><?php echo ($rs['isActive'] == true ? "$isactive" : "$isdeleted" ) ?></td>
+                        </tr><?php
+                        $i++;
+                    }
                 }?>
-                <div>
-                    <div class="float-left chk-barbers dashboard-div-chkbox-container"><input class="dashboard-chk-boxes" type="checkbox" name="chk_active" id="chk_active" value="true" onclick="<?php echo $usethisfunc ?>" checked /> Active </div>
-                    <div class="float-left chk-barbers dashboard-div-chkbox-container"><input class="dashboard-chk-boxes" type="checkbox" name="chk_inactive" id="chk_inactive" value="false" onclick="<?php echo $usethisfunc ?>" />In-Active</div>
-                    <div class="float-left chk-barbers dashboard-div-chkbox-container"><input class="dashboard-chk-boxes" type="checkbox" name="chk_terminated" id="chk_terminated" value="true" onclick="<?php echo $usethisfunc ?>" />Terminated</div>
-                </div><?php
-            }
-            if($from == "Services")
-            {?>
-
-                <div class="float-right">
-                    <div class="float-left div-chk-active"><input type="radio" name="rdoservice" id="rdoserviceactive" value="active" onclick="reloadService();" checked />Active</div>
-                    <div class="float-left div-chk-active"><input type="radio" name="rdoservice" id="rdoserviceinactive" value="inactive" onclick="reloadService();" />Inactive</div>
-                    <div class="float-left"><input type="radio" name="rdoservice" id="rdoservicedeleted" value="deleted" onclick="reloadService('reloadService();', 'Deleted');" />Deleted</div>
-                </div><?php        
-            }
-            if($from != "Services")
-            {
-                //$from == "Users"
-                ?>
-                <div id="div_searchuser_container">
-                    <input class="txt-search-dashboard" type="text" id="txtsearchuser" name="txtsearchuser" value="" placeholder="Enter a name to start search." onfocus="searchUser(this, '<?php echo $from ?>');" onkeyup="searchUser(this, '<?php echo $from ?>');" />
-                    <button type="button" onclick="clearSearchuser();">Clear</button>                
-                </div><?php
-            }?>
-            </div>
-        </div>
+            </tbody>
+        </table>
     </div><?php
 }
 function UpdateUser()
 {
     global $db, $pt, $ne, $load_headers;
-    $thisreturn = "";
-    $tempcheck = false;
-    $thisfields = Array();
-    $thistable = "users";
-    $thisfield = $_POST['thisfield'];
+    $thistable = "users"; 
+    $returnpost = $pt->AnalyzePosts();
+    $thisreturn = "";   
     $thisserver = $load_headers -> GET_THIS_SERVER(); //This will be 'localhost' or the webhosting domain, ex:  https://www.somedomain.com
     $isprosand = "";
     if($_SESSION['isLive'] == true)
     {
         $isprosand = "_pro";
     }
-    if($_POST['thisfield'] == "birthday" || $_POST['thisfield'] == "hiredate" || 
-            $_POST['thisfield'] == "square_access_token_expire_date$isprosand" || $_POST['thisfield'] == "square_refresh_token_expires_date$isprosand")
+    if($returnpost['thisfield'] == "login" || $returnpost['thisfield'] == 'email')
     {
-        $formatthisdate = date('Y-m-d', strtotime($_POST['thisvalue']));
-        $thisdata = array($_POST['thisfield'] => $formatthisdate); 
-    }
-    else if($_POST['thisfield'] == "login" || $_POST['thisfield'] == 'email')
-    {
-        if($_POST['thisfield'] == "email")
+        if($returnpost['thisfield'] == "email")
         {
             //WE want to do a final check on email, make sure it is a valid email.
-            $ne->set_email($db, $_POST['thisvalue']);
+            $ne->set_email($returnpost['thisval']);
             if($ne ->validate_email() == false)
             {
                 $thisreturn = "Bad email format.  Please check email and try again.";
             }
-            if($ne -> check_email() == true)
+            if($ne -> check_email($db) == true)
             {
                 $thisreturn = "Email already exist.  Please check email and try again.";
             }
         }
-        if($_POST['thisfield'] == "login")
+        if($returnpost['thisfield'] == "login")
         {
         //Can't get this to work.
-            $thisfield = [$_POST['thisfield']];
-            $thiswhere = array($_POST['thisfield'] => $_POST['thisvalue']);
+            $thisfield = [$returnpost['thisfield']];
+            $thiswhere = array($returnpost['thisfield'] => $returnpost['thisval']);
             $sqlcheck = $pt -> CheckIfexist($thistable, $thisfield, $thiswhere);
             if($sqlcheck)
             {
                 $thisreturn = "This ".$_POST['thisfield']." already exist.  Please use a different one.";
             }
         }
-        $thisdata[$_POST['thisfield']] = $_POST['thisvalue'];
-    }
-    else if($_POST['thisfield'] == "isTerminated")
-    {
-        
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $thisdata['isActive'] = false;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $thisdata['isActive'] = true;
-        }
-    }
-    else if($_POST['thisfield'] == "isActive")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isAdmin")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isAdmin'] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isAdmin'] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isBarber")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isBarber'] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isBarber'] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isShowfb")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isShowfb'] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isShowfb'] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isShowcancel")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isShowcancel'] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isShowcancel'] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isShowrefund")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isShowrefund'] = true;
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isShowrefund'] = false;
-        }
-    }
-    else if($_POST['thisfield'] == "isLive")
-    {
-        //file_put_contents("./dodebug/debug.txt", "chk: ".$_POST['thisfield']." = ".$_POST['thisvalue']."\n", FILE_APPEND);
-        if($_POST['thisvalue'] == "true")
-        {
-            $thisdata[$_POST['thisfield']] = true;
-            $_SESSION['isLive'] = true;
-            $_SESSION['realsandpro'] = "Production";
-        }
-        else
-        {
-            $thisdata[$_POST['thisfield']] = false;
-            $_SESSION['isLive'] = false;
-            $_SESSION['realsandpro'] = "Sandbox";
-        }
+        $thisdata[$returnpost['thisfield']] = $returnpost['thisval'];
     }
     else
     {
-        $thisdata[$_POST['thisfield']] = $_POST['thisvalue'];  
+        $thisdata[$returnpost['thisfield']] = $returnpost['thisval'];  
     }
     if($thisreturn == "")
     {
-        $thiswhere = array("recno" => $_POST['thisrecno']);
-        $result = $db->PDOUpdate($thistable, $thisdata, $thiswhere, $_POST['thisrecno']);
+        $thiswhere = array("recno" => $returnpost['thisrecno']);
+        $result = $db->PDOUpdate($thistable, $thisdata, $thiswhere, $_SESSION['user_recno']);
         //file_put_contents("./dodebug/debug.txt", $_POST['thisrecno'], FILE_APPEND);
         if(isset($result))
         {
             $thisreturn = 'Success';
-            
-            //Since we successfully updated the system when it comes to terminating or setting inactive on an employee,
-            //we want to email people who are admin status
-            if($_POST['thisfield'] == "isActive" || $_POST['thisfield'] == "isTerminated")
-           {
-                $sentto = Array();
-                $replyto = Array();
-                $ccto = Array();
-                $bccto = Array();
-                $attachment = Array();
-                $tempempname = "";
-                $sql = "SELECT firstname, middlename, lastname, email FROM users WHERE isAdmin = true";
-                $result = $db ->PDOMiniquery($sql);
-                foreach($result as $rs)
-                {
-                    $sendto[] = array($rs['email'] => $rs['firstname'].empty($rs['middlename'] ? ' ' : $rs['middlename'])." ".$rs['lastname']);
-                    //$sendto[] = array("14058890899@sms.smtp2go.com");
-                }
-                $sql = "SELECT firstname, middlename, lastname FROM users WHERE recno = ".$_POST['thisrecno'];
-                $result = $db ->PDOMiniquery($sql);
-                foreach($result as $rs)
-                {
-                    $tempempname = $rs['firstname'].empty($rs['middlename'] ? ' ' : $rs['middlename'])." ".$rs['lastname'];
-                }
-                if($_POST['thisfield'] == "isActive")
-                {
-                    $subject = $ne ->get_active_subject();
-                    $body = $ne ->get_active_body($db, $thisserver, $tempempname, $_POST['thisvalue']);
-                }
-                else
-                {
-                    $subject = $ne ->get_terminated_subject($thisserver, $tempempname);
-                    $body = $ne ->get_terminated_body($thisserver, $tempempname, $_POST['thisvalue']);
-                }
-                $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $subject, $body, $attachment);
-            }
         }
         else
         {
@@ -4151,27 +3903,12 @@ function SearchUser()
     global $db, $ps, $pt;
     $realbarber = true; //If we are from schedule, by default, we will be searcing for barbers so we default this declaration to true
     $returnpost = $pt->AnalyzePosts();
-    
-    if($returnpost['thisfrom'] == "Barbers" || $returnpost['thisfrom'] == "Schedule")
-    {
-        $ps->SetBarbers($returnpost['txtsearchuser'], $returnpost['active'], $returnpost['inactive'], $returnpost['terminated']); //Looking for this person or this phrase
-        $returnarray = $ps->GetBarbers($db);
-    }
-    else if($returnpost['thisfrom'] == "Users")
-    {
-        $ps->SetUsers($returnpost['txtsearchuser']); //Looking for this person or this phrase
-        $returnarray = $ps->GetUsers($db);
-    }
-    else
-    {
-        //Schedules
-        $ps->SetPersonno($returnpost['txtsearchuser'], $returnpost['isActive'], $realbarber, $returnpost['isTerminated']); //Looking for this person or this phrase
-        $returnarray = $ps->GetPerson($db);
-    }
+    $ps->SetUsers($returnpost['txtsearchuser']); //Looking for this person or this phrase
+    $returnarray = $ps->GetUsers($db);
     if(!empty($returnarray))
     {
         //file_put_contents("./dodebug/debug.txt", "Not empty \n", FILE_APPEND);
-        $ps->SetPersonselect($returnpost['thisfrom'], $returnarray, '');
+        $ps->SetPersonselect($returnarray, '');
         $ps->GetPersonselect();
     }
     
@@ -4182,9 +3919,18 @@ function SearchUserexistinglist($tempfrom, $thisstr)
     $ps->SetPersonselect($tempfrom, $_SESSION['usersearchlist'], $thisstr);
     $ps->GetPersonselect();
 }
-function ManageUsers()
-{
-    ManageSearchmenus('Users');    
+function ManageGuests()
+{?>
+    <div id="div_search_containter" class="div-search-containter">
+        <div id="div_search_containter_slt" class="div-search-containter-slt">
+            <div class="float-left" id="div_mgm_search">
+                <div id="div_searchuser_container">
+                    <input class="txt-search-dashboard" type="text" id="txtsearchuser" name="txtsearchuser" value="" placeholder="Enter a name to start search." onfocus="searchGuests(this);" onkeyup="searchGuests(this);" />
+                    <button type="button" onclick="clearSearchuser();">Clear</button>                
+                </div>
+            </div>
+        </div>
+    </div><?php  
 }
 function ManageBarbers()
 { 
@@ -4200,16 +3946,16 @@ function ManageBarbers()
 }
 function Main()
 {
-    global $load_headers, $this_page;
+    global $load_headers, $this_page, $db;
     $load_headers->Load_Header($this_page);?>
-    
+
     <div class="main-div">
         <script type="text/javascript">
             $("body").data('searchguest', '');
         </script>
         <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
             <div class="main-logo float-left">
-                <?php echo $load_headers->LoadLogo();?>
+                <?php echo $load_headers->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $load_headers->LoginPanel();?></div>
             <div class="div-main-tabs-container"><?php
@@ -4222,23 +3968,19 @@ function Main()
                 }
                 if($_SESSION['isBarber'] == true || $_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
                 {?>   
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_managebarbers" onclick="manageBarbers(this, <?php echo $_SESSION['user_recno'] ?>, 'Menu');">Manage Barbers</div>
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageuser" onclick="manageUsers(this);">Manage Guests</div>
-                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageSchedule" onclick="manageSchedule(this);">Manage Schedule</div> -->
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageServices(this);">Manage Products</div>                                 
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageguest" onclick="manageGuests(this);">Manage Guests</div>
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageProducts(this);">Manage Products</div>                                 
                     <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard" id="div_doevent" onclick="doEvent(this);">Create Event</div><?php
                 }?>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_history" onclick="showHistory(this);">Service Search</div><!--search active, history, cancelled service and a search.-->
-                <!--<div class="div-menu-dashboard div-menu-dashboard" id="div_trash" onclick="showTrash(this);">Trash</div>-->
-            
             </div>
             <div class="div-content-holder-flex align-center">
                 <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>
             </div>
             <div class="align-center" style="height: 5%;"><?php echo $load_headers->Load_Footer();?></div>
         </div>
-        
+
 
     </div><?php
+   
 }?>

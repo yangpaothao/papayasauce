@@ -224,8 +224,6 @@ button{
 
 }
 .main-logo{
-    background-image: url(../images/headers/papayaheader.png);
-    background-repeat: no-repeat;
     height: 30%; 
     width: 92%;
 }
@@ -339,8 +337,8 @@ button{
 }
 .div-body-profile-attach-sub-container{
     position: relative;
-    top: 40%;
-    left: 35%;
+    top: 30%;
+    padding: 10px;
 }
 .navmenu{
     margin-top: -20px;
@@ -2734,13 +2732,18 @@ table td{
     justify-content: left;
 }
 .div-dashboard-image-container{
+    width: 65%;
+}
+.div-dashboard-image-container-flex{
     /*stay*/
     overflow: auto;
-    height: 450px;
+    height: 450px; 
     width: 100%;
     display: flex;    
     flex-wrap: wrap;
-    justify-content: left;
+    /* Hide scrollbar for IE, Edge and Firefox */
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
 }
 .profilebucketimage{
     height: 220px;
@@ -3473,7 +3476,7 @@ admin-service-add{
     text-align: left;  
     
 }
-.btn-dashboard-add-service{
+.btn-dashboard-add-products{
     width: 30px; 
     height: 30px;
 }
@@ -3497,7 +3500,7 @@ admin-service-add{
     height: 30px;
 }
 .tbl-dashbard-mgm-user{
-    width: 980px;
+    width: 100%;
 }
 .dashboard-mgmcompany-renew-api{
     width: 400px;
@@ -3752,7 +3755,45 @@ admin-service-add{
 .div-tab-nonslted{
     background-color: #4F8849;
 }
-
+.btn-delete-logo{
+    height: 20px;
+    width: 20px;
+    min-height: 10px;
+    min-width: 10px;
+    background-color: darkred;
+    color: white;
+}
+.dashboard-mgm-company-logo-container{
+    padding: 10px;
+    width: 39%;
+}
+.dashboard-mgm-products-tbl{
+    width: 30%; 
+    min-width: 350px; 
+    background-color: lightgray;
+}
+.dashboard-mgm-products-tabs-container{
+    width: 100%; 
+    display: block;
+}
+.dashboard-mgm-products-tabs{
+    width: 5%;
+    line-height: 26px;
+    min-width: 80px;
+    min-height: 26px;
+    display: block;
+    color: white;
+}
+.dashboard-mgm-products-tabs:hover{
+    font-family: italic;
+    font-weight: bold;
+}
+.dashboard-mgm-products-tabs-slted{
+    background-color: #FF7431;
+}
+.dashboard-mgm-products-tabs-notslt{
+    background-color: gray;
+}
 
 .swing {
     animation: swing ease-in-out 1s infinite alternate;
@@ -3783,6 +3824,7 @@ admin-service-add{
     border-radius: 50% 50%;
     background: #000;
 }
+
 
 
 

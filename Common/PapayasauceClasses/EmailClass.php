@@ -8,6 +8,7 @@ namespace PapayasauceClasses;
 class EmailClass {
     public $cmail;
     public $isdate = false;
+    
     function set_email($email)
     {
         $this->cmail = $email;
@@ -28,10 +29,19 @@ class EmailClass {
             return(false);
         }
     }
-    public function check_email()
+    public function check_email($db)
     {
         //Now we want to check if this email already exist. We will get a record back if it exists.
-        return("SELECT recno FROM users WHERE email = '".$this->cmail."'");
+        $sql = "SELECT recno FROM users WHERE email = '".$this->cmail."'";
+        $result = $db->PDOMiniquery($sql);
+        if($db->PDOrowcount($result) > 0)
+        {
+            return(true);
+        }
+        else
+        {
+            return(false);
+        }
     }
     public function get_verification_subject()
     {

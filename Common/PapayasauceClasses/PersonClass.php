@@ -129,11 +129,10 @@ class PersonClass {
             return("");
         }
     }
-    function SetPersonselect($tempfrom, $temparray, $templist)
+    function SetPersonselect($temparray, $templist)
     {
         $this->personarray = $temparray;
         $this->thislist = $templist;
-        $this->thisfrom = $tempfrom;
     }
     function GetPersonselect()
     {
@@ -199,27 +198,7 @@ class PersonClass {
         //$thiswhere = array("recno" => $_POST['recno']);
         $result = $this->db->PDOQuery($thistable, $thisfields, $thiswhere);
         if(isset($result)) //Nott sure if isset() will check if some items is returned or at least something in asso array.
-        {
-            if($_SESSION['isBarber'] == true)
-            {?>
-                <div>
-                    <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-selected dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top align-center" id="div_barber_user" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">User</div>
-                    <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-noselect dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top align-center" id="div_barber_apipro" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">Square API Production</div><?php
-                    if($_SESSION['isLive'] == false && $_SESSION['isDeveloper'] == true)
-                    {?>
-                        <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-noselect dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top dashboard-mgm-barbers-tabs-border-right align-center" id="div_barber_apisand" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">Square API Sandbox</div><?php
-                    }
-                    if($_SESSION['isDeveloper'] == true)
-                    {?>
-                        <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-noselect dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top dashboard-mgm-barbers-tabs-border-right align-center" id="div_barber_permissionpro" name="div_barber_permissionpro" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">Square Production Permissions</div><?php
-                    }
-                    if($_SESSION['isLive'] == false && $_SESSION['isDeveloper'] == true)
-                    {?>
-                        <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-noselect dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top dashboard-mgm-barbers-tabs-border-right align-center" id="div_barber_permission" name="div_barber_permission" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">Square Sandbox Permissions</div><?php
-                    }?>
-                    <div class="cursor-pointer float-left dashboard-mgm-barbers-tabs dashboard-mgm-barbers-tabs-noselect dashboard-mgm-barbers-tabs-border-left dashboard-mgm-barbers-tabs-border-top dashboard-mgm-barbers-tabs-border-right align-center" id="div_barber_apitwillio" onclick="showUsertbs(this, <?php echo $this->recno ?>, 'Menu');">Twillio API</div>
-                </div><?php
-            }?>
+        {?>
            <div class="div-dashboard-mgm-user" id="div_dashboard">
                <div class="float-left" id="div_dashboard_mgm_barbers_tbl_user">
                     <table id="dashboard_mgm_barbers_tbl_user" class="tbl-dashbard-mgm-user float-left" style="border: 1px solid black;">
@@ -231,59 +210,19 @@ class PersonClass {
                         foreach($result as $rs)
                         {
                             $thismedia = $rs['media_dir'];?>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">First Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txtfirstname" name="txtfirstname" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['firstname'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Middle Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txtmiddlename" name="txtmiddlename" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['middlename'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Last Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txtlastname" name="txtlastname" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['lastname'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Birthday:</td><td class="datepicker-mgmbarbers-tabs"><input class="user-dashboard-input float-left" type="text" id="txtbirthday" name="txtbirthday" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= empty($rs['birthday']) ? '' : date('m/d/Y', strtotime($rs['birthday'])) ?>" style="margin-top: -10px;" onfocus="getVal(this);getJDate(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" placeholder="dd/mm/yyy ex: 01/22/2022" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Hire Date:</td><td class="datepicker-mgmbarbers-tabs"><input class="user-dashboard-input float-left" type="text" id="txthiredate" name="txthiredate" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= empty($rs['hiredate']) ? '' : date('m/d/Y', strtotime($rs['hiredate'])) ?>" style="margin-top: -10px;" onfocus="getVal(this);getJDate(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" placeholder="dd/mm/yyy ex: 01/22/2022" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Login:</td><td><input class="user-dashboard-input float-left" type="text" id="txtlogin" name="txtlogin" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['login'] ?>"/></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Address:</td><td><input class="user-dashboard-input float-left" type="text" id="txtaddress" name="txtaddress" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['address'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">City:</td><td><input class="user-dashboard-input float-left" type="text" id="txtcity" name="txtcity" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['city'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">State:</td><td><input class="user-dashboard-input float-left" type="text" id="txtstate" name="txtstate" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['state'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Zip-Code:</td><td><input class="user-dashboard-input float-left" type="text" id="txtzipcode" name="txtzipcode" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['zipcode'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Email:</td><td><input class="user-dashboard-input float-left" type="text" id="txtemail" name="txtemail" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['email'] ?>" /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Show FB:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisShowfb" name="chkisShowfb" onfocus="getVal(this);" <?php echo $usethisonchange ?> <?php echo ($rs['isShowfb'] == true ? 'checked' : '') ?> /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right nowrap">Show Cancel:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisShowcancel" name="chkisShowcancel" onfocus="getVal(this);" <?php echo $usethisonchange ?> <?php echo ($rs['isShowcancel'] == true ? 'checked' : '') ?> /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right nowrap">Show Refund:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisShowrefund" name="chkisShowrefund" onfocus="getVal(this);" <?php echo $usethisonchange ?> <?php echo ($rs['isShowrefund'] == true ? 'checked' : '') ?> /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Active:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisActive" name="chkisActive" onfocus="getVal(this);" <?php echo $usethisonchange ?> <?php echo ($rs['isActive'] == true ? 'checked' : '') ?> /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Admin:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisAdmin" name="chkisAdmin" onfocus="getVal(this);" <?php echo $usethisonchange ?> <?php echo ($rs['isAdmin'] == true ? 'checked' : '') ?> <?php echo ($rs['isAdmin'] == true ? '' : 'disabled') ?> /></td></tr>
-                            <tr><td class="tbl-dashboard-user-lbl align-right">Barber:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisBarber" name="chkisBarber" <?php echo $usethisonchange ?> <?php echo ($rs['isBarber'] == true ? 'checked' : '') ?> /></td></tr><?php
-                            if($rs['isDeveloper'] == true)
-                            {?>
-                                <tr><td name="td_live" id="td_live" class="tbl-dashboard-user-lbl align-right <?php echo ($rs['isLive'] == true ? 'flashing-background' : '') ?>">LIVE:</td><td><input class="dashboard-tbl-chkbox float-left" type="checkbox" id="chkisLive" name="chkisLive" <?php echo $usethisonchange ?> <?php echo ($rs['isLive'] == true ? 'checked' : '') ?> /></td></tr><?php 
-                            }
-                        }?>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">First Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_firstname" name="txtfirstname" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['firstname'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Middle Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_middlename" name="txtmiddlename" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['middlename'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Last Name:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_lastname" name="txtlastname" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['lastname'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Login:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_login" name="txtlogin" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['login'] ?>"/></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Address:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_address" name="txtaddress" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['address'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Address 2:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_address2" name="txtaddress2" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['address2'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">City:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_city" name="txtcity" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['city'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">State:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_state" name="txtstate" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['state'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Zip-Code:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_zipcode" name="txtzipcode" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['zipcode'] ?>" /></td></tr>
+                            <tr><td class="tbl-dashboard-user-lbl align-right">Email:</td><td><input class="user-dashboard-input float-left" type="text" id="txt_email" name="txtemail" onfocus="getVal(this);" onchange="updateUser(this, <?php echo $this->recno ?>);" value="<?= $rs['email'] ?>" /></td></tr><?php
+                    }?>
                     </table>
-                </div><?php
-                if($_SESSION['isAdmin'] == true || $_SESSION['isBarber'] == true)
-                {
-                        $sql = "SELECT * FROM attachments WHERE foreign_ur = ".$_SESSION['user_recno']." AND name='profile_image' OR name='thumb_nail'";
-                        $result = $this->db->PDOMiniquery($sql);
-                        if($this->db->PDORowcount($result) > 0)
-                        {
-                            foreach($result as $rs)
-                            {
-                                if($rs['name'] == "profile_image")
-                                {
-                                    $profileimage = $rs['file'];
-                                }
-                                if($rs['name'] == "thumb_nail")
-                                {
-                                    $thumbnail = $rs['file'];
-                                }
-                            }
-                        }?>
-                    <div class="float-left" id="div_barbers_img_container">
-                        <div class="float-left">
-                            <img class="cursor-pointer profile-img-size" id="img_profile" src="./images/others/<?php echo $thismedia ?>/avatar/<?php echo $profileimage ?>" onerror="this.onerror=null; this.src='./images/others/<?php echo $thismedia ?>/avatar/defaultimage.png'"><br />
-                            <span style="font-size: .7em;">Profile Image:<br /> <span id="span_profile_image"><?php echo $profileimage ?></span></span>
-                        </div>
-                        <div class="float-left">
-                            <img class="cursor-pointer profile-img-size" id="img_thumbnail" src="./images/others/<?php echo $thismedia ?>/avatar/<?php echo $thumbnail ?>" onerror="this.onerror=null; this.src='./images/others/<?php echo $thismedia ?>/avatar/defaultimage.png'"><br />
-                            <span style="font-size: .7em;">Thumbnail Image::<br /> <span id="span_profile_thumbnail"><?php echo $thumbnail ?></span></span>
-                        </div>
-                    </div><?php
-                }?>
+                </div>
             </div><?php
         }
     }
