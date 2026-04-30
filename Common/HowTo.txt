@@ -104,3 +104,6 @@ Where appropriate
 
 namespace and autoload explained
 https://www.youtube.com/watch?v=YKpB0Sd3mGE
+
+javascript go to website
+window.location.href = "index.php";

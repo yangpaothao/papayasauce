@@ -3768,7 +3768,7 @@ admin-service-add{
     width: 39%;
 }
 .dashboard-mgm-products-tbl{
-    width: 30%; 
+    width: 60%; 
     min-width: 350px; 
     background-color: lightgray;
 }
@@ -3792,7 +3792,7 @@ admin-service-add{
     background-color: #FF7431;
 }
 .dashboard-mgm-products-tabs-notslt{
-    background-color: gray;
+    background-color: darkslategray;
 }
 
 .swing {

@@ -1,7 +1,13 @@
+addproduct.php
+
+Need to work on adding product
+    1.  Do we want the ability to add multiple pictures?  Yes
+    2.  That means when they go to the buy page, user should be able to see these attachments.
+
+
 dashboard.php
 
-Manage Products
-need to make Active, In-Active work
-need to check the add product
+Work on Create Even, go through code and make sure everything works.
 
-the codes may need to be updatd
+Will need to work on Show event too.
+

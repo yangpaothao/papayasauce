@@ -69,25 +69,51 @@ if(count($_GET) > 0)
                 fetchAjaxsltproduct(thisData);
             }
             async function fetchAjaxsltproduct(thisData){
-                try{
-                    const result = await $.ajax({
-                    url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=SelectedProduct&thisarray='+thisData,
-                    type: 'POST',
-                    contentType: "application/json"
-                    });
-                    if(result == "Success"){
-                        window.location.href = "product.php";
-                    }
-                    else
-                    {
-                        alert("SESSION variable 'SELECTED_PRODUCT_RECNO' did not get set.");
-                        return(false);
-                    }
+            try{
+                const result = await $.ajax({
+                url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=SelectedProduct&thisarray='+thisData,
+                type: 'POST',
+                contentType: "application/json"
+                });
+                if(result == "Success"){
+                    window.location.href = "product.php";
                 }
-                catch(error){
-                    alert("ERROR");
-                }  
+                else
+                {
+                    alert("SESSION variable 'SELECTED_PRODUCT_RECNO' did not get set.");
+                    return(false);
+                }
             }
+            catch(error){
+                alert("ERROR");
+            }
+            }
+            function goToschedule(obj, recno){
+                window.location.href = "schedule.php?recno="+recno;
+            }
+            function showOrders(recno){
+                window.location.href = "serviceorder.php?recno="+recno;
+            }
+            function showThisannouncement(){
+                //status will come in as Modify or default to Readonly
+                //window.location.href = "announcement.php?recno="+recno;
+                window.open('manageAnnouncement.php?fromload=index', '_blank');
+            }
+            function showThisimportant(){
+                //status will come in as Modify or default to Readonly
+                //window.location.href = "announcement.php?recno="+recno;
+                window.open('manageImportant.php?fromload=index', '_blank');
+            }
+            function goTofid(){
+                window.open('fid.php?', '_blank');
+            }
+            function displayEvent(thisrecno){
+                window.open('./show_event.php?thisrecno='+thisrecno, '_blank');
+            }
+            function closeDiv(){
+                $("#div_float").remove();
+            }
+            
         </script>
     </head>
     <body>
@@ -113,17 +139,9 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
-            <div class="div-main-tabs-container">
-                <div class="float-left div-main-tabs div-tab-slted cursor-pointer align-center" id="div_main" onclick="mainTabs(this);">Main</div>
-                <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_products" onclick="mainTabs(this);">Products</div>-->
-                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center" id="div_videos" onclick="mainTabs(this);">Videos</div>
-                <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_events" onclick="mainTabs(this);">Events</div>-->
-                <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_recipe" onclick="mainTabs(this);">Recipe</div>-->
-                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center" id="div_about" onclick="mainTabs(this);">About</div>
-            </div>
             <div class="div-content-holder-flex align-center"><?php
                 //1 month from today only
-                $sql = "SELECT * FROM products WHERE isActive = true";
+                $sql = "SELECT * FROM products WHERE recno = ".$_SESSION['thisproduct_recno'];
                 //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
                 $result = $db -> PDOMiniquery($sql);
                 if($db->PDORowcount($result) > 0)

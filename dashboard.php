@@ -242,21 +242,24 @@ if(count($_GET) > 0)
                     $("#main_div_body_dashboard_right_container").html(result);
                 });
             }
-            function manageProducts(obj){
+            function manageProducts(obj, thisfield){
+                //thisfield -> will accept 'isActive' or 'isDeleted'
                 dashboardMenuslt(obj);
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts', function(result){
+                thisArray = [{"this_thisfield": thisfield}];
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts&thisarray='+JSON.stringify(thisArray), function(result){
                     $("#main_div_body_dashboard_right_container").html(result);
                 }); 
             }
-            function getService(obj, recno){
-                thisArray = [{"this_recno": recno}];
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=GetService&thisarray='+JSON.stringify(thisArray), function(result){
-                    //alert(result);
-                    if($("#div_mgm_search").length){
-                        $("#div_mgm_search").remove();  //We want to remove this select because we are rebuilding it with a new updated slt.
+            function getProduct(obj, recno){
+                //this recno is the recno for the product table
+                thisArray = [{"this_thisrecno": recno}];
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=GetProduct&thisarray='+JSON.stringify(thisArray), function(result){
+                    if(result == "Success"){
+                        window.location.href = "manageproduct.php";
                     }
-                    $("#div_search_containter").html(result);
-                       
+                    else{
+                        alert(result);
+                    }
                 }); 
             }
             function updateService(obj, thisrecno, thisfield){                
@@ -288,12 +291,7 @@ if(count($_GET) > 0)
                 }); 
             }
             function addProducts(){
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=AddService', function(result){
-                    if($("#div_mgm_search").length){
-                        $("#div_mgm_search").remove();  //We want to remove this select because we are rebuilding it with a new updated slt.
-                    }
-                    $("#div_search_containter").html(result);
-                }); 
+                window.location.href = "addproduct.php";
             }
             function submitNewservice(obj){
  
@@ -1222,14 +1220,33 @@ if(count($_GET) > 0)
             $.ajax({
                 url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=DeleteLogo&thisarray="+thisData,
                 type: "POST"
-            }).then(function(result) {
-                // Code here will execute *after* the AJAX request is successful
-                alert(result);
-                addCompany($("#div_managecompany")[0]);
-               
-            }).catch(function(error) {
-                alert(error);
-            });
+                }).then(function(result) {
+                    // Code here will execute *after* the AJAX request is successful
+                    alert(result);
+                    addCompany($("#div_managecompany")[0]);
+
+                }).catch(function(error) {
+                    alert(error);
+                });
+            }
+            function dashboardProducttabs(obj, thisfield){
+                //If we are clicking the selected tab, nothing needs to be done
+                if(!$(obj).hasClass('dashboard-mgm-products-tabs-slted')){
+                    //If we are here, that means what we clicked is not the selected tab so we do something
+                    $(".dashboard-mgm-products-tabs-a").each(function(){
+                        if($(obj).prop('id') == $(this).prop('id')){
+                            $(this).removeClass("dashboard-mgm-products-tabs-notslt").addClass("dashboard-mgm-products-tabs-slted");
+                        }
+                        else{
+                            $(this).removeClass("dashboard-mgm-products-tabs-slted");
+                            $(this).addClass("dashboard-mgm-products-tabs-notslt");
+                        }
+                    });
+                }
+                thisArray = [{"this_thisfield": thisfield}];
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts&thisarray='+JSON.stringify(thisArray), function(result){
+                    $("#main_div_body_dashboard_right_container").html(result);
+                });
             }
         </script>
     </head>
@@ -3675,65 +3692,34 @@ function UpdateService()
     }
     echo $thismsg;
 }
-function GetService()
+function GetProduct()
 {
-    global $pt, $db;
+    global $pt;
     $returnpost = $pt->AnalyzePosts();
-    //QueryMe($thistype=null, $thistable=null, $thisfields=null, $thiswheres=null, $thisorderby=null, $thisgroupby=null, $ordering=null)
-    $thistable = "service";
-    $thisfields = array('All');
-    $thiswhere = array("recno" => $returnpost['recno']);
-    //$thiswhere = array("recno" => $_POST['recno']);
-    $result = $db->PDOQuery($thistable, $thisfields, $thiswhere);
-    if(isset($result)) //Nott sure if isset() will check if some items is returned or at least something in asso array.
-    {
-       foreach($result as $rs)
-       {?>
-            <table id="tbluserdata" class="tbl-dashboard-service">
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Service: <span class="asterisk"> * </span></td>
-                    <td><textarea cols="60" rows="4" class="required" onfocus="getVal(this);" id="txtarea_service" name="txtarea_service" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'title');"><?php echo  $rs['title']; ?></textarea></td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Time: <span class="asterisk"> * </span></td>
-                    <td><input type="text" class="required" id="txttime" name="txttime" value="<?php echo  $rs['time']; ?>" onfocus="getVal(this);" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'time');" required />mins.</td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Price: <span class="asterisk"> * </span></td>
-                    <td><input type="text" class="required" id="txtprice" name="txtprice" value="<?php echo number_format($rs['price'], 2); ?>" onfocus="getVal(this);" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'price');" /></td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Comment: </td>
-                    <td><textarea cols="60" rows="4" id="textarea_comment" name="textarea_comment" onfocus="getVal(this);" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'description');"><?php echo  $rs['description']; ?></textarea></td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Active:</td>
-                    <td><input type="checkbox" class="service-check required" id="chkactive" name="chkactive" value="true" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'isactive');" <?php echo ($rs['isactive'] == true) ? 'checked' : '' ?>/></td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">In-active:</td>
-                    <td><input type="checkbox" class="service-check required" id="chkinactive" name="chkinactive" value="false" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'isactive');" <?php echo ($rs['isactive'] == false && $rs['isdeleted'] == false) ? 'checked' : '' ?>/></td>
-                </tr>
-                <tr>
-                    <td class="tbl-dashboard-sc-lbl">Deleted:</td>
-                    <td><input type="checkbox" class="service-check required" id="chkdeleted" name="chkdeleted" value="<?php echo  ($rs['isdeleted'] == true? 'true' : 'false') ?>" onchange="updateService(this, <?php echo $returnpost['recno'] ?>, 'isdeleted');" <?php echo ($rs['isdeleted'] == true) ? 'checked' : '' ?> /></td>
-                </tr>
-            </table><?php 
-       }
-    }
+    $_SESSION['thisproduct_recno'] = $returnpost['thisrecno'];
+    //file_put_contents("./dodebug/debug.txt", "going to product page\n", FILE_APPEND);
+    echo "Success";
 }
 function ManageProducts()
 {    
     global $pt, $db;
     $temp_disc_limit = "";
     $returnpost = $pt->AnalyzePosts(); 
-    $sql = "SELECT * FROM Products WHERE isActive = true AND isDeleted = false ORDER BY name";
+    $thisfield = $returnpost['thisfield'];
+    $usethisclass_1 = "dashboard-mgm-products-tabs-slted";
+    $usethisclass_2 = "dashboard-mgm-products-tabs-notslt";
+    if($thisfield == 'isDeleted')
+    {
+        $usethisclass_1 = "dashboard-mgm-products-tabs-notslt";
+        $usethisclass_2 = "dashboard-mgm-products-tabs-slted";
+    }
+    $sql = "SELECT * FROM Products WHERE $thisfield = true ORDER BY name";
    
     //file_put_contents("./dodebug/debug.txt", "admin menu sql = $sql \n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);?>
     <div class="dashboard-mgm-products-tabs-container float-left">
-        <div class="dashboard-mgm-products-tabs dashboard-mgm-products-tabs-slted float-left cursor-pointer">Active</div>
-        <div class="dashboard-mgm-products-tabs float-left dashboard-mgm-products-tabs-notslt cursor-pointer">In-Active</div>
+        <div class="dashboard-mgm-products-tabs dashboard-mgm-products-tabs-a <?php echo $usethisclass_1 ?> float-left cursor-pointer" onclick="dashboardProducttabs(this, 'isActive');" id="tab_active">Active</div>
+        <div class="dashboard-mgm-products-tabs dashboard-mgm-products-tabs-a <?php echo $usethisclass_2 ?> float-left cursor-pointer" onclick="dashboardProducttabs(this, 'isDeleted');" id="tab_inactive">In-Active</div>
         <div class="dashboard-mgm-products-tabs float-left"><button class="btn-dashboard-add-products float-right cursor-pointer" title="Add Service" onclick="addProducts();">+</button></div>
     </div>
     <div class="float-left">
@@ -3741,7 +3727,7 @@ function ManageProducts()
             <thead>
                 <tr>
                     <th style="width: 2%;">No.</th>
-                    <th style="width: 10%;">Name</th>
+                    <th style="width: 50%;">Name</th>
                     <th style="width: 2%;">Price</th>
                     <th style="width: 2%;">Att.</th>
                     <th style="width: 2%;">Status</th>
@@ -3758,15 +3744,21 @@ function ManageProducts()
                     foreach($result as $rs)
                     {
                         $isattachment = "<img title='".$rs['attachments']."' src='./images/others/blackattachmentpin.png' />";?>
-                        <tr class="cursor-pointer" onclick="getService(this, <?php echo $rs['recno']?>);">
+                        <tr class="cursor-pointer" onclick="getProduct(this, <?php echo $rs['recno']?>);">
                             <td class="td-num-rows align-right"><?php echo $i ?>.</td>
-                            <td class="align-left" style="padding-left: 10px;"><?php echo strlen($rs['name']) > 25 ? substr($rs['name'], 0, 22)."..." : $rs['name'] ?></td>
+                            <td class="align-left" style="padding-left: 10px;"><?php echo strlen($rs['name']) > 20 ? substr($rs['name'], 0, 20)."..." : $rs['name'] ?></td>
                             <td class="align-right">$<?php echo number_format($rs['price'], 2) ?></td>
                             <td><?php echo empty($rs['attachments']) ? '' : $isattachment ?></td>
                             <td><?php echo ($rs['isActive'] == true ? "$isactive" : "$isdeleted" ) ?></td>
                         </tr><?php
                         $i++;
                     }
+                }
+                else
+                {?>
+                    <tr>
+                        <td class="align-center" colspan="5">There is no data</td>
+                    </tr><?php
                 }?>
             </tbody>
         </table>
@@ -3969,7 +3961,7 @@ function Main()
                 if($_SESSION['isBarber'] == true || $_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
                 {?>   
                     <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageguest" onclick="manageGuests(this);">Manage Guests</div>
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageProducts(this);">Manage Products</div>                                 
+                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Manage Products</div>                                 
                     <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard" id="div_doevent" onclick="doEvent(this);">Create Event</div><?php
                 }?>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
