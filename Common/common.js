@@ -233,3 +233,27 @@ function saveMydata(obj){
 function slicePrestring(thisstr, thisno){
     return(thisstr.slice(thisno));
 }
+function validateText(obj){
+    //1.  Check if it is empty
+    //2.  Check if it is a string
+    if($(obj).val().length > 0){
+        return(true);
+    }
+    else{
+        alert("Please enter a name.  Name can't be empty.");
+        $(obj).focus();
+        $(obj).select();
+        return(false);
+    }
+}
+function validateNum(obj){
+    if($(obj).val().length > 0 && !isNaN($(obj).val())){
+        return(true);
+    }
+    else{
+        alert("Please enter a Price.  Price can't be empty.");
+        $(obj).focus();
+        $(obj).select();
+        return(false);
+    }
+}

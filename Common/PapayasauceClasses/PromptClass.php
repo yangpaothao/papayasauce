@@ -98,6 +98,26 @@ class PromptClass
         }
         return($this);
     }
+    function SltCategory($db)
+    {
+        $this->thisarray = [];
+        $thistable = "category";
+        $thisfields = array("recno", "name");
+        $thiswheres = array("isActive" => true);
+        //->PDOQuery($thistable, $thisfields, $thiswhere);
+        $result = $db->PDOQuery($thistable, $thisfields, $thiswheres);
+        $tempname = "";
+        if(!is_null($result))
+        {
+            foreach($result as $rs)
+            {
+                //file_put_contents("./dodebug/debug.txt", 'recno: '.$rs['recno'].' AND name: '.$tempname, FILE_APPEND);
+                $this->thisarray[$rs['recno']]= $rs['name'];
+                //$this->thisarray is now a multi array
+            }
+        }
+        return($this);
+    }
     function CalculateTwotimes($starttime, $endtime)
     {
         //$startime and $endtime can come in as AM and PM

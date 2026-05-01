@@ -136,11 +136,6 @@ body
 .overflow-y{
     overflow-y: scroll;
 }
-button{
-    /*stay*/
-    /*Make the button round at the corners, more mobile friendly*/
-    border-radius: 15px;
-}
 .no-bubble{
     font-size: 12point;
 }
@@ -569,11 +564,12 @@ li{
     height: 20px;
 }
 button{
+    border-radius: 15px;
     color: white;
     font-weight: bold;
     text-align: center;
     margin-right: 10px;
-    background-color: #1D89D1;
+    background-color: #FF7431;
     width: 100px; 
     height: 40px;
     border: 1px solid;
@@ -2929,6 +2925,7 @@ admin-service-add{
 }
 .span-event-numbered{
     padding-right: 2px;
+    color: white;
 }
 .show-event-option-status-option-selected{
     background-color: #173346;
@@ -3794,6 +3791,39 @@ admin-service-add{
 .dashboard-mgm-products-tabs-notslt{
     background-color: darkslategray;
 }
+.tbl-addproduct{
+    width: 30%; 
+    background-color: #4F8849;
+    margin: 0px auto;
+}
+.tbl-addproduct-td-label{
+    width: 30%;
+    color: white;
+}
+.tbl-addproduct-td-input-container{
+    width: 100%;
+}
+.tbl-addproduct-td-input{
+    width: 98%;
+}
+.tbl-addproduct-td-input-txtarea{
+    width: 98%;
+}
+.index-div-container{
+    width: 90%; 
+    margin: auto; 
+    background-color: #f0f5f5;
+}
+.addproduct-div-container{
+    width: 90%; 
+    margin: auto; 
+    background-color: #f0f5f5;
+}
+.addproduct-div-title{
+    font-weight: bold;
+}
+
+
 
 .swing {
     animation: swing ease-in-out 1s infinite alternate;

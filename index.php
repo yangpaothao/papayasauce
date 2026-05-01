@@ -108,7 +108,7 @@ function Main()
 {
     global $db, $pc;?>
     <div class="main-div">
-        <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
+        <div class="index-div-container">
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>
             </div>
@@ -145,7 +145,5 @@ function Main()
             </div>
             <div class="align-center" style="height: 5%;"><?php echo $pc->Load_Footer();?></div>
         </div>
-        
-
     </div><?php
 }

@@ -291,7 +291,7 @@ if(count($_GET) > 0)
                 }); 
             }
             function addProducts(){
-                window.location.href = "addproduct.php";
+                window.location.href = "addproduct.php"; 
             }
             function submitNewservice(obj){
  
@@ -3722,7 +3722,7 @@ function ManageProducts()
         <div class="dashboard-mgm-products-tabs dashboard-mgm-products-tabs-a <?php echo $usethisclass_2 ?> float-left cursor-pointer" onclick="dashboardProducttabs(this, 'isDeleted');" id="tab_inactive">In-Active</div>
         <div class="dashboard-mgm-products-tabs float-left"><button class="btn-dashboard-add-products float-right cursor-pointer" title="Add Service" onclick="addProducts();">+</button></div>
     </div>
-    <div class="float-left">
+    <div class="float-left" style="width: 60%;">
         <table class="dashboard-mgm-products-tbl" border="1" id="tbl_dashboard_service" name="tbl_dashboard_service">
             <thead>
                 <tr>
@@ -3746,7 +3746,7 @@ function ManageProducts()
                         $isattachment = "<img title='".$rs['attachments']."' src='./images/others/blackattachmentpin.png' />";?>
                         <tr class="cursor-pointer" onclick="getProduct(this, <?php echo $rs['recno']?>);">
                             <td class="td-num-rows align-right"><?php echo $i ?>.</td>
-                            <td class="align-left" style="padding-left: 10px;"><?php echo strlen($rs['name']) > 20 ? substr($rs['name'], 0, 20)."..." : $rs['name'] ?></td>
+                            <td class="align-left" style="padding-left: 10px;" title="<?php echo $rs['name'] ?>"><?php echo strlen($rs['name']) > 30 ? substr($rs['name'], 0, 30)."..." : $rs['name'] ?></td>
                             <td class="align-right">$<?php echo number_format($rs['price'], 2) ?></td>
                             <td><?php echo empty($rs['attachments']) ? '' : $isattachment ?></td>
                             <td><?php echo ($rs['isActive'] == true ? "$isactive" : "$isdeleted" ) ?></td>

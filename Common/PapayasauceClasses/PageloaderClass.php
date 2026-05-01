@@ -18,9 +18,19 @@ class PageloaderClass {
         <meta content=IE=edge, chrome="1" http-equiv="X-UA-Compatible">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <title>Ka's Papaya Sauce</title>
+        <link href="./Multiple-Dates-Picker-for-jQuery-UI/jquery-ui.multidatespicker.css" rel="stylesheet" />
         <link href="./jquery-ui-1.14.0/jquery-ui.theme.css" rel="stylesheet" />
+        <link href="./jquery-ui-themes-1.13.2/themes/base/jquery-ui.css" rel="stylesheet" />
+        <link href="./jquery-ui-themes-1.13.2/themes/base/jquery-ui.min.css" rel="stylesheet" />
+        <link href="./jquery-ui-themes-1.13.2/themes/base/theme.css" rel="stylesheet" />
         <link href="./css/all.css" rel="stylesheet" type="text/css" />
+        <link href="./select2-4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" type="text/css" href="./datatables/datatables.css">
         <script type="text/javascript" src="./jquery4/jquery.js"></script>
+        <script type="text/javascript" src="./jquery-ui-1.14.0/jquery-ui.js"></script>
+        <script type="text/javascript" src="./Multiple-Dates-Picker-for-jQuery-UI/jquery-ui.multidatespicker.js"></script>
+        <script type="text/javascript" charset="utf8" src="./datatables/datatables.js"></script> 
+        <script src="./select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script type="text/javascript" src="./common/common.js"></script><?php
         if($page == 'addccard' || $page == 'paynow')
         {

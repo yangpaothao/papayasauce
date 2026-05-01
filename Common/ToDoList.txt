@@ -1,8 +1,9 @@
 addproduct.php
 
 Need to work on adding product
-    1.  Do we want the ability to add multiple pictures?  Yes
-    2.  That means when they go to the buy page, user should be able to see these attachments.
+    1.  Validate date to make sure it only allows curent to future date select
+    2.  Work on validate the values before submit even though we already valibate just in case,
+    3.  Test submit
 
 
 dashboard.php
