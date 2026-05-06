@@ -40,7 +40,7 @@ class PromptClass
     //PDOQuery($thistable=null, $thisfields=null, $thiswhere=null, $thisorderby=null, $thisgroupby=null, $ordering=null, $ons=null, $distinct=null)
     private $db = null;
     private $thisarray = [];
-    private $isDebug = false;
+    private $isDebug = true;
 
     private function GetDBcon()
     {
@@ -1398,9 +1398,10 @@ class PromptClass
         $i = 0;
         foreach($_POST as $key => $value)
         {   
-            if($value != "" && $key != "cmd" && $key != 'thisrecno')
+            if($key != "cmd")
             {
-                $thisfield = substr($key, 5);
+                $thisfield = substr($key, 4);                   
+                
                 if($thisfield != "files") //We don't want to do anything with attachment, we will handle it below.
                 {
                     if($this->isDebug == true)

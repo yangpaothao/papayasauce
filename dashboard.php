@@ -3743,7 +3743,7 @@ function ManageProducts()
                     $i = 1;
                     foreach($result as $rs)
                     {
-                        $isattachment = "<img title='".$rs['attachments']."' src='./images/others/blackattachmentpin.png' />";?>
+                        $isattachment = "<img title='".$rs['attachment']."' src='./images/others/blackattachmentpin.png' />";?>
                         <tr class="cursor-pointer" onclick="getProduct(this, <?php echo $rs['recno']?>);">
                             <td class="td-num-rows align-right"><?php echo $i ?>.</td>
                             <td class="align-left" style="padding-left: 10px;" title="<?php echo $rs['name'] ?>"><?php echo strlen($rs['name']) > 30 ? substr($rs['name'], 0, 30)."..." : $rs['name'] ?></td>

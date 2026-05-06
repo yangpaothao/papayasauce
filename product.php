@@ -123,16 +123,17 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
-function SelectedProduct()
-{
-    global $pt;
-    $returnpost = $pt->AnalyzePosts();
-    $_SESSION['SELECTED_PRODUCT_RECNO'] = $returnpost['recno'];
-    echo "Success";
-}
 function Main()
 {
-    global $db, $pc;?>
+    global $db, $pc;
+    if(!isset($_SESSION['SELECTED_PRODUCT_RECNO']))
+    {?>
+        <script type="text/javascript">
+            window.location.href = "index.php";
+        </script><?php
+        exit;
+    }
+    ?>
     <div class="main-div">
         <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
             <div class="main-logo float-left">
@@ -141,7 +142,7 @@ function Main()
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
             <div class="div-content-holder-flex align-center"><?php
                 //1 month from today only
-                $sql = "SELECT * FROM products WHERE recno = ".$_SESSION['thisproduct_recno'];
+                $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno = ".$_SESSION['SELECTED_PRODUCT_RECNO']." AND p.isActive = true ORDER BY p.name";
                 //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
                 $result = $db -> PDOMiniquery($sql);
                 if($db->PDORowcount($result) > 0)
@@ -151,14 +152,10 @@ function Main()
                     {?>
                         <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
                             <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?>, <?php echo $rs['name']?></div>
-                            <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['attachments']?>" /></div>
+                            <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
                         </div><?php
                         $i++;
                     }
-                }
-                else
-                {?>
-                    <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
                 }?>
             </div>
             <div class="align-center" style="height: 5%;"><?php echo $pc->Load_Footer();?></div>

@@ -1,9 +1,11 @@
-addproduct.php
+product.php
 
-Need to work on adding product
-    1.  Validate date to make sure it only allows curent to future date select
-    2.  Work on validate the values before submit even though we already valibate just in case,
-    3.  Test submit
+do the layout of hte item
+
+manageproduct.php
+will need to wokr on eanbling edit of a product
+will include allowing user to select the main img for the index page or he firest image to display for a product
+the rest will have to be used fro the product page where user can select mini image to view in the image div
 
 
 dashboard.php

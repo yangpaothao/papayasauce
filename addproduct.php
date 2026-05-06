@@ -18,6 +18,7 @@ else
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
+
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
     $_REQUEST['cmd']();
@@ -90,78 +91,74 @@ if(count($_GET) > 0)
                 }
                 event.preventDefault();
             }
-            function submitProduct(){
-                isFalse = false;
-                isAttachment = false;
-                if(validateText($("#txt")))
-                
-                if($("#txt_name").val() == "Select"){
-                    alert("Please select an event type.");
-                    isFalse = true;
+            function validateForm(){
+                if($("#txt_name").val() === ""){
+                    alert("Product name can't be emptied.");
+                    $("#txt_name").focus();
+                    return(false);
                 }
-                if($("#this_special_event").val() == ""){
-                    alert("Event can't be emptied.  Please type in an event name.");
-                    $("#txt_event").focus();
-                    isFalse = true;
+                if($("#sltcategory").val() === "Select"){
+                    alert("Please select a category.");
+                    $("#sltcategory").focus();
+                    return(false);
                 }
-                if($("#this_event_restriction").val() == "Lmited"){
-                    //We only check the dates if there is a date restriction on this event where we will have 2 dates to check and work with.
-                    if($("#this_date").val() == ""){
-                        alert("Event start date can't be emptied.  Please type in an start event date.");
-                        $("#this_date").focus();
-                        isFalse = true;
-                    }
-                    if($("#this_expire_date").val() == ""){
-                        alert("Event expire date can't be emptied.  Please type in an expire event date.");
-                        $("#this_expire_date").focus();
-                        isFalse = true;
-                    }
+                if($("#txt_description").val() === ""){
+                    alert("Description can't be emtpied.");
+                    $("#txt_description").focus();
+                    return(false);
                 }
-                if($("#chkdiscount").is(":checked")){
+                if($("#txt_price").val() === ""){
                     //If the Discount box is checked, we have to check the other variables to make sure they are appropriate
-                    if($("#sltisCombo").val() == "Select"){
-                        alert("Please select 'Yes' or 'No' for Stackable.");
-                        isFalse = true;
-                    }
-                    if($("#txtdiscount").val() == ""){
-                        alert("Please enter a value for Value.");
-                        isFalse = true;
-                    }
-                    if($("#sltisAuto").val() == "Select"){
-                        alert("Please select 'Yes' or 'No' for Auto Apply.");
-                        isFalse = true;
-                    }
-                }                
-                if($("#txtdescription").val() == ""){
-                    alert("Description can't be emptied.");
-                    isFalse = true;
-                }              
-                if(isFalse == false){
-                    form_data = new FormData($('#frmcreateevent')[0]);
+                    alert("Please entered a price for this product.");
+                    $("#txt_price").focus();
+                    return(false);
+                }   
+                if(isNaN($("#txt_price").val())){
+                    alert("The price value entered is not a number.");
+                    $("#txt_price").focus();
+                    return(false);
+                }
+                if($("#txt_date").val() === ""){
+                    alert("Please entered a date.");
+                    $("#txt_date").focus()
+                    return(false);
+                }  
+                var hasAttachment = $('input[type="file"]').filter(function() {
+                    return this.value !== "";
+                }).length > 0;
+                if (!hasAttachment) {
+                    alert("Please select at least one file.");
+                    return(false);
+                }
+                return(true);
+            }
+            function submitProduct(){  
+                if(validateForm()){
+                    form_data = new FormData($('#frmproduct')[0]);
+                    event.preventDefault();
                     $.ajax({
                         type: 'POST',
-                        url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitEvent',
+                        url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitProduct',
                         data: form_data,
                         processData: false,
                         contentType: false,
                         success: function(result) {
-                            alert(result);
+                            //alert(result);
                             if(result != "Success"){
                                 alert(result);
                                 preventDefault();
                                 return(false);
                             }
                             else{
-                                alert("Event added successfully.");
-                                doEvent($("#div_customer")[0]);
+                                alert("Product added successfully.");
+                                window.location.href = "addproduct.php";
                             }
-                            event.preventDefault();
                         }
                     });
                 }
-                event.preventDefault();
-            
-                
+                else{
+                    event.preventDefault();
+                }
             }
         </script>
     </head>
@@ -172,143 +169,224 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
-function SubmitEvent()
+function SubmitProduct()
 {
    global $db, $pt;
-   //echo var_dump($_POST);
-    //file_put_contents("./dodebug/debug.txt", "admin company here: ".$_FILES['thisfile']["name"]." \n", FILE_APPEND);
-    $isDiscounts = false;
-    $thistable = "events";
-    //file_put_contents("./dodebug/debug.txt", "admin company = ".var_dump($_POST['sltevent_type'])." \n", FILE_APPEND);
-    //file_put_contents("./dodebug/debug.txt", "dashboard special_event = ".$_POST['txtspecial_event']." \n", FILE_APPEND);
-    //$thisdata = $pt ->PostIt($_POST); //PostIt is a function that will return an associative array with non-empty values and substring first 3 chars
-    $thisdata = [];
-    
-    $returnpost = $pt->AnalyzePostsubmit(); //doesn't work for some reason.
-    
-    /*
-    event_type == Promotional 
-    special_event == New Customer 
-    event_restriction == Continuous 
-    chkdiscount == on 
-    isCombo == true/false 
-    discount == 5 
-    isDollar == true/false  
-    isAuto == true/false 
-    description == test */
-    $thisdata['event_type'] = $returnpost['event_type'];
-    $thisdata['special_event'] = $returnpost['special_event'];
-    $thisdata['event_restriction'] = $returnpost['event_restriction'];
-    if($returnpost['event_restriction'] == "Repeats" || $returnpost['event_restriction'] == "Limited")
+    $returnpost = $pt->AnalyzePostsubmit(); //doesn't work for some reason.  
+    if(date('Y-m-d', strtotime($returnpost['date'])) >= date('Y-m-d'))
     {
-        $thisdata['date_start'] = $returnpost['date_start'];
-        $thisdata['end_date'] = $returnpost['end_date'];
-    }
-    if($returnpost['chkdiscount'] == true)
-    {
-        
-        $thisdata['isCombo'] = ($returnpost['isCombo'] == 'true' ? true : false);
-        $thisdata['discount'] = $returnpost['discount'];
-        $thisdata['isDollar'] = ($returnpost['isDollar'] == 'true' ? true : false);
-        $thisdata['isAuto'] = ($returnpost['isAuto'] == 'true' ? true: false);
-    }
-    $thisdata['description'] = $returnpost['description'];
-    $thisdata['creator'] = $_SESSION['user_recno'];
-    $thisrecno = $db ->PDOInsert($thistable, $thisdata, $_SESSION['user_recno']);
-    
-    if(isset($thisrecno))
-    {
-        if(count(array_filter(($_FILES["files"]["name"]))))
+        //We want to check if the name is unique
+        $sqlname = "SELECT * FROM products WHERE name = '".$returnpost['name']."'";
+        $resultname = $db->PDOMiniquery($sqlname);
+        if($db->PDORowcount($resultname) == 0)
         {
-            $thisfile = $_FILES["files"];
-            $thisfield = "attachment";
-            $countfiles = count($thisfile["name"]); 
-            //file_put_contents("./dodebug/debug.txt", "admin company = here \n", FILE_APPEND);
-            //Assuming we are here, we want to now handle the upload.
-            //First we want to check if './images/others/$_SESSION['media_dir']/logo/ exist, if not, we create it before we move file into it.
-            $thisdir = "./images/others/".$_SESSION['media_dir']."/event";
-            if (!file_exists($thisdir)) {
-                mkdir("./images/others/".$_SESSION['media_dir']."/event", 0777, true);
-            }
-            //Once we confirmed that it is there after, now we want to move the file or files there and also update the name of the file to the table.
-            $filepath = $thisdir;
-            //$msg = $pt ->UploadFile($thisdir, $_FILES["files"], $thistable, "attachment", $thisrecno, NULL, 'Event');
-
-            $strattachments = "";  
-            $typeisgood = "";
-            for($i=0;$i<$countfiles;$i++)
+            $isDiscounts = false;
+            $thistable = "products";
+            //file_put_contents("./dodebug/debug.txt", "admin company = ".var_dump($_POST['sltevent_type'])." \n", FILE_APPEND);
+            $thisdata = [];
+            $thisdata['foreign_users_recno'] = $_SESSION['user_recno']; //Whoever is logged in will be the user and it's recno
+            $thisdata['foreign_cat_recno'] = $returnpost['category']; //Whatever the user select as the category
+            $thisdata['name'] = $returnpost['name'];
+            $thisdata['description'] = $returnpost['description'];
+            $thisdata['price'] = number_format($returnpost['price'], 2);
+            $thisdata['date'] = date('Y-d-m', strtotime($returnpost['date']));
+            $thisrecno = $db ->PDOInsert($thistable, $thisdata, $_SESSION['user_recno']);
+            if(isset($thisrecno))
             {
-                $filename = $thisfile['name'][$i];
-                //file_put_contents("./dodebug/debug.txt", "this filename ".$filename, FILE_APPEND);
-                $pdfMimearray = array('application/pdf', 'application/doc', 'application/docx');
-                $thismime = mime_content_type($thisfile['tmp_name'][$i]);
-                //file_put_contents("./dodebug/debug.txt", "this mine ".$thismime, FILE_APPEND);
-                //Now that we have the $filename, we can check for the file type and size and all the goodies.
-                $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
-                $detectedType = exif_imagetype($thisfile['tmp_name'][$i]);
-
-                //For from = Event and company_info, we can only accept PNG, JPEG, GIF, because we will display this images on the front page
-                //and it requires images only.
-                if(in_array($detectedType, $allowedTypes))
+                if(count(array_filter(($_FILES["files"]["name"]))))
                 {
-                    //We only get here if the file is PNG, JPEG, GIF, OR PDF
-                    //IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF
-                    switch($detectedType)
+                    $thisfile = $_FILES["files"];
+                    $thisfield = "attachment";
+                    $countfiles = count($thisfile["name"]); 
+                    //file_put_contents("./dodebug/debug.txt", "admin company = here \n", FILE_APPEND);
+                    //Assuming we are here, we want to now handle the upload.
+                    //First we want to check if './images/others/$_SESSION['media_dir']/logo/ exist, if not, we create it before we move file into it.
+                    $sqlca = "SELECT * FROM category Where recno = ".$returnpost['category'];
+                    $resultca = $db->PDOMiniquery($sqlca);
+                    foreach($resultca as $rsca)
                     {
-                        case IMAGETYPE_PNG:
-                            break;
-                        case IMAGETYPE_JPEG:
-                            break;
-                        case IMAGETYPE_GIF:
-                            break;
-                        default:
-                            break;
+                        $thiscategory = $rsca['name'];
                     }
-                   if($strattachments == "")
+                    $thisdir = "./images/others/products/$thiscategory/";
+                    if (!file_exists($thisdir)) {
+                        mkdir("./images/others/products/$thiscategory", 0777, true);
+                    }
+                    $thisprodir = "./images/others/products/$thiscategory/$thisrecno";
+                    if (!file_exists($thisprodir)) {
+                        mkdir("./images/others/products/$thiscategory/$thisrecno", 0777, true);
+                    }
+                    $thisproimgdir = "./images/others/products/$thiscategory/$thisrecno/large";
+                    if (!file_exists($thisproimgdir)) {
+                        //if we are here, that must mean this is the first time we are adding this product so we might as well just create the
+                        //whole sub categories
+                        mkdir("./images/others/products/$thiscategory/$thisrecno/large", 0777, true);  //will resize to 60 x ratio
+                        mkdir("./images/others/products/$thiscategory/$thisrecno/mini", 0777, true);  //220 x ratio
+                        mkdir("./images/others/products/$thiscategory/$thisrecno/regular", 0777, true); //Will resize to 1400 x ratio
+                    }
+                    $strattachments = "";  
+                    $typeisgood = "";
+                    for($i=0;$i<$countfiles;$i++)
                     {
-                        $strattachments = $filename;
+                        $thistempdir = $_FILES["files"]['tmp_name'][$i];
+                        //$filename = strtolower($_FILES["files"]['name'][$i]);
+                        $filename = $thisfile['name'][$i];
+                        $tempfilename = $filename;
+                        //file_put_contents("./dodebug/debug.txt", "this filename ".$filename, FILE_APPEND);
+                        $pdfMimearray = array('application/pdf', 'application/doc', 'application/docx');
+                        
+                        $finfo = new finfo(FILEINFO_MIME_TYPE);
+                        $thismime = $finfo->file($thisfile['tmp_name'][$i]);
+                        
+                        
+                        //$thismime = mime_content_type($thisfile['tmp_name'][$i]);
+                        //$thismime = mime_content_type($_FILES["files"]['tmp_name'][$i]);
+                        //file_put_contents("./dodebug/debug.txt", "this mine ".$thismime, FILE_APPEND);
+                        //Now that we have the $filename, we can check for the file type and size and all the goodies.
+                        $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+                        $detectedType = exif_imagetype($thisfile['tmp_name'][$i]);
+
+                        //For from = Event and company_info, we can only accept PNG, JPEG, GIF, because we will display this images on the front page
+                        //and it requires images only.
+                        if(in_array($detectedType, $allowedTypes))
+                        {
+                            $image_info = getimagesize($thistempdir);
+                            if ($image_info !== false) {
+                                $thiswidth = $image_info[0];
+                                $thisheight = $image_info[1];
+                                //$thistype = $image_info[2]; // Numeric constant for image type (e.g., IMAGETYPE_JPEG)
+                                //$thisattr = $image_info[3]; // String containing width="X" height="Y" for HTML img tag
+                                list($thiswidth, $thisheight) = getimagesize($thistempdir);
+                                // Calculate new height to maintain aspect ratio
+
+                                //file_put_contents("./dodebug/debug.txt", "width?  $thiswidth \n", FILE_APPEND);
+                                //mini -  80(h) x 120(w)
+                                //regular - 220 x 360
+                                //large - 800 x 1100 
+
+                                //$new_height = intval($new_width / $aspect_ratio);
+                                //$new_height = 240;
+                                //file_put_contents("./dodebug/debug.txt", "new width? $new_width && new height? $new_height \n", FILE_APPEND);
+                                switch($detectedType)
+                                {
+                                    case IMAGETYPE_PNG:
+                                        $source_image = imagecreatefrompng($thistempdir);
+                                        break;
+                                    case IMAGETYPE_JPEG:
+                                        $source_image = imagecreatefromjpeg($thistempdir);
+
+                                        break;
+                                    case IMAGETYPE_GIF:
+                                        $source_image = imagecreatefromgif($thistempdir);
+                                        break;
+                                    default:
+                                        $source_image = imagecreatefrompng($thistempdir);
+                                        break;
+                                }
+                                $new_width = 1200;                            
+                                if($thiswidth >= 120)
+                                {
+                                    $new_width = 80;  
+                                    $new_height = 100;
+                                }
+                                else
+                                {
+                                    $new_width = $thiswidth;
+                                    $new_height = $thisheight;
+                                }
+                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/mini/";
+                                $filename = "s_$tempfilename";
+                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                if($thiswidth >= 220)
+                                {
+                                    $new_width = 220;
+                                    $new_height = 400;
+                                }
+                                else
+                                {
+                                    $new_width = $thiswidth;
+                                    $new_height = $thisheight;
+                                }
+                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/large/";
+                                $filename = "l_$tempfilename";
+                                $thislargefilename = "l_$tempfilename";
+                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                if($thiswidth >= 1200)
+                                {
+                                    $new_width = 1200;
+                                    $aspect_ratio = $new_width / $thisheight;
+                                    $new_height = intval($new_width / $aspect_ratio);
+                                }
+                                else
+                                {
+                                    $new_width = $thiswidth;
+                                    $new_height = $thisheight;
+                                }
+                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/regular/";
+                                $filename = "r_$tempfilename";
+                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                //file_put_contents("./dodebug/debug.txt", "Success \n", FILE_APPEND);
+                                
+                                $thistable = "products";
+                                $thisdata = ['attachment' => $thislargefilename];
+                                $thiswhere = ['recno' => $thisrecno];
+                                $db->PDOUpdate($thistable, $thisdata, $thiswhere, $_SESSION['user_recno']);
+                                    
+                                echo "Success";
+                            } 
+                            else 
+                            {
+                                $typeisgood = "Bad size.";
+                            }
+                        }
+                        else
+                        {
+                            $typeisgood = "BAD";
+                        }
                     }
-                    else
-                    {
-                        $strattachments .= ",$filename";
-                    }
-                    move_uploaded_file($thisfile['tmp_name'][$i],"$filepath/$filename");
                 }
                 else
                 {
-                    $typeisgood = "BAD";
-                }
-
-            }
-            if($typeisgood != "BAD")
-            {
-                $thisdata = array($thisfield => $strattachments);
-                $thiswheres = array('recno' => $thisrecno);
-                $result = $db->PDOUPDATE($thistable, $thisdata, $thiswheres, $thisrecno);
-                //file_put_contents("../dodebug/debug.txt", "not here 1", FILE_APPEND);
-                if($result)
-                {
-                    echo 'Success';
-                }
-                else
-                {
-                    echo 'Failed';
+                    echo "Success";
                 }
             }
             else
             {
-                echo "Bad file type.  File type must be PNG, JPEG, GIF, and OR PDF.";
-            }
+                echo "Failed to insert";
+            } 
         }
         else
         {
-            echo "Success";
+            echo "Product name already exist.";
         }
     }
     else
     {
-        echo "Failed to insert";
+        //file_put_contents("./dodebug/debug.txt", "Date can't be less than today?  \n", FILE_APPEND);
+        echo "Date can't be less than today.";
     } 
+}
+function ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight)
+{
+    $destination_image = imagecreatetruecolor($new_width, $new_height);
+    imagecopyresampled($destination_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, $thiswidth, $thisheight);
+
+    // Save the resized image (with quality 90)
+    switch($detectedType)
+    {
+        case IMAGETYPE_PNG:
+            imagepng($destination_image, "$thisdir/$filename", 9);
+            break;
+        case IMAGETYPE_JPEG:
+            imagejpeg($destination_image, "$thisdir/$filename", 90);
+
+            break;
+        case IMAGETYPE_GIF:
+            imagegif($destination_image, "$thisdir/$filename", 90);
+            break;
+        default:
+            imagepng($destination_image, "$thisdir/$filename", 90);
+            break;
+    }
 }
 function RemoveAttachment()
 {
@@ -382,33 +460,35 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
-            <form name="frmcompany" id="frmcompany" method="post" enctype="multipart/form-data">
+            <form name="frmproduct" id="frmproduct" method="post" enctype="multipart/form-data">
                 <div class="div-content-holder-flex">
-                    <table class="tbl-addproduct" id="tbl-addproduct" style="margin-top: 20px;">
+                    <table class="tbl-addproduct" id="tbl-addproduct" style="margin-top: 20px; margin-bottom: 20px;">
                         <tr>
                             <td class="align-right tbl-addproduct-td-label" colspan="2"><div class="align-center addproduct-div-title font-size-2em">Add A New Product</div></td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Name:<span class="asterisk"> * </span></td>
-                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text' name="txt_name" id="txt_name" onblur="validateText(this);" value="" autofocus></td>
+                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text" name="txt_name" id="txt_name" value="" autofocus></td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Category:<span class="asterisk"> * </span></td>
                             <td class="tbl-addproduct-td-input-container align-left"><?php
-                                    $pt->SltCategory($db)->GetSelect("sltcategory", '', true, false, false, true, false, true);?>
+                                $pt->SltCategory($db)->GetSelect("slt_category", '', true, false, false, true, false, true);?>
                             </td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Description:<span class="asterisk"> * </span></td>
-                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input-txtarea" type="textarea" name="txt_description" id="txt_description" onblur="validateText(this);"  rows="5"></td>
+                            <td class="tbl-addproduct-td-input-container align-left">
+                                <textarea class="tbl-addproduct-td-input-txtarea" name="txt_description" id="txt_description" style="min-height: 80px; resize: none;"></textarea>
+                            </td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Price:<span class="asterisk"> * </span></td>
-                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text' name="txt_name" id="txt_name" onblur="validateNum(this);"  value=""></td>
+                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text" name="txt_price" id="txt_price"  value=""></td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Active Date:<span class="asterisk"> * </span></td>
-                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text' name="txt_date" id="txt_date" value="" onfocus="getJDate(this, false);"  placeholder="dd/mm/yyyy ex: 01/22/2022"></td>
+                            <td class="tbl-addproduct-td-input-container align-left"><input class="tbl-addproduct-td-input" type="text" name="txt_date" id="txt_date" value="" onfocus="getJDate(this, false);"  placeholder="dd/mm/yyyy ex: 01/22/2022"></td>
                         </tr>
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Attachments:<button class="add-attachment" id="btn_add_attachment" onclick="addAttachment();" title='Click to add attachment'>+</button><span class="asterisk"> * </span></td>

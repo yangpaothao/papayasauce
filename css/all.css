@@ -489,6 +489,7 @@ li{
     color: black;
     width: 100%;
     min-height: 500px;
+    height: 400px;
     align-items: flex-start;
     /* Hide scrollbar for IE and older Edge */
     -ms-overflow-style: none;
@@ -500,6 +501,7 @@ li{
     padding: 20px; 
     width: 13%; 
     min-width: 240px;
+
 }
 .div-content-holder-flex-data-container{
    
@@ -2906,7 +2908,8 @@ admin-service-add{
     background-color: #f2f2f2;
 }
 .div-front-event{
-    height: 65%;
+    height: 340px;
+    width: 240px;
 }
 .add-attachment{
     width: 20px;
