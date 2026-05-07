@@ -585,144 +585,13 @@ function Main()
     $tempsandpropost = "";
     $_SESSION['isLive'] = false;
     $_SESSION['realsandpro'] = "Sandbox";?>
-    <div class="main-div-paynow">
+    <div class="main-div">
         <div name="div_loader" id="div_loader" class="payment-loader-container display-none">
             <img class="payment-loader-img" src="/images/others/loading.gif" />
         </div>
-        <?php
-        $load_headers::Load_Header_Logo(false);
-        
-        //The reason why we want to pull the actual barber's recno is because, an admin or another person could be viewing this so we want
-        //to make sure we get the actual barber's information when we want to do payment.
-        $sqllive = "SELECT sd.isLive, sd.uf_recno as barber_recno FROM schedule_dates sd INNER JOIN users u ON u.recno = sd.uf_recno ";
-        $sqllive .= "WHERE sd.recno = ".$_SESSION['thisrecno']." AND u.isLive = true";
-        $resultlive = $db->PDOMiniquery($sqllive);
-        if($db->PDORowcount($resultlive) > 0)
-        {
-            foreach($resultlive as $rslive)
-            {
-                $tempsandpropost = "_pro";
-                $_SESSION['isLive'] = true;
-                $_SESSION['realsandpro'] = "Production";
-            }
-        }        
-        $sql = "SELECT sd.*, u.square_ev_location_id$tempsandpropost, u.square_application_id$tempsandpropost FROM schedule_dates sd INNER JOIN users u ON u.recno = sd.uf_recno ";
-        $sql .= "WHERE sd.recno = ".$_SESSION['thisrecno']." AND sd.payment_id IS NULL";
-        //file_put_contents("./dodebug/debug.txt", "what is thisrecno: $sql \n", FILE_APPEND);
-        $result = $db->PDOMiniquery($sql);?>
-        <br/><br/><br/><?php
-        if($db->PDORowcount($result) > 0)
-        {
-            foreach($result as $rs)
-            {
-                $thisguest = $rs['guest'];
-                $thistip = $rs['tip'];
-                $thisdeposit = $rs['deposit'];
-                $thisbalance = $rs['balance'];
-                $thiscost = $rs['cost']; //before tax and promotions
-                $totaltip = $rs['totaltip']; //!!!!!!!!!!!!!!!!! we need to calculate the total after tip
-                $thistotal = $rs['total'];
-                $thisbigtotal = $rs['bigtotal'];
-                $promo = $rs['pr_recno'];
-                $thispr_recno = $rs['pr_recno'];
-                $promostr = "";
-                $promrecnostr = "";
-                $isdeposit = $rs['isDeposit'];
-                $thisdiscount = $rs['discount'];
-                $thisdepost = $rs['deposit'];
-                $thisevlocationid = $rs["square_ev_location_id$tempsandpropost"];
-                $thisapplicationid = $rs["square_application_id$tempsandpropost"];
-                if(!is_null($promo))
-                {
-                    $realpromo = $rs['discount'];
-                    $sqlpromo = "SELECT * FROM events WHERE recno IN($promo) ";
-                    if($_SESSION['thisfrom'] == "Deposit" || $_SESSION['thisfrom'] == "Prepay" || ($_SESSION['thisfrom'] == "Dashpay" && ($rs['date']) >= date('Y-m-d')))
-                    {
-                        //file_put_contents("./dodebug/debug.txt", "what is thisfrom in paynow ".$_SESSION['thisfrom']." && ".$rs['date']." >= ".date('Y-m-d')."\n", FILE_APPEND);
-                        //If the customer is paying before they come in, we will allow the Prepay discount if appropriate.
-                        //We should not have added Prepay before this point.
-                        $sqlpromo .= "OR special_event='Prepay' ";
-                    }
-                    $sqlpromo .= "AND isActive = true";
-                    //file_put_contents("./dodebug/debug.txt", "sqlpromo = $sqlpromo \n", FILE_APPEND);
-                    $resultpromo = $db->PDOMiniquery($sqlpromo);
-                    if($db->PDORowcount($resultpromo) > 0)
-                    {
-                        foreach($resultpromo as $rspromo)
-                        {
-                            if($rspromo['special_event'] == "Prepay")
-                            {
-                                $pc->SetThisdiscount($db, $rspromo['recno'], $thiscost);
-                                $thispromo = $pc->GetThisdiscount();
-                                if($promostr == "")
-                                {
-                                    $promostr = $rspromo['special_event'];
-                                    $promrecnostr = $rspromo['recno'];
-                                }
-                                else
-                                {
-                                    $promostr .= ", ".$rspromo['special_event'];
-                                    $promrecnostr .= ",".$rspromo['recno'];
-                                }
-                            }
-                            else
-                            {
-                                if($promostr == "")
-                                {
-                                    $promostr = $rspromo['special_event'];
-                                    $promrecnostr = $rspromo['recno'];
-                                }
-                                else
-                                {
-                                    $promostr .= ", ".$rspromo['special_event'];
-                                    $promrecnostr .= ",".$rspromo['recno'];
-                                }
-                            }
-                        }
-                    }
-                }
-                //file_put_contents("./dodebug/debug.txt", "promostr = $promostr \n", FILE_APPEND);
-                //file_put_contents("./dodebug/debug.txt", "promrecnostr = $promrecnostr \n", FILE_APPEND);
-                $thisrecno = $rs['recno']; //recno from schedule_dates table
-                $thisservices = $rs['sr_recno'];   
-                
-                $thistotaltime = $rs['total_time'];
-                $thisdate = date('m/d/Y', strtotime($rs['date']));
-                switch(date('g:i', strtotime($rs['slot'])))
-                {
-                    case "10:00":
-                    case "10:30":
-                    case "11:00":
-                    case "11:30":
-                        $thistime = date('g:i', strtotime($rs['slot']))." AM";
-                        break;
-                    default:
-                        $thistime = date('g:i', strtotime($rs['slot']))." PM";
-                        break;
-                }
-            }?>
-            <script type="text/javascript">
-                $("body").data("square_ev_location_id", "<?php echo $thisevlocationid ?>");
-                $("body").data("square_application_id", "<?php echo $thisapplicationid ?>");
-            </script>
-            <div class="pre-pay-div-payment-container" id="div_payment_container">
-                <div class="prepay-div-header-main-container-title align-center">Welcome to the payment portal</div><?php
-                if($_SESSION['thisfrom'] == 'Prepay' && $thiscost < $_SESSION['disc_limit'])
-                {?>
-                    <div class="prepay-div-header-main-container align-center">Please Note: For any discount to apply, the service must be at least $30 dollars or more.  We are sorry for this inconvenient.</div><?php
-                }
-                else if($_SESSION['thisfrom'] == 'Prepay' && $thiscost >= $_SESSION['disc_limit'])
-                {
-                    $sqlprepay = "SELECT discount, isDollar FROM events WHERE special_event = 'Prepay' AND isActive = true AND isCombo = true";
-                    $resultprepay = $db->PDOMiniquery($sqlprepay);
-                    if($db->PDORowcount($resultprepay) > 0)
-                    {
-                        foreach($resultprepay as $rsprepay)
-                        {?>
-                            <div class="prepay-div-header-main-container align-center">Please Note: Pay Now and save <?php echo ($rsprepay['isDollar'] == true ? "$".$rsprepay['discount'] :  $rsprepay['discount'].'%')?></div><?php
-                        }
-                    }
-                }?>
+        <div class="main-logo float-left">
+            <?php echo $pc->LoadLogo($db);?>
+        </div>
                 <div class="prepay-div-payment-table-holder" id="div_payment_holder_data">
                     <div class="align-center" style="color: red; background-color: black; min-width: 650px;">We do not keep any credit card information on file!</div>
                     <div class="div-time-holder" id="div_totalstime" style="width: 100%;">
@@ -890,11 +759,7 @@ function Main()
                                 <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
                                 </div>
                                 <div class="align-center" style="width: 100%;">
-                                    <button type="button" name="btn_card" id="btn_card">Pay</button><?php
-                                    if($isdeposit == true && $_SESSION['thisfrom'] != 'Daily')
-                                    {?>
-                                        <button class="btn-disabled" type="button" name="btn_carddeposit" id="btn_carddeposit" disabled>Pay Deposit</button><?php
-                                    }?>
+                                    <button type="button" name="btn_card" id="btn_card">Pay</button>
                                 </div>
                                 <input type="hidden" id="token" name="token">
                                 <input type="hidden" id="depofull" name="depofull">

@@ -112,7 +112,7 @@ function Main()
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>
             </div>
-            <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
+            <div class="float-left div-loginpanel" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
             <div class="div-main-tabs-container">
                 <div class="float-left div-main-tabs div-tab-slted cursor-pointer align-center" id="div_main" onclick="mainTabs(this);">Main</div>
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_products" onclick="mainTabs(this);">Products</div>-->
@@ -143,7 +143,7 @@ function Main()
                     <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
                 }?>
             </div>
-            <div class="align-center" style="height: 5%;"><?php echo $pc->Load_Footer();?></div>
+            <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
         </div>
     </div><?php
 }

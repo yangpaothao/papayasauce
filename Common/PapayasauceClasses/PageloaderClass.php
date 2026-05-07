@@ -67,6 +67,9 @@ class PageloaderClass {
                     alert(result);
                 }
             }
+            function goTocart(){
+                window.location.href = "cart.php";
+            }
             function doProfile()
             {
                 window.location.href = "profile.php";
@@ -92,6 +95,9 @@ class PageloaderClass {
             }
             function doRegister(){
                 window.location.href = "registerguest.php";
+            }
+            function showLoginmenu(){
+                $("#responsive_ul_child").toggle();
             }
         </script><?php
     }
@@ -122,16 +128,17 @@ class PageloaderClass {
     }
     function LoginPanel()
     {?>
-            <nav class="navmenu" id='navlist'>
+        <div class='for-pc' style="min-width: 100px;">
+            <nav class="navmenu float-left" id='navlist' style='width: 50%;'>
                 <ul class="ul-parent">
                     <li class="li-menu"><?php
                         if(isset($_SESSION['fullname']))
                         {?>
-                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="<?php echo $_SESSION['fullname'] ?>" style="width: 50%; height: auto; min-width: 20px;" src="../../images/others/ripedpapaya.png"/><?php                        
+                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing img-loginpnl" title="<?php echo $_SESSION['fullname'] ?>" src="../../images/others/ripedpapaya.png"/><?php                        
                         }
                         else
                         {?>
-                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="HOME!" style="width: 50%; height: auto; min-width: 20px;" src="../../images/others/greenpapaya.png"/><?php
+                            <img onclick="goTohomepage();" class="cursor-pointer main-top-icon-menu swing" title="HOME!" src="../../images/others/greenpapaya.png"/><?php
                         }?>
                         <ul class="ul-child"><?php
                             if(isset($_SESSION['fullname']))
@@ -153,13 +160,56 @@ class PageloaderClass {
                     </li>
                 </ul>
             </nav>
-
+            <div style="position: relative;">
+                <div id="pc_cart_tracker" class="pc-cart-tracker"><?php echo !isset($_SESSION['TEMP_CART']) ? '0' : $_SESSION['TEMP_CART'] ?></div>
+                <img id="pc_img_cart" onclick="goTocart();" class="cursor-pointer main-top-icon-menu float-right pc-img-cart" title="Go to cart!" src="../../images/others/cart.png"/>
+            </div>
+        </div>
         <?php
     }
     static function Load_Footer()
     {?>
+        <div class="for-responsive align-center responsive-div-load-footer-container">
+            <div class="responsive-div-load-footer-data-container">
+                <nav class="responsive-navmenu float-left" id='navlist'>
+                    <ul class="responsive-ul-parent">
+                        <li class="responsive-li-menu"><?php
+                            if(isset($_SESSION['fullname']))
+                            {?>
+                                <img onclick="showLoginmenu();" class="cursor-pointer responsive-main-top-icon-menu swing" title="<?php echo $_SESSION['fullname'] ?>" src="../../images/others/ripedpapaya.png"/><?php                        
+                            }
+                            else
+                            {?>
+                                <img onclick="showLoginmenu();" class="cursor-pointer responsive-main-top-icon-menu swing" title="HOME!" src="../../images/others/greenpapaya.png"/><?php
+                            }?>
+                            <ul class="responsive-ul-child" id="responsive_ul_child" onmouseout="showLoginmenu();"><?php
+                                if(isset($_SESSION['fullname']))
+                                {?>                                    
+                                    <li onclick="doProfile();" class="li-menu-sub">Profile</li><?php
+                                    if($_SESSION['isAdmin'] == true)
+                                    {?>
+                                        <li onclick="doRegistration();" class="li-menu-sub">Add An Employee</li><?php
+                                    }?>
+                                    <li onclick="dashBoard();" class="li-menu-sub">Dashboard</li>
+                                    <li onclick="logout();" class="li-menu-sub">Log Out</li><?php
+                                }
+                                else
+                                {?>
+                                    <li onclick="doLogin();" class="responsive-li-menu-sub">Login</li> 
+                                <?php
+                                }?>
+                            </ul>
+                        </li>
+                    </ul>
+                </nav>
+                <div style="position: relative;">
+                    <div id="responsive_cart_tracker" class="font-size-1p5em div-cart-tracker-item"><?php echo !isset($_SESSION['TEMP_CART']) ? '0' : $_SESSION['TEMP_CART'] ?></div>
+                    <img id="responsive_img_cart" onclick="goTocart();" class="cursor-pointer float-right div-cart-img" title="Go to cart!" src="../../images/others/cart.png"/>
+                </div>
+            </div>
+        </div>
         <div class="main-div-footer">
-            &copy;&nbsp;2024, YPT Web Development, LLC.
+            <div class="for-responsive-float-left white-space-no-wrap main-div-footer-data">&copy;&nbsp;2024, YPT Web Development, LLC.</div>
         </div><?php
     }
     static function GET_THIS_SERVER()

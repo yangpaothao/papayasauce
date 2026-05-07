@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');
 $_SESSION['predir'] = "";
 $_SESSION['OPERATING_STATE'] = "OK";
