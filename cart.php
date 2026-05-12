@@ -47,78 +47,99 @@ if(count($_GET) > 0)
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
-               $("#btn_dialup").click(function(){
-                   $("#txt_item_tracker").val(parseInt($("#txt_item_tracker").val()) + 1);
-                    
-                });
-                $("#btn_dialdown").click(function(){
-                    if($("#txt_item_tracker").val() != 0){
-                        $("#txt_item_tracker").val(parseInt($("#txt_item_tracker").val()) - 1);
-                    }
-                }); 
+               getSourceid();
             });
-            function selectedProduct(product_recno){
+            function submitDeposit(thisrecno){   
+                //thisrecno is the recno for table schedule_dates
+                if(validateCC() === false){
+                    return(false);
+                }
+                thisstatus = "Deposit";
+                $(".pre-pay-deposit-data-container").each(function(){
+                    //We want to find the color of this background, then we can know the id and find out if use selected to pay in full or just the deposit
+                    
+                    //alert($(this).css('background-color'));
+                    if($(this).css('background-color') == "rgb(29, 137, 209)"){
+                        //This is the lightblue,
+                        //if we are here, we can find out the id
+                        if($(this).prop('id') == "pre_pay_deposit"){
+                            thisstatus = "Deposit";
+                        }
+                        else{
+                            thisstatus = "Full";
+                        }
+                    }
+                    thisamount = $('body').data('finalfull');
+                })
+                //alert(thisstatus);
+                //WE want to find the checked radio for the card type
+                cardtype = $('input[name="rdo_credity_type"]:checked').val();
+                //alert(cardtype);
+                //alert(thisstatus);
                 let thisArray = [{
-                    "this_recno": product_recno
-                }];
+                        "cardtype": cardtype,
+                        "thisamount": thisamount, 
+                        "thiscard": $("#txt_cr_last4").val(), 
+                        "thisexpmm": $("#txt_expiredate_mm").val(),
+                        "thisexpyy": $("#txt_expiredate_yy").val(),
+                        "thissecurity": $("#txt_security").val(),
+                        "thisstatus": thisstatus
+                    }];  
+                $("#div_loader").removeClass("display-none");
                 const thisData = JSON.stringify(thisArray);
-                fetchAjaxsltproduct(thisData);
+                
+                getSquareinfo(thisrecno);
+                
+                fetchAjaxdatadeposit(thisData);
             }
-            async function fetchAjaxsltproduct(thisData){
+            async function fetchAjaxdatadeposit(thisData){
                 try{
                     const result = await $.ajax({
-                    url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=SelectedProduct&thisarray='+thisData,
+                    url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=SubmitDeposit&thisarray='+thisData,
                     type: 'POST',
                     contentType: "application/json"
                     });
                     if(result == "Success"){
-                        window.location.href = "product.php";
+                        window.location.href = "./paid.php";
                     }
                     else
                     {
-                        alert("SESSION variable 'SELECTED_PRODUCT_RECNO' did not get set.");
-                        return(false);
+                        alert("this return? "+result);
                     }
                 }
                 catch(error){
-                    alert("ERROR");
+                    alert("ERROR in paynow");
+                    alert(result);
                 }
             }
-            function addCart(thisrecno){
-                thisArray = [{
-                        "this_thisrecno": thisrecno,
-                        "this_thisval": $("#txt_item_tracker").val()
-                    }];
-                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=AddCart&thisarray='+JSON.stringify(thisArray), function(result){
-                    //alert(result);
-                    //pc_cart_tracker
-                    //responsive_cart_tracker
-                    $("#pc_cart_tracker").text(result);
-                    $("#responsive_cart_tracker").text(result);
-                });
-            }
-            function miniImgslt(obj, thisrecno, thisattachment, thiscatename){
-                thisArray = [{
-                        "this_thisrecno": thisrecno,
-                        "this_thisattachment": thisattachment,
-                        "this_thiscatename": thiscatename
-                    }];
-                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=MiniImgslt&thisarray='+JSON.stringify(thisArray), function(result){
-                    //alert(result);
-                    if($(obj).hasClass("product-selected-bdr")){
-                        //If user clicked the selected one, we will not do anything.
-                        return(false);
-                    }
-                    //When we return, we have the dir to the proper image and we replace the src with it.
-                    $("#large_img_container").prop("src", result);
+            //https://www.google.com/search?q=square+api%2C+PHP+Payments+SDK+example&sca_esv=c84071398b66a2e1&sxsrf=ANbL-n6P1yPIAXFi1NxOlVYEJ26w5yN90w%3A1773282628177&source=hp&ei=RCWyaeeyCaaT8L0P8NLf6AM&iflsig=AFdpzrgAAAAAabIzVE98Flap9obPmHMRlH2ZxviamJPD&ved=0ahUKEwjn5IzJqJmTAxWmCbwBHXDpFz0Q4dUDCCE&uact=5&oq=square+api%2C+PHP+Payments+SDK+example&gs_lp=Egdnd3Mtd2l6IiRzcXVhcmUgYXBpLCBQSFAgUGF5bWVudHMgU0RLIGV4YW1wbGUyBRAhGKABMgUQIRigAUiOP1AAWIY-cAh4AJABAZgBhwKgAYkoqgEHMS4xNi4xMrgBA8gBAPgBAfgBApgCJKAC3ybCAgQQIxgnwgILEAAYgAQYkQIYigXCAg4QLhiABBixAxjRAxjHAcICBRAuGIAEwgILEAAYgAQYsQMYgwHCAgUQABiABMICERAuGIAEGLEDGNEDGIMBGMcBwgIIEC4YgAQYsQPCAggQABiABBixA8ICChAAGIAEGBQYhwLCAgYQABgWGB7CAgUQABjvBcICCBAAGIAEGKIEwgILEAAYgAQYhgMYigXCAgUQIRirAsICBxAhGKABGAqYAwCSBwc4LjE2LjEyoAfozQGyBwcwLjE2LjEyuAfOJsIHBzExLjIxLjTIBzCACAA&sclient=gws-wiz
+            async function tokenize(payment, depofull) {
+                const result = await payment.tokenize();
+                if (result.status === 'OK') {
+                    // Send the token to your backend PHP script
+                    $("#token").val(result.token);
+                    $("#depofull").val(depofull);
                     
-                    //We go through the ele of this class and remote the class "product-selected-bdr".
-                    $(".pro-mini-img").each(function(){
-                        $(this).removeClass("product-selected-bdr");
-                    });
-                    //Because we have selected a new image, we will have to show the border color for this new selection
-                    //we just add the class to the elemenbt or image the user clicked
-                    $(obj).addClass("product-selected-bdr");
+                    //alert(result.token);
+                    $("#payment_form").submit();
+                } else {
+                    alert("Please enter your card information correctly and try again.");
+                    return(false);
+                    //alert(result.errors);
+                    //alert('Tokenization failed. See console for details.');
+                }
+            }
+            async function getSourceid() {
+                //4111 1111 1111 1111
+                const payments = Square.payments($("body").data("square_application_id"), $("body").data("square_ev_location_id"));
+                const card = await payments.card();
+                await card.attach('#div_card_container');
+                
+                $('#btn_card').on('click', async function(event){
+                    await tokenize(card, 'Full');
+                });
+                $('#btn_carddeposit').on('click', async function(event){
+                    await tokenize(card, 'Deposit');
                 });
             }
         </script>
@@ -166,63 +187,57 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left div-loginpanel"><?php echo $pc->LoginPanel();?></div>
-            <div class="div-content-holder-flex align-center"><?php
+
+            <div class="cart-div-content-holder-flex float-left"><?php
+                //echo json_encode($_SESSION['CARTRECNOTRACKER']);
+                //We only want to get the key so we can make a list of recno for the sql below.
+                $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
+                //echo json_encode($thiscartrecno);
+                //now that $thiscartrecno is an array with just the recno, we need to convert it into a string separated by ","
+                //implode
+                $thiscartrecnostr = implode(",", $thiscartrecno);
+                //
                 //1 month from today only
-                $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno = ".$_SESSION['SELECTED_PRODUCT_RECNO']." AND p.isActive = true ORDER BY p.name";
+                $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($thiscartrecnostr) ORDER BY p.name";
                 //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
                 $result = $db -> PDOMiniquery($sql);
                 if($db->PDORowcount($result) > 0)
                 {
-                    $i = 1;
-                    
-                    foreach($result as $rs)
-                    {
-                        $thisdir = "./images/others/products/".$rs['cname']."/".$rs['recno'];?>
-                        <div class="align-left product-div-content-holder-flex-data-container">  
-                            <div class="float-left pro-mini-img-big-container">
-                                <div class="float-left white-space-no-wrap pro-mini-img-container"><?php
-                                    $dir = new DirectoryIterator($thisdir."/mini/");
-                                    foreach ($dir as $fileinfo) {
-                                        if (!$fileinfo->isDot() && $fileinfo->isFile()) 
-                                        {
-                                            //file_put_contents("./dodebug/debug.txt", 'selected?? '.substr($rs['attachment'],2)." == ".substr($fileinfo->getFilename(),2), FILE_APPEND);
-                                            //We had to substr because the name is the same but we have a pre str added and this pre str are 'l-' and 's_', they are not he same.  By substr
-                                            //it will make them the same and therefore meet our filtration.
-                                            if(substr($rs['attachment'],2) == substr($fileinfo->getFilename(), 2))
-                                            {
-                                                $thisbordercolor = "product-selected-bdr";
-                                            }
-                                            else
-                                            {
-                                                $thisbordercolor = "";
-                                            }?>
-                                            <img id="img_<?php echo $fileinfo->getFilename() ?>" onclick="miniImgslt(this, <?php echo $rs['recno'] ?>, '<?php echo $fileinfo->getFilename() ?>', '<?php echo $rs['cname'] ?>');" class="<?php echo $thisbordercolor ?> pro-mini-img" src="<?php echo $thisdir ?>/mini/<?php echo $fileinfo->getFilename() ?>" /> <?php
-                                        }
-                                    }?>
+                    $i = 1;?>
+                    <div class="float-left" style="width: 50%;"><?php
+                        foreach($result as $rs)
+                        {
+                            $thisdir = "./images/others/products/".$rs['cname']."/".$rs['recno'];?>
+                            <div class="align-left cart-div-content-holder-flex-data-container" style="display: inline-block;">  
+                                <div class="float-left cart-img-data-container">
+                                    <div class="float-left" ><img id="large_img_container" class="img-cart-review" src="<?php echo $thisdir ?>/mini/s_<?php echo substr($rs['attachment'],2) ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+                                    <div><?php echo $rs['name'] ?></div>
+                                    <div>Items: <?php echo $_SESSION['CARTRECNOTRACKER'][$rs['recno']] ?></div>
+                                    <div class="font-weight-bold">$<?php echo number_format($rs['price'], 2) ?></div>
+                                    <div class="float-left"><textarea class="cart-txtarea" rows="7" readonly><?php echo $rs['description'] ?></textarea></div>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="float-left" ><img id="large_img_container" class="div-front-event" src="<?php echo $thisdir ?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
-                            </div>
-                            <div class="float-left pro-img-data-container">
-                                <div><?php echo $rs['name'] ?></div>
-                                <div class="font-weight-bold">$<?php echo number_format($rs['price'], 2) ?></div>
-                                <div><textarea class="pro-txtarea" rows="13" readonly><?php echo $rs['description'] ?></textarea></div>
-                                <div>
-                                    <div class="float-left"><input class="align-center font-size-1p5em" type="text" id="txt_item_tracker" name="txt_item_tracker" style="height: 46px;" size="4" value="1"/></div>
-                                    <div class="float-left">
-                                        <div id="btn_dialup" class="cursor-pointer display-block"><img class="pro-img-dial" src="./images/others/orange.png"/></div>
-                                        <div id="btn_dialdown" class="cursor-pointer display-block"><img class="pro-img-dial" src="./images/others/reddown.png"/></div>
-                                    </div>
+                            </div><?php
+                            $i++;
+                        }?>
+                    </div>
+                    <div class="float-left" style="background-color: darkred;"><?php
+                        
+                        ?>
+                        <div style="min-width: 742px; margin: 0px auto;">
+                            <form name="payment-form" id="payment_form" method="post">
+                                <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
                                 </div>
-                                <div class="cursor-pointer"><button name="btn_cart" id="btn_cart" onclick="addCart(<?php echo $rs['recno']?>);">Add to cart</button></div>
-                            </div>
-                        </div><?php
-                        $i++;
-                    }
+                                <div class="align-center" style="width: 100%;">
+                                    <button type="button" name="btn_card" id="btn_card">Pay</button>
+                                </div>
+                                <input type="hidden" id="token" name="token">
+                                <input type="hidden" id="depofull" name="depofull">
+                            </form>
+                        </div>
+                    </div><?php
                 }?>
             </div>
-            <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
+            <div class="align-center main-div-footer float-left"><?php echo $pc->Load_Footer();?></div>
         </div>
         
 

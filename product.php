@@ -89,12 +89,15 @@ if(count($_GET) > 0)
                         "this_thisrecno": thisrecno,
                         "this_thisval": $("#txt_item_tracker").val()
                     }];
-                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=AddCart&thisarray='+JSON.stringify(thisArray), function(result){
+                $.post('<?=$_SERVER['PHP_SELF']; ?>', "cmd=AddCart&thisarray="+JSON.stringify(thisArray), function(result){
                     //alert(result);
                     //pc_cart_tracker
                     //responsive_cart_tracker
-                    $("#pc_cart_tracker").text(result);
-                    $("#responsive_cart_tracker").text(result);
+                    
+                    jonArray = JSON.parse(result);
+                    //alert(jonArray['carttracker']+" and "+jonArray['carttotaltracker']);
+                    $("#pc_cart_tracker").text(jonArray['carttracker']+"/$"+jonArray['carttotaltracker']);
+                    $("#responsive_cart_tracker").text(jonArray['carttracker']+"/$"+jonArray['carttotaltracker']);
                 });
             }
             function miniImgslt(obj, thisrecno, thisattachment, thiscatename){
@@ -132,17 +135,43 @@ if(count($_GET) > 0)
 <?php
 function AddCart()
 {
-    global $pt;
+    global $db, $pt;
     $returnpost = $pt->AnalyzePosts();
-    if(!isset($_SESSION['TEMP_CART']))
+    $sql = "SELECT * FROM products WHERE recno = ".$returnpost['thisrecno'];
+    $result = $db->PDOMiniquery($sql);
+    foreach($result as $rs)
     {
-        $_SESSION['TEMP_CART'] = $returnpost['thisval'];
+        $thisprice = $rs['price'];
+    }
+    $thistotal = number_format($thisprice * $returnpost['thisval'],2);
+    
+    if(!isset($_SESSION['TEMPCART']))
+    {
+        $_SESSION['TEMPCART'] = $returnpost['thisval'];
     }
     else
     {
-        $_SESSION['TEMP_CART'] = $_SESSION['TEMP_CART'] + $returnpost['thisval'];
+        $_SESSION['TEMPCART'] = $_SESSION['TEMPCART'] + $returnpost['thisval'];
     }
-    echo $_SESSION['TEMP_CART'];
+    if(isset($_SESSION['CARTTOTALTRACKER']))
+    {
+        $_SESSION['CARTTOTALTRACKER'] += $thistotal;
+    }
+    else
+    {
+        $_SESSION['CARTTOTALTRACKER'] = $thistotal;
+    }
+    if(isset($_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']]))
+    {
+        $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']] = $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']] + $returnpost['thisval'];
+    }
+    else
+    {
+        $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']] = $returnpost['thisval'];
+    }
+    $returnarray = ["carttracker" => $_SESSION['TEMPCART'], "carttotaltracker" => $_SESSION['CARTTOTALTRACKER']];
+    echo json_encode($returnarray);
+    exit;
 }
 function MiniImgslt(){
     global $pt;

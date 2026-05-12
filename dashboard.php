@@ -3442,7 +3442,6 @@ function AddCompany()
     $thiszipcode = "";
     $thislogo = "";
     $thispaymentcompany = "";
-    $thisapiid = "";
     $thisapikey = "";
     $usthisfunc = "";
     $thisgooglemap = "";
@@ -3461,20 +3460,15 @@ function AddCompany()
             $thispaymentcompany = $rs['api_company'];
             $thisphonenumber = $rs['phone_number'];
             $thissmsnumber = $rs['smsnumber'];
-            $thisappid = $rs['application_id'];
-            $thisapiaccesstoken = $rs['api_access_token'];
-            $thisapitoken = $rs['api_token'];
-            $thisapiid = $rs['api_id'];
-            //$thisapiid = $rs['api_id'];
-            //$thisapikey = $rs['api_key'];
-            $thisdisclimit = $rs['disc_limit'];
+            $thisappid = $rs['square_application_id'.$_SESSION['isSandpro']];
+            $thisapiaccesstoken = $rs['square_api_access_token'.$_SESSION['isSandpro']];
+            $thisapitoken = $rs['square_refresh_token'.$_SESSION['isSandpro']];
             $thisaddress = $rs['address'];
             $thiscity = $rs['city'];
             $thisstate = $rs['state'];
             $thiszipcode = $rs['zipcode'];
             $thislogo = $rs['mainlogo'];
             $thisfblink = $rs['facebook_link'];
-            $thislimit = $rs['disc_limit'];
         }
         $usthisfunc = 'onfocus="getVal(this)" onchange="updateCompanyinfo(this, '.$thisrecno.');"';
         $thisbutton = "";

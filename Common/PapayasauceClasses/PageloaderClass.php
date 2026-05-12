@@ -161,7 +161,7 @@ class PageloaderClass {
                 </ul>
             </nav>
             <div style="position: relative;">
-                <div id="pc_cart_tracker" class="pc-cart-tracker"><?php echo !isset($_SESSION['TEMP_CART']) ? '0' : $_SESSION['TEMP_CART'] ?></div>
+                <div id="pc_cart_tracker" class="pc-cart-tracker font-size-pt8em white-space-no-wrap"><?php echo !isset($_SESSION['TEMPCART']) ? '0/$0.00' : $_SESSION['TEMPCART']."/$".number_format($_SESSION['CARTTOTALTRACKER'],2) ?></div>
                 <img id="pc_img_cart" onclick="goTocart();" class="cursor-pointer main-top-icon-menu float-right pc-img-cart" title="Go to cart!" src="../../images/others/cart.png"/>
             </div>
         </div>
@@ -203,7 +203,7 @@ class PageloaderClass {
                     </ul>
                 </nav>
                 <div style="position: relative;">
-                    <div id="responsive_cart_tracker" class="font-size-1p5em div-cart-tracker-item"><?php echo !isset($_SESSION['TEMP_CART']) ? '0' : $_SESSION['TEMP_CART'] ?></div>
+                    <div id="responsive_cart_tracker" class="font-size-1em div-cart-tracker-item white-space-no-wrap"><?php echo !isset($_SESSION['TEMPCART']) ? '0/$0.00' : $_SESSION['TEMPCART']."/$".number_format($_SESSION['CARTTOTALTRACKER'],2) ?></div>
                     <img id="responsive_img_cart" onclick="goTocart();" class="cursor-pointer float-right div-cart-img" title="Go to cart!" src="../../images/others/cart.png"/>
                 </div>
             </div>

@@ -253,3 +253,123 @@ Page: prompt
 Page: prompt 
  Function: AnalyzePosts 
 , AnalyzeArray 2: tempfield = thisval && value = 3 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 13 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 25 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 25 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 24 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 11 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 12 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 12 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 1 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 23 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 23 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 3 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 11 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisrecno && value = 11 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = thisval && value = 3 
+Page: prompt 
+ Function: AnalyzePosts 
+, AnalyzeArray 2: tempfield = recno && value = 11 

@@ -552,6 +552,18 @@ li{
     /* Hide scrollbar for IE and older Edge */
     -ms-overflow-style: none;
 }
+.cart-div-content-holder-flex{
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    color: black;
+    width: 92%;
+    min-height: 520px;
+    height: 400px;
+    align-items: flex-start;
+    /* Hide scrollbar for IE and older Edge */
+    -ms-overflow-style: none;
+}
 .div-content-holder-flex-div{
     flex-grow: 1;
 }
@@ -565,6 +577,11 @@ li{
     padding: 20px; 
     width: 25%; 
     min-width: 420px;
+}
+.cart-div-content-holder-flex-data-container{
+    padding: 20px; 
+    min-width: 280px;
+    background-color: orange;
 }
 .div-content-holder-flex-data-container{
    
@@ -3656,6 +3673,9 @@ admin-service-add{
     display: inline-block;
     height: 40px;
 }
+.display-block{
+   display: block;
+}
 .div-dashboard-barber-container{
     height: 100%;
     width: 100%;
@@ -3941,6 +3961,14 @@ admin-service-add{
     min-width: 168px; 
     height: 330px;
 }
+.cart-img-data-container{
+    background-color: #4F8849; 
+    color: white; 
+    padding-left: 10px; 
+    padding-bottom: 10px; 
+    min-width: 268px; 
+    height: 160px;
+}
 .pro-mini-img-container{
     width: 418px; 
     color: white; 
@@ -3978,6 +4006,10 @@ admin-service-add{
     width: 90%; 
     resize: none;
 }
+.cart-txtarea{
+    width: 96%; 
+    resize: none;
+}
 .pc-img-cart{
     width: 30%; 
     height: auto; 
@@ -3988,7 +4020,7 @@ admin-service-add{
     min-height: 20px;
     min-width: 20px; 
     position: absolute; 
-    left: 85%; 
+    left: 60%; 
     margin: 1px; 
     width: 30%; 
     font-weight: bold; 
@@ -4025,7 +4057,10 @@ admin-service-add{
     min-width: 60px; 
     margin-top: 10px;
 }
-
+.img-cart-review{
+    height: 165px;
+    width: 90px;
+}
 
 
 

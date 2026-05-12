@@ -18,34 +18,10 @@ class PdoClass {
         }
         else
         {
-            //www.domainname.com
-            $explodedomain = explode(".", $temp_host);
-            //$explodedomain[0] = 'www'
-            //$explodedomain[1] = 'domainname'
-            //$explodedomain[2] = 'com'
-            $thedomain = $explodedomain[1];
-            if($thedomain == "yptdevelopment")
-            {
-                $this->local_database = $_ENV['production_database'];
-                $this->local_user = $_ENV['production_user'];
-                $this->local_password = $_ENV['production_password'];
-            }
-            else
-            {
-                //When we get a new domain, we will use the domain as a database, ex: www.newdomain.com, 
-                //database will be $explodedomain[1]_newdomain
-                //user will be     $explodedomain[1]_someusername
-                //password will be $explodedomain[1]_password, will be a random generated pw
-                //
-                //exmaple if we have a domain with www.mouacuts.com our .ENV would be
-                //mouacuts_database = mouacuts
-                //mouacuts_user = yangpaothao
-                //mouacuts_password = *****
-
-                $this->local_database = "gcwwkite_".$_ENV[$explodedomain[1].'_database'];
-                $this->local_user = "gcwwkite_".$_ENV[$explodedomain[1].'_user'];
-                $this->local_password = "gcwwkite_".$_ENV[$explodedomain[1].'_password'];
-            }
+            $this->local_database = $_ENV['production_papayasauce_database'];
+            $this->local_user = $_ENV['production_papayasauce_user'];
+            $this->local_password = $_ENV['production_papayasauce_password'];
+            
         }
         try{
             $this -> conn = new PDO("mysql:host=localhost;dbname=".$this->local_database, $this->local_user, $this->local_password, [PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]);
