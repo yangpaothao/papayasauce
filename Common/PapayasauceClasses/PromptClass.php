@@ -1424,7 +1424,7 @@ class PromptClass
     }
     function GetDeveloperstatus()
     {
-        if($_SESSION['isLive'] == true)
+        if($_SESSION['isLive'] == true || $_SESSION['thisfrom'] == "Production")
         {
             return("https://connect.squareup.com/oauth2/authorize");
         }
@@ -1486,7 +1486,7 @@ class PromptClass
     }
     function GetSquareevn($thisaccesstoken)
     {
-        if(isset($_SESSION['realsandpro']) && $_SESSION['realsandpro'] == "Production")
+        if(isset($_SESSION['isLive']) || $_SESSION['thisfrom'] == "Production")
         {
             //file_put_contents('./dodebug/debug.txt', "GetSquareevn Production \n", FILE_APPEND);
             return(new SquareClient(

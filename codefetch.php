@@ -1,15 +1,23 @@
 <?php
-require __DIR__ . '/common/vendor/autoload.php';
-
+require __DIR__ . '/Common/vendor/autoload.php';
+use PapayasauceClasses\PdoClass;
+use PapayasauceClasses\PageloaderClass;
+use PapayasauceClasses\PromptClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
-require("./common/page.php");
-require("./common/classes/PageloaderClass.php");
-require("./common/pdocon.php");
-require_once("./common/prompt.php");
-$pt = new PROMPT();
+$temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
+
+if($temp_host != "localhost")
+{
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
+}
+else
+{
+    require_once("./Common/page.php");
+}
+$pt = new PromptClass();
 $load_headers = new PageloaderClass();
-$db = new PDOCON();
+$db = new PdoClass();
 
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
@@ -33,11 +41,10 @@ if(count($_GET) > 0)
 <html>
     <head>
         <?php
-            $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME'); // will get 'localhost'
             $temp_page = filter_input(INPUT_SERVER, 'PHP_SELF'); // will look like /index.php or /somedir/somepage.php
             $explode_page = explode("/", $temp_page); //This variable will now be an array and the page name is the last element of this array
             $this_page = end($explode_page); //this variable will hold the page name like index.php
-            $load_headers::Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
+            $load_headers->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
         ?>
         <script type="text/javascript">
             function validateForm(){
@@ -90,11 +97,11 @@ function ShowToken()
     global $db;
     $thissandpro = "";
     $thisaccesstoken = "";
-    if($_SESSION['isLive'] == true)
+    if($_SESSION['thisfrom'] == "Production")
     {
         $thissandpro = "_pro";
     }
-    $sql = "SELECT square_refresh_token$thissandpro FROM users WHERE recno = ".$_SESSION['user_recno'];
+    $sql = "SELECT square_refresh_token$thissandpro FROM company_info";
     //file_put_contents("./dodebug/debug.txt", "ShowToken: ".$sql."\n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);
     foreach($result as $rs)
@@ -115,11 +122,11 @@ function SquareUp()
     $tempsandpropost = "";
     $thisscope = "";
     $thissession = true;
-    if($_SESSION['isLive'] == true){
+    if($_SESSION['thisfrom'] == "Production"){
         $tempsandpropost = "_pro";
         $thissession = false;
     }
-    $sql  = "SELECT square_application_id$tempsandpropost FROM users WHERE recno = ".$_SESSION['permission_recno'];
+    $sql  = "SELECT square_application_id$tempsandpropost FROM company_info";
     //file_put_contents("./dodebug/debug.txt", "sql: ".$sql."\n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);
     foreach($result as $rs)
@@ -163,12 +170,12 @@ function DrawTable($thisappid, $thiscode)
                         <td class="tbl-fetchcode-lbl align-center font-size-2em" colspan="2">Fetch Code</td>
                     </tr>
                     <tr>
-                        <td class="tbl-fetchcode-lbl">Application I.D.: <span class="asterisk"> * </span></td>
-                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_application_id" name="this_square_application_id" size="80" placeholder="Paste or Type your Application I.D here." value="<?php echo $thisappid ?>" /><img onclick="showHint();" title="Click to see hint on how to get it." src="./images/others/question.png"></td>
+                        <td class="tbl-fetchcode-lbl white-space-no-wrap">Application I.D.: <span class="asterisk"> * </span></td>
+                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_application_id" name="this_square_application_id" style="width: 85%;" size="35" placeholder="Paste or Type your Application I.D here." value="<?php echo $thisappid ?>" /><img onclick="showHint();" title="Click to see hint on how to get it." src="./images/others/question.png"></td>
                     </tr>
                     <tr>
                         <td class="tbl-fetchcode-lbl">Code:</td>
-                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_code" name="this_square_code" size="80"  value="<?php echo $thiscode ?>" readonly /></td>
+                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_code" name="this_square_code" size="45" style="width: 85%;"  value="<?php echo $thiscode ?>" readonly /></td>
                     </tr>
                     <tr class="tr-codefetch-btn-container">
                         <td class="tbl-fetchcode-lbl align-center" colspan="2">
@@ -183,7 +190,7 @@ function DrawTable($thisappid, $thiscode)
 function DrawTabletoken($thistoken, $thisexpiredate)
 {
     //This table shows the refresh token (maybe the same) but should have a different expiration date.?>    
-    <div class="div-body-container">
+    <div style="margin: 0px auto;">
             <form name="frmregistration" id="frmfetchcode" method="post">
                 <table class="tbl-codetech">
                     <tr>
@@ -192,13 +199,13 @@ function DrawTabletoken($thistoken, $thisexpiredate)
                     <tr>
                         <td class="tbl-fetchcode-lbl">Refresh Token.: <span class="asterisk"> * </span></td>
                         <td class="fetchcodeinput">
-                            <input class="align-left" type="text" id="this_square_application_id" name="this_square_application_id" size="80" placeholder="Paste or Type your Application I.D here." style="height: 25px;" value="<?php echo $thistoken ?>" readonly />
+                            <input class="align-left" type="text" id="this_square_application_id" name="this_square_application_id" style="width: 85%;" size="45" placeholder="Paste or Type your Application I.D here." style="height: 25px; min-width: 200px; width: 100%;" value="<?php echo $thistoken ?>" readonly />
                             <img id="codefetch_seeing_eye" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showToken(this);"/>
                         </td>
                     </tr>
                     <tr>
                         <td class="tbl-fetchcode-lbl">Expire Date:</td>
-                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_access_token_expire_date" name="this_square_access_token_expire_date" size="80"  style="height: 25px;"value="<?php echo date('m/d/Y', strtotime($thisexpiredate)) ?>" readonly /></td>
+                        <td class="fetchcodeinput"><input class="align-left" type="text" id="this_square_access_token_expire_date" style="width: 85%;" name="this_square_access_token_expire_date" size="45"  style="height: 25px; min-width: 200px; width: 100%;"value="<?php echo date('m/d/Y', strtotime($thisexpiredate)) ?>" readonly /></td>
                     </tr>
                 </table>
             </form>
@@ -216,10 +223,11 @@ function Main()
     
     //Walk through example of how to go through the process of obtaining code, created code challenge and such
     //https://www.oauth.com/playground/authorization-code-with-pkce.html
+    $thisrecno = "";
     $thisappid = "";
     $thiscode = "";
     $thissecret = "";
-    $thistable = "users";
+    $thistable = "company_info";
     $thisdata = [];
     $thisrefreshexpiredate = "";
     $thisrereshtoken = "";
@@ -230,93 +238,102 @@ function Main()
         $thisstate = $_GET['state'];
         
     }?>
-    <div class="main-div-codefetch"><?php
-        $load_headers::Load_Header_Logo();
-        $tempsandpropost = "";
-        if($_SESSION['isLive'] == true){
-            $tempsandpropost = "_pro";
-        }
-        if($thiscode == "")
-        {
-            $sql = "SELECT square_application_id$tempsandpropost, square_code$tempsandpropost FROM $thistable WHERE recno = ".$_SESSION['permission_recno'];
-            $result = $db ->PDOMiniquery($sql);
-            foreach($result as $rs)
-            {
-                $thisappid = $rs["square_application_id$tempsandpropost"];
-                $thiscode = $rs["square_code$tempsandpropost"];
-            }
-            $_SESSION['appid'] = $thisappid;
-            DrawTable($thisappid, $thiscode);
-        }
-        else
-        {
-            if($_SESSION['squarestate'] == $thisstate)
-            {
-                //verify this code.
-                $thisappid = $_SESSION['appid'];
-                $sql = "SELECT square_api_access_token$tempsandpropost, square_refresh_token$tempsandpropost, square_application_id$tempsandpropost, square_client_secret$tempsandpropost ";
-                $sql .= "FROM users WHERE recno = ".$_SESSION['permission_recno'];
-                $result = $db->PDOMiniquery($sql);
-                foreach($result as $rs)
-                {
-                    $thistoken = $rs["square_api_access_token$tempsandpropost"];
-                    $thisrereshtoken = $rs["square_refresh_token$tempsandpropost"];
-                    $thisappid = $rs["square_application_id$tempsandpropost"];
-                    $thissecret = $rs["square_client_secret$tempsandpropost"];
+    <div class="main-div">
+        <div class="index-div-container">
+            <div class="main-logo float-left">
+                <?php echo $load_headers->LoadLogo($db);?>
+            </div>
+            <div class="float-left div-loginpanel" style="width: 7%;"><?php echo $load_headers->LoginPanel();?></div>
+            <div style="width: 100%; height: 100%; min-height: 520px; height: 870px;"><?php
+                $tempsandpropost = "";
+                if($_SESSION['thisfrom'] == "Production"){
+                    $tempsandpropost = "_pro";
                 }
-                //We must now use this code to get an access token and a refresh token
-                $thisreturnsarray = $pt->GetAccesstoken($thistoken, $thisrereshtoken, $thisappid, $thissecret, $thiscode, $_SESSION['code_verifier']);
-                //file_put_contents("./dodebug/debug.txt", "thisreturnsarray? $thisreturnsarray\n", FILE_APPEND);
-               
-                if(is_array($thisreturnsarray))
+                if($thiscode == "")
                 {
-                    foreach($thisreturnsarray as $key1 => $value1)
+                    $sql = "SELECT recno, square_application_id$tempsandpropost, square_code$tempsandpropost FROM $thistable";
+                    $result = $db ->PDOMiniquery($sql);
+                    foreach($result as $rs)
                     {
-                        if($key1 == "access_token")
-                        {
-                            $thisdata["square_api_access_token$tempsandpropost"] = $value1;
-                            //file_put_contents("./dodebug/debug.txt", "access_token? $value1\n", FILE_APPEND);
-                        }
-                        if($key1 == "expires_at")
-                        {
-                            $explodedate = explode("T", $value1);
-                            $thisexpiredate = $explodedate[0];
-                            $thisdata["square_access_token_expire_date$tempsandpropost"] = date('Y-m-d', strtotime($thisexpiredate));
-                            //file_put_contents("./dodebug/debug.txt", "expires_at? $value1\n", FILE_APPEND);
-                        }
-                        if($key1 == "refresh_token")
-                        {
-                            $thisdata["square_refresh_token$tempsandpropost"] = $value1;
-                            $thisrefreshtoken = $value1;
-                            //file_put_contents("./dodebug/debug.txt", "refresh_token? $value1\n", FILE_APPEND);
-                        }
-                        if($key1 == "refresh_token_expires_at")
-                        {
-                            $explodedate = explode("T", $value1);
-                            $thisexpiredate = $explodedate[0];
-                            $thisrefreshexpiredate = date("Y-m-d", strtotime($thisexpiredate));
-                            $thisdata["square_refresh_token_expires_date$tempsandpropost"] = $thisrefreshexpiredate;
-                            
-                            //file_put_contents("./dodebug/debug.txt", "refresh_token_expires_at? $value1\n", FILE_APPEND);
-                        }
-                    }   
+                        $thisrecno = $rs['recno'];
+                        $thisappid = $rs["square_application_id$tempsandpropost"];
+                        $thiscode = $rs["square_code$tempsandpropost"];
+                    }
+                    $_SESSION['appid'] = $thisappid;
+                    DrawTable($thisappid, $thiscode);
                 }
                 else
                 {
-                    //file_put_contents("./dodebug/debug.txt", "NOT supposed to be here.\n", FILE_APPEND);
-                }
-                $thisdata["square_ocde$tempsandpropost"] = $thiscode;
-                $thiswhere['recno'] = $_SESSION['permission_recno'];
-                $thisupdate = $db->PDOUpdate($thistable, $thisdata, $thiswhere);
-                //file_put_contents("./dodebug/debug.txt", "sql. $thisupdate\n", FILE_APPEND);
-                if($thisupdate == "Success")
-                {
-                    //file_put_contents("./dodebug/debug.txt", "NOT supposed to be here.\n", FILE_APPEND);
-                    $thistoken = "*****************************************************";
-                    //"2025-04-03T18:31:06Z",
-                    DrawTabletoken($thistoken, $thisrefreshexpiredate);
-                }
-            }
-        }?>
+                    if($_SESSION['squarestate'] == $thisstate)
+                    {
+                        //verify this code.
+                        $thisappid = $_SESSION['appid'];
+                        $sql = "SELECT square_api_access_token$tempsandpropost, square_refresh_token$tempsandpropost, square_application_id$tempsandpropost, square_client_secret$tempsandpropost ";
+                        $sql .= "FROM company_info";
+                        $result = $db->PDOMiniquery($sql);
+                        foreach($result as $rs)
+                        {
+                            $thistoken = $rs["square_api_access_token$tempsandpropost"];
+                            $thisrereshtoken = $rs["square_refresh_token$tempsandpropost"];
+                            $thisappid = $rs["square_application_id$tempsandpropost"];
+                            $thissecret = $rs["square_client_secret$tempsandpropost"];
+                        }
+                        //We must now use this code to get an access token and a refresh token
+                        $thisreturnsarray = $pt->GetAccesstoken($thistoken, $thisrereshtoken, $thisappid, $thissecret, $thiscode, $_SESSION['code_verifier']);
+                        //file_put_contents("./dodebug/debug.txt", "thisreturnsarray? $thisreturnsarray\n", FILE_APPEND);
+
+                        if(is_array($thisreturnsarray))
+                        {
+                            foreach($thisreturnsarray as $key1 => $value1)
+                            {
+                                if($key1 == "access_token")
+                                {
+                                    $thisdata["square_api_access_token$tempsandpropost"] = $value1;
+                                    //file_put_contents("./dodebug/debug.txt", "access_token? $value1\n", FILE_APPEND);
+                                }
+                                if($key1 == "expires_at")
+                                {
+                                    $explodedate = explode("T", $value1);
+                                    $thisexpiredate = $explodedate[0];
+                                    $thisdata["square_access_token_expire_date$tempsandpropost"] = date('Y-m-d', strtotime($thisexpiredate));
+                                    //file_put_contents("./dodebug/debug.txt", "expires_at? $value1\n", FILE_APPEND);
+                                }
+                                if($key1 == "refresh_token")
+                                {
+                                    $thisdata["square_refresh_token$tempsandpropost"] = $value1;
+                                    $thisrefreshtoken = $value1;
+                                    //file_put_contents("./dodebug/debug.txt", "refresh_token? $value1\n", FILE_APPEND);
+                                }
+                                if($key1 == "refresh_token_expires_at")
+                                {
+                                    $explodedate = explode("T", $value1);
+                                    $thisexpiredate = $explodedate[0];
+                                    $thisrefreshexpiredate = date("Y-m-d", strtotime($thisexpiredate));
+                                    $thisdata["square_refresh_token_expire_date$tempsandpropost"] = $thisrefreshexpiredate;
+
+                                    //file_put_contents("./dodebug/debug.txt", "refresh_token_expires_at? $value1\n", FILE_APPEND);
+                                }
+                            }   
+                        }
+                        else
+                        {
+                            //file_put_contents("./dodebug/debug.txt", "NOT supposed to be here.\n", FILE_APPEND);
+                        }
+                        $thisdata["square_code$tempsandpropost"] = $thiscode;
+                        $thiswhere['recno'] = $thisrecno;   
+                        $thisupdate = $db->PDOUpdate($thistable, $thisdata, $thiswhere);
+                        //file_put_contents("./dodebug/debug.txt", "sql. $thisupdate\n", FILE_APPEND);
+                        if($thisupdate == "Success")
+                        {
+                            //file_put_contents("./dodebug/debug.txt", "NOT supposed to be here.\n", FILE_APPEND);
+                            $thistoken = "*****************************************************";
+                            //"2025-04-03T18:31:06Z",
+                            DrawTabletoken($thistoken, $thisrefreshexpiredate);
+                        }
+                    }
+                }?>
+            </div>
+            <div class="align-center main-div-footer"><?php echo $load_headers->Load_Footer();?></div>
+        </div>
     </div><?php
 }

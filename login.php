@@ -1,17 +1,24 @@
 <?php
 ob_start();
-require __DIR__ . '/common/vendor/autoload.php';
+require __DIR__ . '/Common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\EmailClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
-require("./common/page.php");
-require("./common/sendmail.php");
+require("./Common/sendmail.php");
 $pc = new PageloaderClass();
 $db = new PdoClass();
 $ne = new EmailClass();
-
+$temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
+if($temp_host != "localhost")
+{
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
+}
+else
+{
+    require_once("./common/page.php");
+}
 if(count($_POST) > 0 && isset($_POST['hid_cmd']))
 {
     $_REQUEST['hid_cmd']();

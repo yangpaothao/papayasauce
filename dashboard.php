@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/common/vendor/autoload.php';
+require __DIR__ . '/Common/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
@@ -9,14 +9,23 @@ use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\EmailClass;
 use PapayasauceClasses\PersonClass;
-require("./common/page.php");
-require_once("./common/sendmail.php");
+
+require_once("./Common/sendmail.php");
 
 $ps = new PersonClass();
 $pt = new PromptClass();
 $load_headers = new PageloaderClass();
 $db = new PdoClass();
 $ne = new EmailClass();
+$temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
+if($temp_host != "localhost")
+{
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
+}
+else
+{
+    require_once("./Common/page.php");
+}
 
 $isDebug = true;
 //echo var_dump($_POST);
@@ -53,15 +62,7 @@ if(count($_GET) > 0)
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
-               <?php
-               if($_SESSION['isAdmin'] == true)
-               {?>
-                    manageUsers($("#div_manageuser")[0]);<?php
-                }
-                else
-                {?>
-                    showEvent($("#div_modifyevent")[0], thisstatus = "Active", thiseventtype = "Event");<?php
-                }?>
+                showEvent($("#div_modifyevent")[0], thisstatus = "Active", thiseventtype = "Event");
             });
             function dashboardMenuslt(obj){
                 $(".div-menu-dashboard").each(function(){
@@ -317,9 +318,6 @@ if(count($_GET) > 0)
             function addCompany(obj){
                 dashboardMenuslt(obj);
                 $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=AddCompany', function(result){
-                    if($("#div_mgm_search").length){
-                        $("#div_mgm_search").remove();  //We want to remove this select because we are rebuilding it with a new updated slt.
-                    }
                     $("#main_div_body_dashboard_right_container").html(result);
                 }); 
             }
@@ -942,15 +940,25 @@ if(count($_GET) > 0)
                     }
                 }
             } 
-            function getSquarecode(){
-            //thisfrom =  authorization_code or refresh_token
-                window.open('./codefetch.php', '_self'); 
+            function getSquarecode(thisfrom){
+                //thisfrom =  Production or Sandbox
+                thisArray = [{
+                    "this_thisfrom": thisfrom
+                }];
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=GetSquarecode&thisarray='+JSON.stringify(thisArray), function(result){
+                    //alert(result);
+                    window.open('./codefetch.php', '_blank'); 
+                });
             }
-            function refreshToken(thissandpro){
+            function refreshToken(thisfrom){
                 //window.open('./refreshtoken.php', '_self');
+                let thisArray = [{
+                    "this_thisfrom": thisfrom
+                }];
+            const thisData = JSON.stringify(thisArray);
                 $("#div_loader").removeClass("display-none");
                 $.ajax({
-                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=RefreshToken",
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=RefreshToken&thisarray="+thisData,
                     dataType: 'json',
                     type: "POST"
                 }).then(function(result) {
@@ -986,6 +994,7 @@ if(count($_GET) > 0)
                     // Code here will execute *after* the AJAX request is successful - sandbox-sq0idb--T0TYR72gfayXs3qWKPynA
                     //alert(result);
                     //We need to change the eye depending on what it is right now
+                    //alert(result);
                     $("#"+thisid).val(result);
                 }).catch(function(error) {
                     alert(error);
@@ -1248,6 +1257,15 @@ if(count($_GET) > 0)
                     $("#main_div_body_dashboard_right_container").html(result);
                 });
             }
+            function manageAPI(obj, thisfrom){
+                dashboardMenuslt(obj);
+                thisArray = [{
+                    "this_thisfrom": thisfrom
+                }];
+                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageAPI&thisarray='+JSON.stringify(thisArray), function(result){
+                    $("#main_div_body_dashboard_right_container").html(result);
+                }); 
+            }
         </script>
     </head>
     <body>
@@ -1257,6 +1275,140 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function GetSquarecode()
+{
+    global $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $_SESSION['thisfrom'] = $returnpost['thisfrom'];  //Production or Sandbox
+}
+function ManageAPI()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $thissandpro = "";
+    $usthisfunc = "";
+    if($returnpost['thisfrom'] == "Production")
+    {
+        $thissandpro = "_pro";
+    }           
+    $square_url = "";
+    $square_code = "";
+    $square_application_id = "";
+    $square_client_secret = "";
+    $square_api_access_token = "";
+    $square_access_token_expire_date = "";
+    $square_refresh_token = "";
+    $square_refresh_token_expire = "";
+    $square_ev_location_id = "";
+    $temp_square_access_token_expire_date = "";
+    $temp_square_refresh_token_expires_date = "";
+    
+    $sql = "SELECT recno, square_approved_url, square_code$thissandpro, square_application_id$thissandpro, square_client_secret$thissandpro, square_api_access_token$thissandpro, ";
+    $sql .= "square_access_token_expire_date$thissandpro, square_refresh_token$thissandpro, square_refresh_token_expire_date$thissandpro, square_ev_location_id$thissandpro ";
+    $sql .= "FROM company_info";
+    $result = $db->PDOMiniquery($sql);
+    if($db->PDORowcount($result) > 0)
+    {
+        foreach($result as $rs)
+        {
+            $thisrecno = $rs['recno'];            
+            $square_url = $rs["square_approved_url"];
+            $square_code = $rs["square_code$thissandpro"];
+            $square_application_id = $rs["square_application_id$thissandpro"];
+            $square_client_secret = $rs["square_client_secret$thissandpro"];
+            $square_api_access_token = $rs["square_api_access_token$thissandpro"];
+            $square_access_token_expire_date = $rs["square_access_token_expire_date$thissandpro"];
+            $square_refresh_token = $rs["square_refresh_token$thissandpro"];
+            $square_refresh_token_expire = $rs["square_refresh_token_expire_date$thissandpro"];
+            $square_ev_location_id = $rs["square_ev_location_id$thissandpro"];
+            $temp_square_access_token_expire_date = !empty($rs["square_access_token_expire_date$thissandpro"]) ? date('m/d/Y', strtotime($rs["square_access_token_expire_date$thissandpro"])) : '';
+            $temp_square_refresh_token_expires_date = empty($rs["square_refresh_token_expire_date$thissandpro"]) ? '' : date('m/d/Y', strtotime($rs["square_refresh_token_expire_date$thissandpro"]));
+        }
+        $usthisfunc = 'onfocus="getVal(this)" onchange="updateCompanyinfo(this, '.$thisrecno.');"';
+    }?>
+    <div class="float-left">
+        <table id="tblservicedata" class="tbl-dashboard-company">
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Approved URL: <span class="asterisk"> * </span></td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left align-left" size="80" id="square_approved_url" name="square_approved_url" <?php echo $usthisfunc ?> value="*********************************************************************" required />
+                    <div class="float-left div-check-eye align-left dashboard-company-input-img"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_approved_url', 'square_approved_url', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-center">Code:</td>
+                <td>
+                    <button class="cursor-pointer dashboard-mgmbarber-renew-api float-left" name="btn_get_code" id="btn_get_code" onclick="getSquarecode('<?php echo ($returnpost['thisfrom'] == "Production" ? 'Production' : 'Sandbox') ?>');">Click to get code and refresh token</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Application ID:</td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_application_id<?php echo $thissandpro ?>" name="square_application_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_application_id<?php echo $thissandpro ?>', 'square_application_id', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Client Secret: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_client_secret<?php echo $thissandpro ?>" name="square_client_secret<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_client_secret" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_client_secret<?php echo $thissandpro ?>', 'square_client_secret', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Access Token: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_api_access_token<?php echo $thissandpro ?>" name="square_api_access_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div id="div_mgm_barbers_pro_api_token dashboard-company-input-img" class="float-left div-check-eye"><img id="img_api_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_api_access_token<?php echo $thissandpro ?>', 'square_api_access_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Access Token Expire Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" size="80" id="square_access_token_expire_date<?php echo $thissandpro ?>" name="square_access_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date("m/d/Y", strtotime($square_access_token_expire_date)) ?>" readonly /></td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Refresh Token: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_refresh_token<?php echo $thissandpro ?>" name="square_refresh_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye"><img id="img_refresh_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_refresh_token<?php echo $thissandpro ?>', 'square_refresh_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Refresh Token Expire Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" size="80" id="square_fresh_token_expire<?php echo $thissandpro ?>" name="square_refresh_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date('m/d/Y', strtotime($square_refresh_token_expire)) ?>" readonly /></td>
+            </tr>
+            <?php
+            if(!empty($temp_square_refresh_token_expires_date))
+            {?>
+                <tr>
+                    <td class="tbl-dashboard-user-lbl align-right"></td>
+                    <td class="tbl-dashboard-user-lbl-span align-center">
+                    <?php
+                        //We want to blink the button if the access code is going to expire within 1 week.
+                        $blinkingdefault = "";
+                        if(strtotime(date('m/d/Y', strtotime($temp_square_refresh_token_expires_date))) < strtotime(date('m/d/Y', strtotime('+1 week'))))
+                        {
+                            $blinkingdefault = "flashing-background";
+                        }
+                        $daysleft = (int)(date('d', strtotime(date('m/d/Y', strtotime($temp_square_refresh_token_expires_date))) - strtotime(date('m/d/Y'))));
+                        ?>
+                        <button class="cursor-pointer dashboard-mgmbarber-refresh-api-btn <?php echo $blinkingdefault ?> align-left float-left" name="btn_renew_api" id="btn_renew_api" onclick="refreshToken('<?php echo $returnpost['thisfrom'] ?>');">
+                            <span class="font-size-1p5em">Refresh token</span> expires On <?php echo date('m/d/Y', strtotime($temp_square_refresh_token_expires_date)) ?>.  
+                            You have <?php echo $daysleft ?> days left for the access token, click to refresh the access token!!!
+                        </button>
+                    </td>
+                </tr><?php
+            }?>
+            <tr>
+                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Location ID: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_ev_location_id<?php echo $thissandpro ?>" name="square_ev_location_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye"><img id="img_code" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_ev_location_id<?php echo $thissandpro ?>', 'square_ev_location_id', '<?php echo $returnpost['thisfrom']?>');" /></div></div>
+                </td>
+            </tr>
+        </table>
+    </div><?php 
+}
 function DeleteLogo()
 {
     global $db, $pt;
@@ -1781,17 +1933,11 @@ function ShowHidden()
     $thisaccesstoken = "";
     $returnpost = $pt->AnalyzePosts();
 
-    if($returnpost['from'] == "div_barber_apipro" || $returnpost['from'] == "div_barber_permissionpro")
+    if($returnpost['from'] == "Production" && $returnpost['field'] != "square_approved_url")
     {
         $thissandpro = "_pro"; 
     }
-    if($returnpost['from'] == "div_barber_apisand" || $returnpost['from'] == "div_barber_permission" ||
-        $returnpost['field'] == "twillio_sms_number" ||  $returnpost['field'] == "twillio_api_token" ||  
-        $returnpost['field'] == "twillio_api_id")
-    {
-        $thissandpro = ""; 
-    }
-    $sql = "SELECT ".$returnpost['field']."$thissandpro FROM users WHERE recno = ".$_SESSION['user_recno'];
+    $sql = "SELECT ".$returnpost['field']."$thissandpro FROM company_info";
     //file_put_contents("./dodebug/debug.txt", "ShowToken: ".$sql."\n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);
     foreach($result as $rs)
@@ -1803,22 +1949,25 @@ function ShowHidden()
 function RefreshToken()
 {
     global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
     $tempsandpropost = "";
-    $thistable = 'users';
+    $thistable = 'company_info';
     $newdate = "";
     $thisappid = "";
     $returnarray = [];
-    //We will reset or refresh the access token.
-    if($_SESSION['isLive'] == true)
+    $thisrecno = "";
+    if($returnpost['thisfrom'] == "Production")
     {
         $tempsandpropost = "_pro";
+        $_SESSION['thisfrom'] = $returnpost['thisfrom'];
     }
-    $sql = "SELECT square_api_access_token$tempsandpropost, square_refresh_token$tempsandpropost, square_application_id$tempsandpropost, square_client_secret$tempsandpropost,";
+    $sql = "SELECT recno, square_api_access_token$tempsandpropost, square_refresh_token$tempsandpropost, square_application_id$tempsandpropost, square_client_secret$tempsandpropost,";
     $sql .= "square_approved_url ";
-    $sql .= "FROM users WHERE recno = ".$_SESSION['user_recno'];
+    $sql .= "FROM $thistable ";
     $result = $db->PDOMiniquery($sql);
     foreach($result as $rs)
     {
+        $thisrecno = $rs["recno"];
         $thistoken = $rs["square_api_access_token$tempsandpropost"];
         $thisrereshtoken = $rs["square_refresh_token$tempsandpropost"];
         $thisappid = $rs["square_application_id$tempsandpropost"];
@@ -1864,7 +2013,7 @@ function RefreshToken()
                 $returnarray["refresh_date"] = $newdate;
             }
         }
-        $thiswhere['recno'] = $_SESSION['user_recno'];
+        $thiswhere['recno'] = $thisrecno;
         $thisupdate = $db->PDOUpdate($thistable, $thisdata, $thiswhere);
         //file_put_contents("./dodebug/debug.txt", "sql. $thisupdate\n", FILE_APPEND);
         if($thisupdate == "Success")
@@ -1915,7 +2064,7 @@ function ShowUsertbs()
     {
         $temp_square_code = $rs["square_code$temptablename"];
         $temp_square_access_token_expire_date = !empty($rs["square_access_token_expire_date$temptablename"]) ? date('m/d/Y', strtotime($rs["square_access_token_expire_date$temptablename"])) : '';
-        $temp_square_refresh_token_expires_date = empty($rs["square_refresh_token_expires_date$temptablename"]) ? '' : date('m/d/Y', strtotime($rs["square_refresh_token_expires_date$temptablename"]));
+        $temp_square_refresh_token_expires_date = empty($rs["square_refresh_token_expire_date$temptablename"]) ? '' : date('m/d/Y', strtotime($rs["square_refresh_token_expire_date$temptablename"]));
     }
     if($_SESSION['isAdmin'] == true || $_SESSION['isBarber'] == true || $_SESSION['isDeveloper'] == true)
     {
@@ -3519,11 +3668,7 @@ function AddCompany()
                         <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
                     </tr>
                     <tr>
-                        <td class="tbl-dashboard-company-lbl">Deleted:</td>
-                        <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isShowcounter " name="isShowcounter" <?php echo $usthisfunc ?> disabled /></td>
-                    </tr>
-                    <tr>
-                        <td class="user-profile-lbl tbl-profile-lbl">Upload Attachment: </td>
+                        <td class="user-profile-lbl tbl-profile-lbl">Upload Logos: </td>
                         <td class="user-profile-input" id="tduploadattachment"><img class="cursor-pointer float-left" style="height: 50px;" src="./images/others/dummyattach.png" onclick="dashboardAttach(this);"/><div class="align-left font-size-pt8em">jpeg, gif, png ONLY</div></td>
                     </tr>
                     <?php 
@@ -3697,7 +3842,6 @@ function GetProduct()
 function ManageProducts()
 {    
     global $pt, $db;
-    $temp_disc_limit = "";
     $returnpost = $pt->AnalyzePosts(); 
     $thisfield = $returnpost['thisfield'];
     $usethisclass_1 = "dashboard-mgm-products-tabs-slted";
@@ -3707,7 +3851,7 @@ function ManageProducts()
         $usethisclass_1 = "dashboard-mgm-products-tabs-notslt";
         $usethisclass_2 = "dashboard-mgm-products-tabs-slted";
     }
-    $sql = "SELECT * FROM Products WHERE $thisfield = true ORDER BY name";
+    $sql = "SELECT * FROM products WHERE $thisfield = true ORDER BY name";
    
     //file_put_contents("./dodebug/debug.txt", "admin menu sql = $sql \n", FILE_APPEND);
     $result = $db->PDOMiniquery($sql);?>
@@ -3944,21 +4088,17 @@ function Main()
                 <?php echo $load_headers->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $load_headers->LoginPanel();?></div>
-            <div class="div-main-tabs-container"><?php
-                if($_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
-                {?>
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageabout" onclick="about(this);">About</div>
-                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageintro" onclick="introduction(this);">Introduction</div>   -->
-                    <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_managecompany" onclick="addCompany(this);">Manage Company</div><?php
-                }
-                if($_SESSION['isBarber'] == true || $_SESSION['isAdmin'] == true || $_SESSION['isDeveloper'] == true)
-                {?>   
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageguest" onclick="manageGuests(this);">Manage Guests</div>
-                    <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Manage Products</div>                                 
-                    <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard" id="div_doevent" onclick="doEvent(this);">Create Event</div><?php
-                }?>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
+            <div class="div-main-tabs-container">
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageabout" onclick="about(this);">About</div>
+                <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageintro" onclick="introduction(this);">Introduction</div>   -->
+                <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_managecompany" onclick="addCompany(this);">Company</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth" id="div_manageapi_pro" onclick="manageAPI(this, 'Production');">Square Production API</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>                
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_manageguest" onclick="manageGuests(this);">Guests</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
+                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap" id="div_doevent" onclick="doEvent(this);">Create Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
             </div>
             <div class="div-content-holder-flex align-center">
                 <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>

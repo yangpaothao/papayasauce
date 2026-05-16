@@ -1,5 +1,7 @@
-product.php
-we need to make it so the code knows to track which items user click and how many items and show the total above the cart.
+codefetch.php
+When we click the pro or sand tab, the code may not know, we have to make sure it knows we are from production or sandbox
+as of now, it doesn't 
+line 118
 
 paynow.php
 will need to redo the whole thing but much easier

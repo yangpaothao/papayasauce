@@ -13,7 +13,7 @@ if($temp_host != "localhost")
 }
 else
 {
-    require_once("./common/page.php");
+    require_once("./Common/page.php");
 }
 $db = new PdoClass();
 $pc = new PageloaderClass();

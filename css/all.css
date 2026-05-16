@@ -987,9 +987,11 @@ button{
 }
 .div-menu-dashboard{
     padding: 5px;
-    width: 8%;
-    min-width: 112px;
-    white-space: nowrap;
+    width: 5%;
+    min-width: 100px;
+}
+.div-menu-dashboard-bigwidth{
+    width: 10%;
 }
 .div-menu-dashboard:hover{
     font-family: italic;
@@ -1062,8 +1064,10 @@ button{
     text-align: left;
 }
 .dashboard-company-input{
-    width: 98%;
-    text-align: left;
+    width: 90%;
+}
+.dashboard-company-input-img{
+    width: 8%;
 }
 .tbl-dashboard-sc-lbl{
     width: 160px;
@@ -1163,9 +1167,10 @@ button{
 }
 .tbl-codetech{
     /*stay*/
-    width: 50%;
+    width: 45%;
     background-color: lightgray;
     margin: 0px auto;
+    min-width: 390px;
 }
 .tbl-admin-service{
     /*stay*/
@@ -1281,7 +1286,8 @@ tbody tr:last-child {
 }
 .tbl-dashboard-company{
     /*stay*/
-    width: 600px;
+    width: 80%;
+    min-width: 220px;
     background-color: lightgray;
 }
 .tbl-passwordreset{
@@ -2893,10 +2899,8 @@ table td{
 }
 .tbl-dashboard-company-lbl{
     width: 160px;
-    text-align: right;
     background-color: #393C3E; 
     color: white;
-    white-space: nowrap;
 }
 .adminuserinput{
     width: 70%;

@@ -7,7 +7,7 @@ $_SESSION['predir'] = "";
 $_SESSION['OPERATING_STATE'] = "OK";
 if($temp_host != "localhost")
 {
-    $_SESSION['predir'] = "/home1/gcwwkite/public_html";
+    $_SESSION['predir'] = "/home1/gcwwkite/public_html/website_ad583fcd";
 }
 //Hostgator pre dir
 //date_default_timezone_set('America/Chicago'); //THIS MAKES THE WEBSITE USE THIS TIMEZONE AS THE TIME.
