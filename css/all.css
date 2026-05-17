@@ -67,6 +67,12 @@ body
     background-color: gray; 
     border: solid 1px black;
 }
+.dashboard-div-float-mgm{
+    background-color: gray; 
+    border: solid 1px black;
+    width: auto;
+    min-width: 360px;
+}
 .index-close-div{
     height: 40px;
     width: 40px;
@@ -1024,6 +1030,7 @@ button{
 .tbl-dashboard-user-lbl-span{
     background-color: #393C3E; 
     color: white;
+    width: 90%;
 }
 .tbl-order-lbl{
     background-color: white; 
@@ -1064,7 +1071,12 @@ button{
     text-align: left;
 }
 .dashboard-company-input{
-    width: 90%;
+    width: 50%;
+    min-width: 210px;
+}
+.dashboard-company-input-company{
+    width: 50%;
+    min-width: 210px;
 }
 .dashboard-company-input-img{
     width: 8%;
@@ -1286,8 +1298,7 @@ tbody tr:last-child {
 }
 .tbl-dashboard-company{
     /*stay*/
-    width: 80%;
-    min-width: 220px;
+    width: 60%;
     background-color: lightgray;
 }
 .tbl-passwordreset{
@@ -2845,11 +2856,15 @@ table td{
     margin: 5px;
 }
 .dashboard-bucket-image{
-    width: 420px;
+
     cursor: pointer;
     border: 1px solid;
     padding: 5px;
     margin: 5px;
+    width: 100%;
+    display: block; /* Removes the text baseline space */
+    margin: 0;      /* Removes any outside margins */
+    padding: 0; 
 }
 .profile-span-image-disc{
     text-align: left;
@@ -2899,6 +2914,17 @@ table td{
 }
 .tbl-dashboard-company-lbl{
     width: 160px;
+    min-width: 160px;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-dashboard-company-lbl-company{
+    width: 160px;
+    min-width: 160px;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-dashboard-company-lbl-api{
     background-color: #393C3E; 
     color: white;
 }
@@ -3600,8 +3626,9 @@ admin-service-add{
     width: 400px;
 }
 .dashboard-mgmbarber-renew-api-btn{
-    width: 440px;
-    height: 80px;
+    width: 50%;
+    min-width: 240px;
+    height: auto;
 }
 .dashboard-mgmbarber-revoke-api-btn{
     width: 240px;
@@ -3609,8 +3636,8 @@ admin-service-add{
     background-color: darkred;
 }
 .dashboard-mgmbarber-refresh-api-btn{
-    width: 500px;
-    height: 80px;
+    width: 60%;
+    min-width: 240px;
 }
 .dashboard-mgmbarbers-question{
     height: 15px; width: 15px; 

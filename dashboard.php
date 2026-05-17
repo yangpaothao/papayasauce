@@ -1325,57 +1325,59 @@ function ManageAPI()
             $temp_square_refresh_token_expires_date = empty($rs["square_refresh_token_expire_date$thissandpro"]) ? '' : date('m/d/Y', strtotime($rs["square_refresh_token_expire_date$thissandpro"]));
         }
         $usthisfunc = 'onfocus="getVal(this)" onchange="updateCompanyinfo(this, '.$thisrecno.');"';
-    }?>
+    }
+    $thisinputsize = 'size="40"';
+    ?>
     <div class="float-left">
         <table id="tblservicedata" class="tbl-dashboard-company">
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Approved URL: <span class="asterisk"> * </span></td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Approved URL: <span class="asterisk"> * </span></td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left align-left" size="80" id="square_approved_url" name="square_approved_url" <?php echo $usthisfunc ?> value="*********************************************************************" required />
+                    <input type="text" class="dashboard-company-input float-left align-left" <?php echo $thisinputsize ?> id="square_approved_url" name="square_approved_url" <?php echo $usthisfunc ?> value="*********************************************************************" required />
                     <div class="float-left div-check-eye align-left dashboard-company-input-img"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_approved_url', 'square_approved_url', '<?php echo $returnpost['thisfrom']?>');" /></div>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-center">Code:</td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Code:</td>
                 <td>
-                    <button class="cursor-pointer dashboard-mgmbarber-renew-api float-left" name="btn_get_code" id="btn_get_code" onclick="getSquarecode('<?php echo ($returnpost['thisfrom'] == "Production" ? 'Production' : 'Sandbox') ?>');">Click to get code and refresh token</button>
+                    <button class="cursor-pointer dashboard-mgmbarber-renew-api-btn float-left" name="btn_get_code" id="btn_get_code" onclick="getSquarecode('<?php echo ($returnpost['thisfrom'] == "Production" ? 'Production' : 'Sandbox') ?>');">Click to get code and refresh token</button>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Application ID:</td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Application ID:</td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_application_id<?php echo $thissandpro ?>" name="square_application_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_application_id<?php echo $thissandpro ?>" name="square_application_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
                     <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_application_id<?php echo $thissandpro ?>', 'square_application_id', '<?php echo $returnpost['thisfrom']?>');" /></div>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Client Secret: </td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Client Secret: </td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_client_secret<?php echo $thissandpro ?>" name="square_client_secret<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_client_secret<?php echo $thissandpro ?>" name="square_client_secret<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
                     <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_client_secret" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_client_secret<?php echo $thissandpro ?>', 'square_client_secret', '<?php echo $returnpost['thisfrom']?>');" /></div>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Access Token: </td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Access Token: </td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_api_access_token<?php echo $thissandpro ?>" name="square_api_access_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_api_access_token<?php echo $thissandpro ?>" name="square_api_access_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
                     <div id="div_mgm_barbers_pro_api_token dashboard-company-input-img" class="float-left div-check-eye"><img id="img_api_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_api_access_token<?php echo $thissandpro ?>', 'square_api_access_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Access Token Expire Date: </td>
-                <td><input type="text" class="dashboard-company-input float-left" size="80" id="square_access_token_expire_date<?php echo $thissandpro ?>" name="square_access_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date("m/d/Y", strtotime($square_access_token_expire_date)) ?>" readonly /></td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Acc. Token Exp. Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_access_token_expire_date<?php echo $thissandpro ?>" name="square_access_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date("m/d/Y", strtotime($square_access_token_expire_date)) ?>" readonly /></td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Refresh Token: </td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Refresh Token: </td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_refresh_token<?php echo $thissandpro ?>" name="square_refresh_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_refresh_token<?php echo $thissandpro ?>" name="square_refresh_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
                     <div class="float-left div-check-eye"><img id="img_refresh_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_refresh_token<?php echo $thissandpro ?>', 'square_refresh_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
                 </td>
             </tr>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Refresh Token Expire Date: </td>
-                <td><input type="text" class="dashboard-company-input float-left" size="80" id="square_fresh_token_expire<?php echo $thissandpro ?>" name="square_refresh_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date('m/d/Y', strtotime($square_refresh_token_expire)) ?>" readonly /></td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Refresh Token Exp. Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_fresh_token_expire<?php echo $thissandpro ?>" name="square_refresh_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date('m/d/Y', strtotime($square_refresh_token_expire)) ?>" readonly /></td>
             </tr>
             <?php
             if(!empty($temp_square_refresh_token_expires_date))
@@ -1392,17 +1394,17 @@ function ManageAPI()
                         }
                         $daysleft = (int)(date('d', strtotime(date('m/d/Y', strtotime($temp_square_refresh_token_expires_date))) - strtotime(date('m/d/Y'))));
                         ?>
-                        <button class="cursor-pointer dashboard-mgmbarber-refresh-api-btn <?php echo $blinkingdefault ?> align-left float-left" name="btn_renew_api" id="btn_renew_api" onclick="refreshToken('<?php echo $returnpost['thisfrom'] ?>');">
-                            <span class="font-size-1p5em">Refresh token</span> expires On <?php echo date('m/d/Y', strtotime($temp_square_refresh_token_expires_date)) ?>.  
-                            You have <?php echo $daysleft ?> days left for the access token, click to refresh the access token!!!
+                        <button class="cursor-pointer dashboard-mgmbarber-refresh-api-btn <?php echo $blinkingdefault ?> align-left float-left font-size-pt7em" name="btn_renew_api" id="btn_renew_api" onclick="refreshToken('<?php echo $returnpost['thisfrom'] ?>');">
+                            Refresh token expires On <?php echo date('m/d/Y', strtotime($temp_square_refresh_token_expires_date)) ?>.  
+                            There's <?php echo $daysleft ?> days left. Click to refresh!
                         </button>
                     </td>
                 </tr><?php
             }?>
             <tr>
-                <td class="tbl-dashboard-company-lbl white-space-no-wrap align-right">Location ID: </td>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Location ID: </td>
                 <td>
-                    <input type="text" class="dashboard-company-input float-left" size="80" id="square_ev_location_id<?php echo $thissandpro ?>" name="square_ev_location_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_ev_location_id<?php echo $thissandpro ?>" name="square_ev_location_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
                     <div class="float-left div-check-eye"><img id="img_code" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'square_ev_location_id<?php echo $thissandpro ?>', 'square_ev_location_id', '<?php echo $returnpost['thisfrom']?>');" /></div></div>
                 </td>
             </tr>
@@ -2506,8 +2508,8 @@ function About()
             $thisrecno = $rs['recno'];
         }
     }?>
-    <div id="div_float_about" class="index-div-float-mgm float-left">
-        <textarea id="txtarea_about" name="txtarea_about" cols="83" rows="24"><?php echo $thisabout ?></textarea>
+    <div id="div_float_about" class="dashboard-div-float-mgm float-left">
+        <textarea id="txtarea_about" name="txtarea_about" style="min-width: 320px; width: 98%; resize: none;" cols="54" rows="24"><?php echo $thisabout ?></textarea>
         <button id="btn_save" onclick="saveAbout(<?php echo $thisrecno ?>);" style="margin: 0px auto; display: block;">Save</button>
     </div><?php
 }
@@ -3626,50 +3628,50 @@ function AddCompany()
         <div class="float-left">
             <table id="tblservicedata" class="tbl-dashboard-company">
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Name Of Company: <span class="asterisk"> * </span></td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="name" name="name" <?php echo $usthisfunc ?> value="<?php echo $thisname ?>" required /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Name Of Company: <span class="asterisk"> * </span></td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="name" name="name" <?php echo $usthisfunc ?> value="<?php echo $thisname ?>" required /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Google Map Location:</td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="googlemap_location" name="googlemap_location" <?php echo $usthisfunc ?> value="<?php echo $thisgooglemap ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Google Map Location:</td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="googlemap_location" name="googlemap_location" <?php echo $usthisfunc ?> value="<?php echo $thisgooglemap ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Facebook Link:</td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="facebook_link" name="facebook_link" <?php echo $usthisfunc ?> value="<?php echo $thisfblink ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Facebook Link:</td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="facebook_link" name="facebook_link" <?php echo $usthisfunc ?> value="<?php echo $thisfblink ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Payment Company: </td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="api_company" name="api_company" <?php echo $usthisfunc ?> value="<?php echo $thispaymentcompany ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Payment Company: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="api_company" name="api_company" <?php echo $usthisfunc ?> value="<?php echo $thispaymentcompany ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Phone No.: </td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="phone_number" name="phone_number" <?php echo $usthisfunc ?> value="<?php echo $thisphonenumber ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Phone No.: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="phone_number" name="phone_number" <?php echo $usthisfunc ?> value="<?php echo $thisphonenumber ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Address: </td>
-                    <td><input type="text" class="dashboard-company-input" style="width: 98%;" id="address" name="address" <?php echo $usthisfunc ?> value="<?php echo $thisaddress ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Address: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="address" name="address" <?php echo $usthisfunc ?> value="<?php echo $thisaddress ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">City: </td>
-                    <td><input type="text" class="dashboard-company-input" id="city" name="city" <?php echo $usthisfunc ?> value="<?php echo $thiscity ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">City: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="city" name="city" <?php echo $usthisfunc ?> value="<?php echo $thiscity ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">State: </td>
-                    <td><input type="text" class="dashboard-company-input" id="state" name="state" <?php echo $usthisfunc ?> value="<?php echo $thisstate ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">State: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="state" name="state" <?php echo $usthisfunc ?> value="<?php echo $thisstate ?>" /></td>
                 </tr>
                 <tr>
-                    <td class="tbl-dashboard-company-lbl">Zipcode: </td>
-                    <td><input type="text" class="dashboard-company-input" id="zipcode" name="zipcode" <?php echo $usthisfunc ?> value="<?php echo $thiszipcode ?>" /></td>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Zipcode: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="zipcode" name="zipcode" <?php echo $usthisfunc ?> value="<?php echo $thiszipcode ?>" /></td>
                 </tr><?php
                 if($thisname != "")
                 {?> 
                     <tr>
-                        <td class="tbl-dashboard-company-lbl">Active:</td>
-                        <td><input type="checkbox" class="dashboard-company-input float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
+                        <td class="tbl-dashboard-company-lbl-company align-right">Active:</td>
+                        <td><input type="checkbox" class="dashboard-company-input-company float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
                     </tr>
                     <tr>
-                        <td class="user-profile-lbl tbl-profile-lbl">Upload Logos: </td>
-                        <td class="user-profile-input" id="tduploadattachment"><img class="cursor-pointer float-left" style="height: 50px;" src="./images/others/dummyattach.png" onclick="dashboardAttach(this);"/><div class="align-left font-size-pt8em">jpeg, gif, png ONLY</div></td>
+                        <td class="tbl-dashboard-company-lbl-company">Upload Logos: </td>
+                        <td  id="tduploadattachment"><img class="cursor-pointer float-left" style="height: 50px; width: 50%; min-width: 220px;" src="./images/others/dummyattach.png" onclick="dashboardAttach(this);"/><div class="align-left font-size-pt8em">jpeg, gif, png ONLY</div></td>
                     </tr>
                     <?php 
                 }
@@ -3715,7 +3717,7 @@ function BuildCompanyimagecontainer($from, $thisdir, $thispath, $sltedimage)
                     $usethistitle = "Selected";
                 }
             }?>
-            <div class="dashboard-mgm-company-logo-container float-left">
+            <div style="width: 75%;">
                 <input class="btn-delete-logo float-right" type="button" name="btn_delete_<?php echo basename($file) ?>" id="btn_delete_<?php echo basename($file) ?>" onclick="deleteLogo('<?php echo basename($file) ?>');" title="Click to remove this image" value="X" />
                 <img name="<?php echo basename($file) ?>" id="<?php echo basename($file) ?>" class="dashboard-bucket-image <?php echo $usethiscssborder ?>" title="<?php echo $usethistitle ?>" src="<?php echo $thispath ?>/<?php echo basename($file) ?>" onclick="selectImage(this, 'mainlogo', '<?php echo basename($file) ?>');"></a>
                 <br/><span class="admin-span-image-disc"><?php echo basename($file) ?></span>
