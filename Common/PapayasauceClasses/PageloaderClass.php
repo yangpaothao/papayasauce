@@ -32,7 +32,7 @@ class PageloaderClass {
         <script type="text/javascript" charset="utf8" src="./datatables/datatables.js"></script> 
         <script src="./select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script type="text/javascript" src="./Common/common.js"></script><?php
-        if($page == 'addccard' || $page == 'paynow')
+        if($page == 'cart')
         {
             if(isset($_SESSION['isLive']) && $_SESSION['isLive'] == true)
             {?>

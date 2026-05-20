@@ -1,13 +1,7 @@
-codefetch.php
-When we click the pro or sand tab, the code may not know, we have to make sure it knows we are from production or sandbox
-as of now, it doesn't 
-line 118
-
-paynow.php
-will need to redo the whole thing but much easier
-just need to do similar layout as product but include the payment entry stuffs
-only need to show one picture
-user could be buying more than 1 item or more than 1 type of item so we need to list the items, a review kind of sort.
+cart.php
+Will need to make sure we submit and get all the data
+will need to allow user to adjust the items #, they could be adding more or removing more and the total has to reflect this change onchange, recalculate total and such, will
+need to update database so that way when we do a submit, it will get the total from there.
 
 
 manageproduct.php
@@ -22,3 +16,4 @@ Work on Create Even, go through code and make sure everything works.
 
 Will need to work on Show event too.
 
+The tabs needs to font to change to smaller when the screen goes smaller

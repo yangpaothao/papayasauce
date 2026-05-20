@@ -589,6 +589,13 @@ li{
     min-width: 280px;
     background-color: orange;
 }
+.cart-div-headline-info{
+    color: red; 
+    background-color: black; 
+    min-width: 320px; 
+    width: 100%; 
+    font-weight: bold;
+}
 .div-content-holder-flex-data-container{
    
 }
@@ -1077,6 +1084,20 @@ button{
 .dashboard-company-input-company{
     width: 50%;
     min-width: 210px;
+}
+.cart-input{
+    width: 50%;
+    min-width: 210px;
+}
+.cart-div-container{
+    min-width: 410px; 
+    width: 75%; 
+    margin: 0px auto; 
+    background-color: lightgray;
+}
+.cart-div-pro-container{
+    width: 50%; 
+    margin-top: 20px;
 }
 .dashboard-company-input-img{
     width: 8%;
@@ -2919,6 +2940,12 @@ table td{
     color: white;
 }
 .tbl-dashboard-company-lbl-company{
+    width: 160px;
+    min-width: 160px;
+    background-color: #393C3E; 
+    color: white;
+}
+.tbl-cart-lbl{
     width: 160px;
     min-width: 160px;
     background-color: #393C3E; 

@@ -17,7 +17,7 @@ if($temp_host != "localhost")
 }
 else
 {
-    require_once("./common/page.php");
+    require_once("./Common/page.php");
 }
 if(count($_POST) > 0 && isset($_POST['hid_cmd']))
 {
@@ -74,7 +74,7 @@ function SubmitLoginForm()
     {    
         //file_put_contents("./dodebug/debug.txt", "Here now", FILE_APPEND);  //2137
         $thisfields = array('recno', 'firstname', 'lastname', 'email', 'login', 'media_dir', 'ispasswordchanged', 'isverified', 'isactive', 
-            'isauthenticated', 'isauthenticatedverified', 'profile', 'isAdmin', 'isBarber', 'isLive', 'isDeveloper');
+            'isauthenticated', 'isauthenticatedverified', 'profile', 'isAdmin', 'isBarber', 'isDeveloper');
         $thistable = "users";
         $getpasssword = $pc -> Hash_Me_Password($_POST['txtpassword']); //we hash user's entered pw.      
         
@@ -175,12 +175,7 @@ function SubmitLoginForm()
                     $_SESSION['thiswebsite'] = "$temp_host";
                     $_SESSION['isAdmin'] = $row['isAdmin'];
                     $_SESSION['isBarber'] = $row['isBarber'];
-                    $_SESSION['isLive'] = $row['isLive'];
                     $_SESSION['realsandpro'] = "Sandbox";
-                    if($row['isLive'] == true)
-                    {
-                        $_SESSION['realsandpro'] = "Production";
-                    }
                     $_SESSION['isDeveloper'] = $row['isDeveloper'];
                     //file_put_contents('./dodebug/debug.txt', "What is admin? ".$_SESSION['isAdmin'], FILE_APPEND);
                     //Since we successfully logged in, we want to make vericode NULL so that it wil negate any new password change request or verification

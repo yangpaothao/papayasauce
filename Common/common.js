@@ -72,14 +72,15 @@ function unEscapethisemail(thisemail){
     tempemail = thisemail.replace(/\\/g, '');
     return(tempemail);
 }
-function validateEmail(thisEmail){
+function validateEmail(obj){
     let regex1 = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z]{2,4})+$/;
             ///^([a-zA-Z0-9_\.\-\+])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-    if(regex1.test(thisEmail)){
+    if(regex1.test($(obj).val())){
         return(true);
     }
     else{
         alert("Please enter a valid email.");
+        $(obj).focus();
         return(false);
     }
 }
