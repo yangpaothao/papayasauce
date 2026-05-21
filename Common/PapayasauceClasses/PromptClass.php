@@ -344,85 +344,6 @@ class PromptClass
         }
         echo $tempname;
     }
-    function GetStates($thisstate)
-    {
-        $statearray = [
-                        'Alaska' => 'AK', 
-                        'Arkansas' => 'AR',
-                        'American Samoa' => 'AS',
-                        'California' => 'CA',
-                        'Colorado' => 'CO',
-                        'Connecticut' => 'CT',
-                        'District of Columbia' => 'DC',
-                        'Georgia' => 'GA',
-                        'Florida' => 'FL',
-                        'Guam' => 'GU',
-                        'Hawaii' => 'HI',
-                        'Iowa' => 'IA',
-                        'Idaho' => 'ID',
-                        'Illinois' => 'IL',
-                        'Indiana' => 'IN',
-                        'Kansas' => 'KS',
-                        'Kentucky' => 'KY',
-                        'Louisiana' => 'LA',
-                        'Massachusetts' => 'MA',
-                        'Maryland' => 'MD',
-                        'Maine' => 'ME',
-                        'Michigan' => 'MI',
-                        'Minnesota' => 'MN',
-                        'Missouri' => 'MO',
-                        'Mississippi' => 'MS',
-                        'Montana' => 'MT',
-                        'North Carolina' => 'NC',
-                        'North Dakota' => 'ND',
-                        'New Hampshire' => 'NH',
-                        'New Jersey' => 'NJ',
-                        'New Mexico' => 'NM',
-                        'Nevada' => 'NV',
-                        'New York' => 'NY',
-                        'Ohio' => 'OH',
-                        'Oklahoma' => 'OK',
-                        'Oregon' => 'OR',
-                        'Pennsylvania' => 'PA',
-                        'Puerto Rico' => 'PR',
-                        'Rhode Island' => 'RI',
-                        'South Carolina' => 'SC',
-                        'South Dakota' => 'SD',
-                        'Tennessee' => 'TN',
-                        'Texas' => 'TX',
-                        'Northern Mariana Islands' => 'MP',
-                        'Utah' => 'UT',
-                        'Virginia' => 'VA',
-                        'Virgin Islands' => 'VI',
-                        'Vermont' => 'VT',
-                        'Washington' => 'WA',
-                        'Wisconsin' => 'WI',
-                        'West Virginia' => 'WV',
-                        'Wyoming' => 'WY'];
-        
-    
-        if(strlen($thisstate) > 2)
-        {
-            foreach($statearray as $tempstate => $tempabb){
-                if(strtolower($tempstate) == strtolower($thisstate))
-                {
-                    //file_put_contents('./dodebug/debug.txt', " 1promp temp state: $tempabb \n", FILE_APPEND);
-                    return($tempabb);
-                }
-            }
-        }
-        else
-        {
-            file_put_contents('./dodebug/debug.txt', "3promp temp state: not here \n", FILE_APPEND);
-            if (in_array($thisstate, $statearray)) {
-                return($thisstate);
-            }
-            else
-            {
-                return("Bad State.");
-            }
-        }
-    }
     function CheckIfexist($thistable, $thisfields, $thiswhere)
     {
         $result = $this->db->PDOQuery($thistable, $thisfields, $thiswhere);
@@ -1621,5 +1542,66 @@ class PromptClass
             $isLive = true;
         }
         return($isLive);      
+    }
+    function GetStates($db)
+    {
+        $this->thisarray = [];
+        //Will return an associative array, ex, array("Alaska" => "AK",.....)
+        $sql = "SELECT * FROM states ORDER BY name";
+        $result = $db->PDOminiquery($sql);
+        foreach($result as $rs)
+        {
+            $this->thisarray[$rs['abbr']] = $rs['name'];
+        }
+        if($this->isDebug == true)
+        {
+            file_put_contents('./dodebug/debug.txt', "GetStates: ".json_encode($this->thisarray)." \n", FILE_APPEND);
+        }
+        return $this;
+    }
+    function ShowReceipt($db, $thiscartrecnostr, &$thistotal)
+    {
+        $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($thiscartrecnostr) ORDER BY p.name";
+        //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
+        $result = $db -> PDOMiniquery($sql);
+        if($db->PDORowcount($result) > 0)
+        {
+            $i = 1;
+            foreach($result as $rs)
+            {
+                $numberofitems = $_SESSION['CARTRECNOTRACKER'][$rs['recno']];
+                $thisdir = "./images/others/products/".$rs['cname']."/".$rs['recno'];?>
+                <div class="align-right cart-div-content-holder-flex-data-container display-inline-block" >  
+                    <div class="float-left cart-img-data-container">
+                        <div class="float-left" ><img id="large_img_container" class="img-cart-review" src="<?php echo $thisdir ?>/mini/s_<?php echo substr($rs['attachment'],2) ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+                        <div class="align-left float-left">
+                            <table>
+                                <tr>
+                                    <td class="font-color-white" colspan="2"><?php echo $rs['name'] ?></div><td>
+                                </tr>
+                                <tr>
+                                    <td class="font-color-white float-left align-right">Each: </td>
+                                    <td class="font-color-white float-left align-left" >$<?php echo number_format($rs['price'], 2) ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-color-white float-left align-right">Items: </td>
+                                    <td class="font-color-white float-left align-left"><?php echo $numberofitems ?></td>
+                                </tr>
+                                <tr>
+                                    <td class="font-color-white float-left align-right color-darkred"><b>Total:</b>  </td>
+                                    <td class="font-color-white float-left align-left color-darkred"><b>$<?php echo number_format($numberofitems*$rs['price'], 2) ?></b></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2"><textarea class="cart-txtarea" rows="7" readonly><?php echo $rs['description'] ?></textarea><td>
+                                </tr>
+                            </table>
+
+                        </div>
+                    </div>
+                </div><?php
+                $thistotal += number_format($numberofitems*$rs['price'], 2);
+                $i++;
+            }
+        }
     }
 }?>

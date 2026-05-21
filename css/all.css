@@ -586,8 +586,9 @@ li{
 }
 .cart-div-content-holder-flex-data-container{
     padding: 20px; 
-    min-width: 280px;
+    min-width: 210px;
     background-color: orange;
+    min-height: 210px;
 }
 .cart-div-headline-info{
     color: red; 
@@ -4024,8 +4025,7 @@ admin-service-add{
     color: white; 
     padding-left: 10px; 
     padding-bottom: 10px; 
-    min-width: 268px; 
-    height: 160px;
+    min-width: 280px;
 }
 .pro-mini-img-container{
     width: 418px; 
@@ -4119,9 +4119,12 @@ admin-service-add{
     height: 165px;
     width: 90px;
 }
-
-
-
+.font-color-white{
+    color: white;
+}
+.color-darkred{
+    color: darkred;
+}
 
 
 

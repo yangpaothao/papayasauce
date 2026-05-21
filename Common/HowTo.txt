@@ -107,3 +107,9 @@ https://www.youtube.com/watch?v=YKpB0Sd3mGE
 
 javascript go to website
 window.location.href = "index.php";
+
+How to do a select
+$pt->GetStates($db)->GetSelect("slt_thisstate", '', true, false, false, true, false, true);
+
+The $pt->GetStates($db)
+    This must go to a function that will return an associate array, ex, array("one" => "two",.....)

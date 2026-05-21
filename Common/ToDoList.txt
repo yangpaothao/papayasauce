@@ -2,7 +2,7 @@ cart.php
 Will need to make sure we submit and get all the data
 will need to allow user to adjust the items #, they could be adding more or removing more and the total has to reflect this change onchange, recalculate total and such, will
 need to update database so that way when we do a submit, it will get the total from there.
-
+line 200, recaculate
 
 manageproduct.php
 will need to wokr on eanbling edit of a product

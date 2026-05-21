@@ -1,5 +1,5 @@
 <?php
-require __DIR__ . '/common/vendor/autoload.php';
+require __DIR__ . '/Common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
@@ -9,11 +9,11 @@ $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
 
 if($temp_host != "localhost")
 {
-    require_once("/home1/gcwwkite/public_html/common/page.php");
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
 }
 else
 {
-    require_once("./common/page.php");
+    require_once("./Common/page.php");
 }
 $db = new PdoClass();
 $pc = new PageloaderClass();

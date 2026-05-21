@@ -1,13 +1,21 @@
 <?php
-require __DIR__ . '/common/vendor/autoload.php';
+require __DIR__ . '/Common/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
-require("./common/page.php");
+$temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
 
+if($temp_host != "localhost")
+{
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
+}
+else
+{
+    require_once("./Common/page.php");
+}
 $load_headers = new PageloaderClass();
 $pc = new PromptClass();
 $db = new PdoClass();
@@ -299,13 +307,13 @@ function ChangePassword()
 }
 function Main()
 {
-    global $pc, $load_headers; $this_page?><?php
+    global $db, $pc, $load_headers; $this_page?><?php
     //We are sending false into the load_header_logo(false) because we do not want the logo to show, just the other stuffs.
     $load_headers->Load_Header($this_page);?>
     <div class="main-div">
         <div style="width: 90%; margin: auto; background-color: #f0f5f5;">
             <div class="main-logo float-left">
-                <?php echo $load_headers->LoadLogo();?>
+                <?php echo $load_headers->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%; display: block;"><?php echo $load_headers->LoginPanel();?></div>
             <div class="div-main-tabs-container">

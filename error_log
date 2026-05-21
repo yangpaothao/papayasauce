@@ -1,0 +1,5 @@
+[20-May-2026 22:52:47 America/Chicago] PHP Fatal error:  Uncaught Error: Call to a member function GetSelect() on array in /home1/gcwwkite/public_html/website_ad583fcd/cart.php:495
+Stack trace:
+#0 /home1/gcwwkite/public_html/website_ad583fcd/cart.php(155): Main()
+#1 {main}
+  thrown in /home1/gcwwkite/public_html/website_ad583fcd/cart.php on line 495
