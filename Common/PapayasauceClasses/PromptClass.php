@@ -40,7 +40,7 @@ class PromptClass
     //PDOQuery($thistable=null, $thisfields=null, $thiswhere=null, $thisorderby=null, $thisgroupby=null, $ordering=null, $ons=null, $distinct=null)
     private $db = null;
     private $thisarray = [];
-    private $isDebug = true;
+    private $isDebug = false;
 
     private function GetDBcon()
     {
@@ -907,7 +907,7 @@ class PromptClass
         $thisarray = json_decode($thisstring, true);
         return($thisarray);
     }
-    function MakeSquarepayment($thiscustomerid, $thistotal, $thistip, $thishash, $thisaccesstoken, $thistoken)
+    function MakeSquarepayment($thiscustomerid, $thistotal, $thishash, $thisaccesstoken, $thistoken)
     {
         //https://developer.squareup.com/reference/square/payments-api/create-payment
         //https://developer.squareup.com/docs/devtools/sandbox/payments for credit card# testing 4111 1111 1111 1111, 
@@ -920,7 +920,6 @@ class PromptClass
             new CreatePaymentRequest([
                 'amountMoney' => new Money([
                     'amount' => $thistotal,
-                    'tip_money' => $thistip,
                     'currency' => Currency::Usd->value
                 ]),
                 'idempotencyKey' => $thishash,
@@ -1558,50 +1557,5 @@ class PromptClass
             file_put_contents('./dodebug/debug.txt', "GetStates: ".json_encode($this->thisarray)." \n", FILE_APPEND);
         }
         return $this;
-    }
-    function ShowReceipt($db, $thiscartrecnostr, &$thistotal)
-    {
-        $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($thiscartrecnostr) ORDER BY p.name";
-        //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
-        $result = $db -> PDOMiniquery($sql);
-        if($db->PDORowcount($result) > 0)
-        {
-            $i = 1;
-            foreach($result as $rs)
-            {
-                $numberofitems = $_SESSION['CARTRECNOTRACKER'][$rs['recno']];
-                $thisdir = "./images/others/products/".$rs['cname']."/".$rs['recno'];?>
-                <div class="align-right cart-div-content-holder-flex-data-container display-inline-block" >  
-                    <div class="float-left cart-img-data-container">
-                        <div class="float-left" ><img id="large_img_container" class="img-cart-review" src="<?php echo $thisdir ?>/mini/s_<?php echo substr($rs['attachment'],2) ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
-                        <div class="align-left float-left">
-                            <table>
-                                <tr>
-                                    <td class="font-color-white" colspan="2"><?php echo $rs['name'] ?></div><td>
-                                </tr>
-                                <tr>
-                                    <td class="font-color-white float-left align-right">Each: </td>
-                                    <td class="font-color-white float-left align-left" >$<?php echo number_format($rs['price'], 2) ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-color-white float-left align-right">Items: </td>
-                                    <td class="font-color-white float-left align-left"><?php echo $numberofitems ?></td>
-                                </tr>
-                                <tr>
-                                    <td class="font-color-white float-left align-right color-darkred"><b>Total:</b>  </td>
-                                    <td class="font-color-white float-left align-left color-darkred"><b>$<?php echo number_format($numberofitems*$rs['price'], 2) ?></b></td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2"><textarea class="cart-txtarea" rows="7" readonly><?php echo $rs['description'] ?></textarea><td>
-                                </tr>
-                            </table>
-
-                        </div>
-                    </div>
-                </div><?php
-                $thistotal += number_format($numberofitems*$rs['price'], 2);
-                $i++;
-            }
-        }
     }
 }?>

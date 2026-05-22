@@ -1,13 +1,20 @@
 <?php
-require __DIR__ . '/common/vendor/autoload.php';
+require __DIR__ . '/Common/vendor/autoload.php';
 
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
-require("./common/page.php");
-require("./common/classes/PageloaderClass.php");
-require("./common/pdocon.php");
-require("./common/sendmail.php");
 
+use PapayasauceClasses\PageloaderClass;
+use PapayasauceClasses\PdoClass;
+require("./Common/sendmail.php");
+if($temp_host != "localhost")
+{
+    require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
+}
+else
+{
+    require_once("./Common/page.php");
+}
 $load_headers = new PageloaderClass();
 $db = new PDOCON();
 
@@ -57,7 +64,7 @@ function Main()
             <div class="align-center" style="color: black;">
                 <?php
                 //BULIT A RECEIPT HERE!!!
-                echo "Thank you for the payment.  A receipt has been sent to your email, a confirmation to your phone number on record.\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
+                echo "Thank you for your payment.  A receipt has been sent to your email.\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
             ?>
             </div>
         </div>

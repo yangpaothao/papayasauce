@@ -3,6 +3,7 @@ require __DIR__ . '/Common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
+use PapayasauceClasses\OrderClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
@@ -18,6 +19,7 @@ else
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
+$oc = new OrderClass();
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
     $_REQUEST['cmd']();
@@ -25,6 +27,7 @@ if(count($_POST) > 0 && isset($_POST['cmd']))
 }
 if(count($_POST) > 0 && isset($_POST['token']))
 {
+    echo var_dump($_POST);
     TokenizedPayment();
     exit();
 }
@@ -54,57 +57,13 @@ if(count($_GET) > 0)
             $(document).ready(function(){
                getSourceid();
             });
-            function submitDeposit(thisrecno){   
-                //thisrecno is the recno for table schedule_dates
-                if(validateCC() === false){
-                    return(false);
-                }
-                //alert(thisstatus);
-                //WE want to find the checked radio for the card type
-                cardtype = $('input[name="rdo_credity_type"]:checked').val();
-                //alert(cardtype);
-                //alert(thisstatus);
-                let thisArray = [{
-                        "cardtype": cardtype,
-                        "thisamount": thisamount, 
-                        "thiscard": $("#txt_cr_last4").val(), 
-                        "thisexpmm": $("#txt_expiredate_mm").val(),
-                        "thisexpyy": $("#txt_expiredate_yy").val(),
-                        "thissecurity": $("#txt_security").val(),
-                        "thisstatus": thisstatus
-                    }];  
-                $("#div_loader").removeClass("display-none");
-                const thisData = JSON.stringify(thisArray);
-                
-                getSquareinfo(thisrecno);
-                
-                fetchAjaxdatadeposit(thisData);
-            }
-            async function fetchAjaxdatadeposit(thisData){
-                try{
-                    const result = await $.ajax({
-                    url: '<?=$_SERVER['PHP_SELF']; ?>?cmd=SubmitDeposit&thisarray='+thisData,
-                    type: 'POST',
-                    contentType: "application/json"
-                    });
-                    if(result == "Success"){
-                        window.location.href = "./paid.php";
-                    }
-                    else
-                    {
-                        alert("this return? "+result);
-                    }
-                }
-                catch(error){
-                    alert("ERROR in paynow");
-                    alert(result);
-                }
-            }
             //https://www.google.com/search?q=square+api%2C+PHP+Payments+SDK+example&sca_esv=c84071398b66a2e1&sxsrf=ANbL-n6P1yPIAXFi1NxOlVYEJ26w5yN90w%3A1773282628177&source=hp&ei=RCWyaeeyCaaT8L0P8NLf6AM&iflsig=AFdpzrgAAAAAabIzVE98Flap9obPmHMRlH2ZxviamJPD&ved=0ahUKEwjn5IzJqJmTAxWmCbwBHXDpFz0Q4dUDCCE&uact=5&oq=square+api%2C+PHP+Payments+SDK+example&gs_lp=Egdnd3Mtd2l6IiRzcXVhcmUgYXBpLCBQSFAgUGF5bWVudHMgU0RLIGV4YW1wbGUyBRAhGKABMgUQIRigAUiOP1AAWIY-cAh4AJABAZgBhwKgAYkoqgEHMS4xNi4xMrgBA8gBAPgBAfgBApgCJKAC3ybCAgQQIxgnwgILEAAYgAQYkQIYigXCAg4QLhiABBixAxjRAxjHAcICBRAuGIAEwgILEAAYgAQYsQMYgwHCAgUQABiABMICERAuGIAEGLEDGNEDGIMBGMcBwgIIEC4YgAQYsQPCAggQABiABBixA8ICChAAGIAEGBQYhwLCAgYQABgWGB7CAgUQABjvBcICCBAAGIAEGKIEwgILEAAYgAQYhgMYigXCAgUQIRirAsICBxAhGKABGAqYAwCSBwc4LjE2LjEyoAfozQGyBwcwLjE2LjEyuAfOJsIHBzExLjIxLjTIBzCACAA&sclient=gws-wiz
             async function tokenize(payment) {
                 const result = await payment.tokenize();
                 if (result.status === 'OK') {
                     //alert(result.token);
+                    // Send the token to your backend PHP script
+                    $("#token").val(result.token);
                     $("#payment_form").submit();
                 } else {
                     alert("Please enter your card information correctly and try again.");
@@ -164,13 +123,20 @@ function ValidateState()
 }
 function TokenizedPayment()
 {
-    global $db, $pt, $mc, $tc, $pc, $load_headers, $ne, $sc, $sms;
+    global $db, $pt, $mc, $tc, $pc, $load_headers, $ne, $sc, $sms, $oc;
     if(!isset($_SESSION['companyname']))
     {
         //if session timed out, we send user to index, front page.
         header("Location: /index.php"); //Unless this is the main/front page, if user does not have a logged session, they will be forced to login first.
     }
-    $returnpost = $pt->AnalyzePosts();
+    $tempsandpropost = "";
+    $thisreturns = "";
+    $thissquareid = NULL;
+    $square_receiptno = "";
+    $thissquareorderid = "";
+    $newuserrecno = "";
+    $insertpro = "";
+    $returnpost = $pt->AnalyzePostsubmit();
     $email = $returnpost['email'];
     $firstname = $returnpost['firstname'];
     $lastname = $returnpost['lastname'];
@@ -187,7 +153,7 @@ function TokenizedPayment()
     if(isset($_SESSION['isLive']) && $_SESSION['isLive'] == true){
         $tempsandpropost = "_pro";
     }
-    $thisserver = $load_headers -> GET_THIS_SERVER();
+    //$thisserver = $load_headers -> GET_THIS_SERVER();
     
     $sqlacc = "SELECT square_api_access_token$tempsandpropost FROM company_info";
     //file_put_contents("./dodebug/debug.txt", "sqlacc = $sqlacc \n", FILE_APPEND);
@@ -198,18 +164,36 @@ function TokenizedPayment()
     }
     //We got the total from the form.  However, we want to run the total from the array to make sure it matches before we OKayed the total to be paid for security reason.
     //$_SESSION['CARTRECNOTRACKER']
-    
-    
-    
-    if($realamount > 0)
+    $realtotal = $oc->CalculateTotalorders($db);
+    //file_put_contents("./dodebug/debug.txt", "returndata: $returndata \n", FILE_APPEND);
+    //file_put_contents("./dodebug/debug.txt", "total $total \n", FILE_APPEND);
+    //$total has a leading '$' that we need to remove.  Ex, $120.00
+    if(substr($total,1) == $realtotal)
     {
-        if($_SESSION['thisfrom'] != "Daily" && is_null($thisbalance))
+        //file_put_contents("./dodebug/debug.txt", "Is Good \n", FILE_APPEND);
+        //If the total coming from the form and the total from the recalculation is the same, that means it is good.
+        
+        
+        if($realtotal > 0)
         {
-            $thisdataupdatecomplete['isPrepaid'] = true;
+            if(isset($_SESSION['user_recno']))
+            {
+                $sql = "SELECT squareid from users WHERE squareid IS NOT NULL AND recno = ".$_SESSION['user_recno'];
+                //file_put_contents("./dodebug/debug.txt", "sql = $sql \n", FILE_APPEND);
+                $result = $db->PDOMiniquery($sql);
+                if($db->PDORowcount($result) > 0)
+                {
+                    foreach($result as $rs)
+                    {
+                        $thissquareid = $rs['squareid'];
+                    }
+                }
+            }
+            $newuserrecno = $_SESSION['user_recno'];
         }
         if(is_null($thissquareid))
         {
-            $thisnewcust = $pt->CreateSquareCustomer($thisuser_recno, $thisfirstname, $thislastname, $thisemail, $thisphone_number, $thisaccesstoken);
+            $thisnewcust = $pt->CreateSquareCustomer($thisuser_recno, $firstname, $lastname, $email, $phonenumber, $thisaccesstoken);
             //$thispayment is an array but 1 item in it.
             //$sqrecord will show the returned array
             //$sqlvalue will show the value
@@ -229,9 +213,34 @@ function TokenizedPayment()
                 }
             }
             $thistable = "users";
-            $thisdata = ["squareid$tempsandpropost" => $thissquarecustomerid];
-            $thiswhere = ["recno" => $thisuser_recno];
-            $db->PDOUpdate($thistable, $thisdata, $thiswhere);
+            $email = $returnpost['email'];
+            $firstname = $returnpost['firstname'];
+            $lastname = $returnpost['lastname'];
+            $phonenumber = $returnpost['phonenumber'];
+            $address1 = $returnpost['address'];
+            $address2 = $returnpost['address2'];
+            $city = $returnpost['city'];
+            $state = $returnpost['state'];
+            $zipcode = $returnpost['zipcode'];
+            $total = $returnpost['total'];
+            $thisdata = ["email" => $email, 
+                         "firstname" => $firstname,
+                         "lastname" => $lastname, 
+                         "phone_number" => $phonenumber,
+                         "address" => $address1,
+                         "address2" => $address2,
+                         "city" => $city,
+                         "state" => $state, 
+                         "zipcode" => $zipcode,
+                         "squareid$tempsandpropost" => $thissquarecustomerid];
+
+            $newuserrecno = $db->PDOInsert($thistable, $thisdata);
+            
+            $thistable = "orders";
+            $thisdata = ["foreign_user_recno" => $newuserrecno,
+                         "products" => json_encode($_SESSION['CARTRECNOTRACKER']),
+                         "total" => $realtotal];
+            $db->PDOInsert($thistable, $thisdata);
         }
         else
         {
@@ -244,7 +253,7 @@ function TokenizedPayment()
 
         //https://developer.squareup.com/reference/sdks/web/payments/card-payments
 
-        $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realamount, $thistip, $thishash, $thisaccesstoken, $thistoken);
+        $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
         //https://developer.squareup.com/reference/square/payments-api
         //file_put_contents('./dodebug/debug.txt', "In Pay NoW what is thisreturns: $thisreturns \n", FILE_APPEND);
         //for the return, we will need the id, 
@@ -282,6 +291,7 @@ function TokenizedPayment()
                     if($key1 == "order_id")
                     {
                         $thisdataupdatecomplete['order_id'] = $value1;
+                        $thissquareorderid = $value1;
                     }
                 }                 
             }
@@ -289,23 +299,11 @@ function TokenizedPayment()
         if($squarestatus == "COMPLETED")
         {
             $thisdataupdatecomplete["source_id"] = $thistoken;
-            $thisdataupdatecomplete["isActive"] = true; 
             $thisdataupdatecomplete['isPaid'] = true;
-            $thisdataupdatecomplete['iscompleted'] = true;
-            if($thisIsdeposit == true)
-            {
-                $thiswhere = ["recno" => $thenewrecno];
-            }
-            else
-            {
-                //We pay in full or there is no deposit so we just need to update the appropriate fields with the return values from square.
-                //payment_id
-                //location_id
-                //square_receit
-                //payment_confirmation
-                $thiswhere = ["recno" => $_SESSION['thisrecno']];
-            }
-            $thistable = "schedule_dates";
+            $thisdataupdatecomplete['date'] = date('Y-m-d H:i:s');
+            $thiswhere = ["recno" => $newuserrecno];
+            
+            $thistable = "orders";
             $thisupdate = $db->PDOUpdate($thistable, $thisdataupdatecomplete, $thiswhere);
             //file_put_contents("./dodebug/debug.txt", "$thisupdate \n", FILE_APPEND);
             if($thisupdate == "Success")
@@ -315,37 +313,29 @@ function TokenizedPayment()
                 //Send email
                 //$thisfirstname, $thislastname 
                 //$thisservicerecno
-                $setservicetitle = $sc->SetService($db, $thisservicerecno);
-                $getservicetitle = $sc->GetServicetitle();
+                $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
+                $thiscartrecnostr = implode(",", $thiscartrecno);
+                $oc->SetReceipt($thiscartrecnostr, $square_receiptno, $thissquareorderid);
+                $payment_receipt_body = $oc->ShowReceipt($db);
 
                 $payment_receipt_subject = $ne->get_paymentreceipt_subject();
                 $payment_receipt_body = $ne->get_paymentreceipt_body($thisfirstname, $thislastname, $realamount, $square_receiptno, $getservicetitle);
                 $guestname = $rs['firstname']." ".$rs['lastname'];
                 $sendto[] = array($thisemail => $guestname);
                 $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
-                $thisreturns = "Success";
-                //NOW we will need to send a text to the guest.  Howevever, depend on if they opt-in or out so we must check this status in the user's table
-                if($thisopt ==  true)
-                {   
-                    /*
-                     * We do not have a valid sms setup yet, once we do, we will enable it and we shall be able send text!!!!
-                    //By default, the system sets it to true, but when it's false, that means user does not opt out and would like to receive txt.
-                    //Now we send a text to the user's phone in the database                        
-                    $returnsms = $sms->SendSMSpayment($db, $thisphone_number, $square_receiptno, $realamount, $thisuser_recno, $thisserver);
-                    if($returnsms == "")
-                    {
-                        $thisreturns = "Failed to send SMS";
-                    }
-                    */
-                }
             }
             $_SESSION['THISCONFIRMATION'] = $square_receiptno;
             header("location: ./paid.php");
+
+        }
+        else
+        {
+            $thisreturns = "Cost is not valid.";
         }
     }
     else
     {
-        $thisreturns = "Cost is not valid.";
+        $thisreturns = "Server is having a maintenance right now.  Your order didn't go through.  Please try again some other times.";
     }
     echo $thisreturns;
 }
@@ -370,7 +360,7 @@ function MiniImgslt(){
 }
 function Main()
 {
-    global $db, $pc, $pt;
+    global $db, $pc, $pt, $oc;
     $thistotal = 0;
     if(!isset($_SESSION['SELECTED_PRODUCT_RECNO']))
     {?>
@@ -396,7 +386,7 @@ function Main()
                 $thiscartrecnostr = implode(",", $thiscartrecno);?>
                 
                 <div class="cart-div-pro-container float-left"><?php
-                    $pt->ShowReceipt($db, $thiscartrecnostr, $thistotal);?>
+                    $oc->ShowOrderproducts($db, $thiscartrecnostr, $thistotal);?>
                 </div>
                 <div class="float-left align-left" style="width: 50%; min-width: 320px;"><?php
                     $sqlid = "SELECT square_application_id, square_ev_location_id FROM company_info";

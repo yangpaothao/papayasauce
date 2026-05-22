@@ -9,18 +9,18 @@ class ServiceClass {
     private $recnostr = "";
     private $resultsvc = "";
     private $sqlsvc = "";
-    function SetService($db, $tempservicerecno)
+    function SetOrders($db, $tempservicerecno)
     {
         //If we want to recalculate with the prepay, we have to pass it, otherwise it will only calculate the appropriate tax.
         $this->db = $db; //passing the db connection in from the call
         $this->recnostr = $tempservicerecno;
     }
-    function GetServicetitle()
+    function GetOrdernames()
     {
         $body = "";
         $lineno = 1;
-        $body .= "Service:<br/><br/>" ;
-        $this->sqlsvc = "SELECT * FROM service WHERE recno IN (".$this->recnostr.")";
+        $body .= "Orders:<br/><br/>" ;
+        $this->sqlsvc = "SELECT * FROM orders WHERE recno IN (".$this->recnostr.")";
         $this->resultsvc = $this->db ->PDOMiniquery($this->sqlsvc);
         foreach($this->resultsvc as $rssvc)
         {
