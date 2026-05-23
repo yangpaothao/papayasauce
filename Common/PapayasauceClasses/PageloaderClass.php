@@ -33,15 +33,9 @@ class PageloaderClass {
         <script src="./select2-4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script type="text/javascript" src="./Common/common.js"></script><?php
         if($page == 'cart')
-        {
-            if(isset($_SESSION['isLive']) && $_SESSION['isLive'] == true)
-            {?>
-                <script src="https://web.squarecdn.com/v1/square.js"></script><?php
-            }
-            else
-            {?>
-                <script src="https://sandbox.web.squarecdn.com/v1/square.js"></script><?php
-            }
+        {?>
+            <script src="https://web.squarecdn.com/v1/square.js"></script>
+            <!--<script src="https://sandbox.web.squarecdn.com/v1/square.js"></script>--><?php
         }?>        
         <script type="text/javascript">
             function logout(){  
@@ -257,9 +251,10 @@ class PageloaderClass {
     {   
         return(sha1(microtime()));
     }
-    static function Hash_Me_Recno($recno)
+    static function Hash_Me_Recno($thisstr)
     {   
-        return( sha1($recno)); 
+        file_put_contents('./dodebug/debug.txt', "Do I at least get here? \n", FILE_APPEND);
+        return( sha1($thisstr)); 
     }
     static function Hash_Me_Questionniare_Answers($tempanswer)
     {   

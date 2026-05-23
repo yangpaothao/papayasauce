@@ -1406,7 +1406,7 @@ class PromptClass
     }
     function GetSquareevn($thisaccesstoken)
     {
-        if(isset($_SESSION['isLive']) || $_SESSION['thisfrom'] == "Production")
+        if(isset($_SESSION['isLive']) || (isset($_SESSION['thisfrom']) && $_SESSION['thisfrom'] == "Production"))
         {
             //file_put_contents('./dodebug/debug.txt', "GetSquareevn Production \n", FILE_APPEND);
             return(new SquareClient(

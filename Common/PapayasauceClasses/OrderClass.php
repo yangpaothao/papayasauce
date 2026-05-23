@@ -79,7 +79,8 @@ class OrderClass {
             {
                 $numberofitems = $_SESSION['CARTRECNOTRACKER'][$rs['recno']];
                 $thisdir = "./images/others/products/".$rs['cname']."/".$rs['recno'];?>
-                <div class="align-right cart-div-content-holder-flex-data-container display-inline-block" >  
+                <div class="align-right cart-div-content-holder-flex-data-container display-inline-block" id="cart_div_container_<?php echo $rs['recno'] ?>" >  
+                    <button class="float-right btn-x-cart cursor-pointer" id="btn_x_cart" onclick="removePro(<?php echo $rs['recno'] ?>);" title="Remove this product.">X</button>
                     <div class="float-left cart-img-data-container">
                         <div class="float-left" ><img id="large_img_container" class="img-cart-review" src="<?php echo $thisdir ?>/mini/s_<?php echo substr($rs['attachment'],2) ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
                         <div class="align-left float-left">
@@ -92,12 +93,17 @@ class OrderClass {
                                     <td class="font-color-white float-left align-left" >$<?php echo number_format($rs['price'], 2) ?></td>
                                 </tr>
                                 <tr>
-                                    <td class="font-color-white float-left align-right">Items: </td>
-                                    <td class="font-color-white float-left align-left"><?php echo $numberofitems ?></td>
+                                    <td class="font-color-white float-left align-right" style="padding-top: 5px;">Items: </td>
+                                    <td class="font-color-white float-left align-left" style="padding-top: 5px; padding-bottom: 5px;">
+                                        <div id="item_div_<?php echo $rs['recno'] ?>" class="float-left" style="padding-right: 5px;"><?php echo $numberofitems ?></div>
+                                        <div id="btn_dialup" class="cursor-pointer float-left"><img class="pro-img-dial" style="border: 1px solid black;" onclick="updateCart('Up', 'item_div', <?php echo $rs['recno'] ?>);" src="./images/others/orange.png"/></div>
+                                        <div id="btn_dialdown" class="cursor-pointer float-left"><img class="pro-img-dial" style="border: 1px solid black;" onclick="updateCart('Down', 'item_div', <?php echo $rs['recno'] ?>);" src="./images/others/reddown.png"/></div>
+                                    </td>
                                 </tr>
+
                                 <tr>
-                                    <td class="font-color-white float-left align-right color-darkred"><b>Total:</b>  </td>
-                                    <td class="font-color-white float-left align-left color-darkred"><b>$<?php echo number_format($numberofitems*$rs['price'], 2) ?></b></td>
+                                    <td class="font-color-white float-left align-right"><b>Total:</b>  </td>
+                                    <td class="font-color-white float-left align-left font-weight-bold" id="item_total_<?php echo $rs['recno'] ?>">$<?php echo number_format($numberofitems*$rs['price'], 2) ?></td>
                                 </tr>
                                 <tr>
                                     <td colspan="2"><textarea class="cart-txtarea" rows="7" readonly><?php echo $rs['description'] ?></textarea><td>
@@ -136,5 +142,15 @@ class OrderClass {
         }
         //$thistotal = 100.00
         return($thistotal);
+    }
+    function GetProductprice($db, $thisrecno)
+    {
+        $sql = "SELECT price from products WHERE recno = $thisrecno";
+        $result = $db->PDOMiniquery($sql);
+        foreach($result as $rs)
+        {
+            $thisprice = $rs['price'];
+        }
+        return($thisprice);
     }
 }

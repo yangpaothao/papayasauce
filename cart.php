@@ -27,7 +27,7 @@ if(count($_POST) > 0 && isset($_POST['cmd']))
 }
 if(count($_POST) > 0 && isset($_POST['token']))
 {
-    echo var_dump($_POST);
+    //echo var_dump($_POST);
     TokenizedPayment();
     exit();
 }
@@ -51,8 +51,7 @@ if(count($_GET) > 0)
             $temp_page = filter_input(INPUT_SERVER, 'PHP_SELF'); // will look like /index.php or /somedir/somepage.php
             $explode_page = explode("/", $temp_page); //This variable will now be an array and the page name is the last element of this array
             $this_page = end($explode_page); //this variable will hold the page name like index.php
-            $pc->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
-        ?>
+            $pc->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.?>
         <script type="text/javascript">
             $(document).ready(function(){
                getSourceid();
@@ -103,7 +102,57 @@ if(count($_GET) > 0)
                     alert(error);
                 });
             }
-            
+            function removePro(thisrecno){
+                thisArray = [{
+                    "this_thisrecno": thisrecno
+                }];
+                const thisData = JSON.stringify(thisArray);
+                $.ajax({
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=RemovePro&thisarray="+thisData,
+                    type: "POST"
+                    }).then(function(result) {
+                        //alert(result);
+                        // Code here will execute *after* the AJAX request is successful
+                        returndata = JSON.parse(result);
+                        $("#pc_cart_tracker").text(returndata['tempcart']+'/'+returndata['temptotal']);
+                        $("#txt_total").val(returndata['temptotal']);
+                        $("#cart_div_container_"+thisrecno).remove();
+                        if(returndata['temptotal'] == "$0.00"){
+                            $("#cart_div_content_holder_flex").html('<div class="cart-div-headline-info align-center font-size-2em">There is no item in the cart!</div>');
+                        }
+                    }).catch(function(error) {
+                        alert(error);
+                    });
+            }
+            function updateCart(thisdir, thisele, thisrecno){
+                //thisdir = 'Up' or 'Down'
+                //thisele will be the element that holds this items
+                //thisrecno is the recno of the product table
+                //before anything, we want to check if the item has a value that is greater than 1.
+                if($("#item_div_"+thisrecno).text() == 1 && thisdir == "Down"){
+                    return(false);
+                }
+                thisArray = [{
+                    "this_thisdir": thisdir,
+                    "this_thisele": thisele,
+                    "this_thisrecno": thisrecno
+                }];
+                const thisData = JSON.stringify(thisArray);
+                $.ajax({
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=UpdateCart&thisarray="+thisData,
+                    type: "POST"
+                }).then(function(result) {
+                    //alert(result);
+                    // Code here will execute *after* the AJAX request is successful
+                    returndata = JSON.parse(result);
+                    $("#pc_cart_tracker").text(returndata['tempcart']+'/'+returndata['temptotal']);
+                    $("#txt_total").val(returndata['temptotal']);
+                    $("#"+thisele+"_"+thisrecno).text(returndata['tempele']);
+                    $("#item_total_"+thisrecno).text(returndata['tempitemtotal']);
+                }).catch(function(error) {
+                    alert(error);
+                });
+            }
         </script>
     </head>
     <body>
@@ -113,14 +162,6 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
-function ValidateState()
-{
-    global $db, $pt;
-    $returnpost = $pt->AnalyzePosts();
-    $returnpost['thisstate'];
-    echo $pt->GetStates($returnpost['thisstate']);
-    
-}
 function TokenizedPayment()
 {
     global $db, $pt, $mc, $tc, $pc, $load_headers, $ne, $sc, $sms, $oc;
@@ -136,6 +177,7 @@ function TokenizedPayment()
     $thissquareorderid = "";
     $newuserrecno = "";
     $insertpro = "";
+    $thishash = "";
     $returnpost = $pt->AnalyzePostsubmit();
     $email = $returnpost['email'];
     $firstname = $returnpost['firstname'];
@@ -150,18 +192,17 @@ function TokenizedPayment()
     $thistoken = $_POST['token']; //We get this token after we tokenized.
     $thisstatus = "Full"; //$_POST['depofull'];
     //file_put_contents("./dodebug/debug.txt", "thisstatus = $thisstatus \n", FILE_APPEND);
-    if(isset($_SESSION['isLive']) && $_SESSION['isLive'] == true){
-        $tempsandpropost = "_pro";
-    }
+    $tempsandpropost = $_SESSION['isSandpro'];
     //$thisserver = $load_headers -> GET_THIS_SERVER();
     
     $sqlacc = "SELECT square_api_access_token$tempsandpropost FROM company_info";
-    //file_put_contents("./dodebug/debug.txt", "sqlacc = $sqlacc \n", FILE_APPEND);
+    
     $resultacc = $db->PDOMiniquery($sqlacc);
     foreach($resultacc as $rsacc)
     {
         $thisaccesstoken = $rsacc["square_api_access_token$tempsandpropost"];
     }
+    //file_put_contents("./dodebug/debug.txt", "thisaccesstoken = $thisaccesstoken \n", FILE_APPEND);
     //We got the total from the form.  However, we want to run the total from the array to make sure it matches before we OKayed the total to be paid for security reason.
     //$_SESSION['CARTRECNOTRACKER']
     $realtotal = $oc->CalculateTotalorders($db);
@@ -188,30 +229,11 @@ function TokenizedPayment()
                         $thissquareid = $rs['squareid'];
                     }
                 }
+                $newuserrecno = $_SESSION['user_recno'];
             }
-            $newuserrecno = $_SESSION['user_recno'];
         }
         if(is_null($thissquareid))
         {
-            $thisnewcust = $pt->CreateSquareCustomer($thisuser_recno, $firstname, $lastname, $email, $phonenumber, $thisaccesstoken);
-            //$thispayment is an array but 1 item in it.
-            //$sqrecord will show the returned array
-            //$sqlvalue will show the value
-            foreach($thisnewcust as $sqrecord => $sqlvalue)
-            {
-                if(is_array($sqlvalue))
-                {
-                    foreach($sqlvalue as $sqrecord2 => $sqlvalue2)
-                    {
-                        //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2 \n", FILE_APPEND);
-                        if($sqrecord2 == "id")
-                        {
-                            //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2: $sqlvalue2 \n", FILE_APPEND);
-                            $thissquarecustomerid = $sqlvalue2;
-                        }
-                    }
-                }
-            }
             $thistable = "users";
             $email = $returnpost['email'];
             $firstname = $returnpost['firstname'];
@@ -231,16 +253,38 @@ function TokenizedPayment()
                          "address2" => $address2,
                          "city" => $city,
                          "state" => $state, 
-                         "zipcode" => $zipcode,
-                         "squareid$tempsandpropost" => $thissquarecustomerid];
+                         "zipcode" => $zipcode];
 
             $newuserrecno = $db->PDOInsert($thistable, $thisdata);
             
+            $thisnewcust = $pt->CreateSquareCustomer($newuserrecno, $firstname, $lastname, $email, $phonenumber, $thisaccesstoken);
+            //$thispayment is an array but 1 item in it.
+            //$sqrecord will show the returned array
+            //$sqlvalue will show the value
+            foreach($thisnewcust as $sqrecord => $sqlvalue)
+            {
+                if(is_array($sqlvalue))
+                {
+                    foreach($sqlvalue as $sqrecord2 => $sqlvalue2)
+                    {
+                        //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2 \n", FILE_APPEND);
+                        if($sqrecord2 == "id")
+                        {
+                            //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2: $sqlvalue2 \n", FILE_APPEND);
+                            $thissquarecustomerid = $sqlvalue2;
+                        }
+                    }
+                }
+            }
+            $updatethisdata = ["squareid$tempsandpropost" => $thissquarecustomerid];
+            $thiswhere = ["recno" => $newuserrecno];
+            $db->PDOUpdate($thistable, $updatethisdata, $thiswhere);
+            
             $thistable = "orders";
-            $thisdata = ["foreign_user_recno" => $newuserrecno,
+            $insertorderdata = ["foreign_user_recno" => $newuserrecno,
                          "products" => json_encode($_SESSION['CARTRECNOTRACKER']),
                          "total" => $realtotal];
-            $db->PDOInsert($thistable, $thisdata);
+            $db->PDOInsert($thistable, $insertorderdata);
         }
         else
         {
@@ -248,9 +292,9 @@ function TokenizedPayment()
         }
         //We need to get the recno of the deposit or the single full payment.
         //We will send this payment into the portal
-
-        $thishash = $load_headers->Hash_Me_Recno(time());
-
+        //file_put_contents('./dodebug/debug.txt', "thisdate: ".date('YmdHs')." \n", FILE_APPEND);
+        $thishash = sha1(date('YmdHs'));
+        file_put_contents('./dodebug/debug.txt', "thishash: $thishash \n", FILE_APPEND);
         //https://developer.squareup.com/reference/sdks/web/payments/card-payments
 
         $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
@@ -308,11 +352,6 @@ function TokenizedPayment()
             //file_put_contents("./dodebug/debug.txt", "$thisupdate \n", FILE_APPEND);
             if($thisupdate == "Success")
             {
-                //We need to send a receipt to the user's email and phone if the user opt-in for text
-
-                //Send email
-                //$thisfirstname, $thislastname 
-                //$thisservicerecno
                 $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
                 $thiscartrecnostr = implode(",", $thiscartrecno);
                 $oc->SetReceipt($thiscartrecnostr, $square_receiptno, $thissquareorderid);
@@ -331,13 +370,65 @@ function TokenizedPayment()
         else
         {
             $thisreturns = "Cost is not valid.";
-        }
+        }  
     }
     else
     {
         $thisreturns = "Server is having a maintenance right now.  Your order didn't go through.  Please try again some other times.";
     }
     echo $thisreturns;
+}
+function UpdateCart()
+{
+    global $db, $oc, $pt;
+
+    $returnpost = $pt->AnalyzePosts();
+    if($returnpost['thisdir'] == "Down")
+    {
+        $_SESSION['TEMPCART'] -= 1; //regardless, we will just remove 1 from the count, doens't matter which item.
+        $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']] -= 1; //remove 1 item from this record
+    }
+    else
+    {
+        $_SESSION['TEMPCART'] += 1; //regardless, we will just remove 1 from the count, doens't matter which item.
+        $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']] += 1; //remove 1 item from this record
+    }
+    //We want to calculate the item total
+    $thisprice = $oc->GetProductprice($db, $returnpost['thisrecno']);
+    $tempitemtotal = number_format($_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']]*$thisprice,2);
+    $_SESSION['CARTTOTALTRACKER'] = $oc->CalculateTotalorders($db); //Recalculate the new total
+    $returnarray = ['tempcart' => $_SESSION['TEMPCART'], 
+        'temptotal' => "$".number_format($_SESSION['CARTTOTALTRACKER'],2), 
+        'tempele' => $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']],
+        'tempitemtotal' => "$".$tempitemtotal
+            ];
+    echo json_encode($returnarray);
+}
+function RemovePro()
+{
+    global $db, $oc, $pt;
+
+    $returnpost = $pt->AnalyzePosts();
+    $_SESSION['TEMPCART'] -= $_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']]; //subtract this number of items from the $_SESSION['TEMPCART'] 
+    unset($_SESSION['CARTRECNOTRACKER'][$returnpost['thisrecno']]); //Unset this item from the $_SESSION['CARTRECNOTRACKER']
+    if(count($_SESSION['CARTRECNOTRACKER']) > 0)
+    {
+        $_SESSION['CARTTOTALTRACKER'] = $oc->CalculateTotalorders($db); //Recalculate the new total
+    }
+    else
+    {
+        $_SESSION['CARTTOTALTRACKER'] = 0;
+    }
+    $returnarray = ['tempcart' => $_SESSION['TEMPCART'], 'temptotal' => "$".number_format($_SESSION['CARTTOTALTRACKER'],2)];
+    echo json_encode($returnarray);
+}
+function ValidateState()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $returnpost['thisstate'];
+    echo $pt->GetStates($returnpost['thisstate']);
+    
 }
 function AddCart()
 {
@@ -362,6 +453,7 @@ function Main()
 {
     global $db, $pc, $pt, $oc;
     $thistotal = 0;
+    $thissandpro = $_SESSION['isSandpro'];
     if(!isset($_SESSION['SELECTED_PRODUCT_RECNO']))
     {?>
         <script type="text/javascript">
@@ -376,86 +468,93 @@ function Main()
             </div>
             <div class="float-left div-loginpanel"><?php echo $pc->LoginPanel();?></div>
 
-            <div class="cart-div-content-holder-flex float-left"><?php
-                //echo json_encode($_SESSION['CARTRECNOTRACKER']);
-                //We only want to get the key so we can make a list of recno for the sql below.
-                $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
-                //echo json_encode($thiscartrecno);
-                //now that $thiscartrecno is an array with just the recno, we need to convert it into a string separated by ","
-                //implode
-                $thiscartrecnostr = implode(",", $thiscartrecno);?>
-                
-                <div class="cart-div-pro-container float-left"><?php
-                    $oc->ShowOrderproducts($db, $thiscartrecnostr, $thistotal);?>
-                </div>
-                <div class="float-left align-left" style="width: 50%; min-width: 320px;"><?php
-                    $sqlid = "SELECT square_application_id, square_ev_location_id FROM company_info";
-                    $resultid = $db->PDOMiniquery($sqlid);
-                    foreach($resultid as $rsid)
-                    {
-                        $thisappid = $rsid["square_application_id"];
-                        $thislocationid = $rsid["square_ev_location_id"];
-                    }?>
-                    <div class="cart-div-container">
-                        <script type="text/javascript">
-                            $("body").data("square_application_id", "<?php echo $thisappid ?>");
-                            $("body").data("square_ev_location_id", "<?php echo $thislocationid ?>");
-                        </script>
-                        <form name="payment-form" id="payment_form" method="post">
-                            <div class="cart-div-headline-info align-center">ONE time payment only.  We do not keep any credit card information on file!</div>
-                            <table class="tbl-cart float-left">
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Email: <span class="asterisk"> * </span></td>
-                                    <td><input type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">First Name: <span class="asterisk"> * </span></td>
-                                    <td><input type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Last Name: <span class="asterisk"> * </span></td>
-                                    <td><input type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Phone#: <span class="asterisk"> * </span></td>
-                                    <td><input type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Address 1: <span class="asterisk"> * </span></td>
-                                    <td><input type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Address 2:</td>
-                                    <td><input type="text" class="cart-input" id="txt_address2" name="txt_address2" value="" placeholder="" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">City: </td>
-                                    <td><input type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">State: </td>
-                                    <td><?php
-                                        $pt->GetStates($db)->GetSelect("slt_state", '', true, false, false, true, false, true);?>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right">Zip-Code: </td>
-                                    <td><input type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
-                                </tr>
-                                <tr>
-                                    <td class="tbl-cart-lbl align-right"><b>Total:</b> </td>
-                                    <td><input type="text" id="txt_total" name="txt_total" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
-                                </tr>
-                            </table>
-                            <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
-                            </div>
-                            <div class="align-center" style="width: 100%;">
-                                <button type="button" name="btn_card" id="btn_card">Pay</button>
-                            </div>
-                            <input type="hidden" id="token" name="token">
-                        </form>
+            <div class="cart-div-content-holder-flex float-left" id='cart_div_content_holder_flex'><?php
+                if(count($_SESSION['CARTRECNOTRACKER']) > 0)
+                {
+                    //echo json_encode($_SESSION['CARTRECNOTRACKER']);
+                    //We only want to get the key so we can make a list of recno for the sql below.
+                    $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
+                    //echo json_encode($thiscartrecno);
+                    //now that $thiscartrecno is an array with just the recno, we need to convert it into a string separated by ","
+                    //implode
+                    $thiscartrecnostr = implode(",", $thiscartrecno);?>
+
+                    <div class="cart-div-pro-container float-left"><?php
+                        $oc->ShowOrderproducts($db, $thiscartrecnostr, $thistotal);?>
                     </div>
-                </div>
+                    <div class="float-left align-left" style="width: 50%; min-width: 320px;"><?php
+                        $sqlid = "SELECT square_application_id$thissandpro, square_ev_location_id$thissandpro FROM company_info";
+                        $resultid = $db->PDOMiniquery($sqlid);
+                        foreach($resultid as $rsid)
+                        {
+                            $thisappid = $rsid["square_application_id$thissandpro"];
+                            $thislocationid = $rsid["square_ev_location_id$thissandpro"];
+                        }?>
+                        <div class="cart-div-container">
+                            <script type="text/javascript">
+                                $("body").data("square_application_id", "<?php echo $thisappid ?>");
+                                $("body").data("square_ev_location_id", "<?php echo $thislocationid ?>");
+                            </script>
+                            <form name="payment-form" id="payment_form" method="post">
+                                <div class="cart-div-headline-info align-center">ONE time payment only.  We do not keep any credit card information on file!</div>
+                                <table class="tbl-cart float-left">
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Email: <span class="asterisk"> * </span></td>
+                                        <td><input type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">First Name: <span class="asterisk"> * </span></td>
+                                        <td><input type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Last Name: <span class="asterisk"> * </span></td>
+                                        <td><input type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Phone#: <span class="asterisk"> * </span></td>
+                                        <td><input type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Address 1: <span class="asterisk"> * </span></td>
+                                        <td><input type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Address 2:</td>
+                                        <td><input type="text" class="cart-input" id="txt_address2" name="txt_address2" value="" placeholder="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">City: </td>
+                                        <td><input type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">State: </td>
+                                        <td><?php
+                                            $pt->GetStates($db)->GetSelect("slt_state", '', true, false, false, true, false, true);?>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right">Zip-Code: </td>
+                                        <td><input type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="tbl-cart-lbl align-right"><b>Total:</b> </td>
+                                        <td><input type="text" id="txt_total" name="txt_total" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
+                                    </tr>
+                                </table>
+                                <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
+                                </div>
+                                <div class="align-center" style="width: 100%;">
+                                    <button type="button" name="btn_card" id="btn_card">Pay</button>
+                                </div>
+                                <input type="hidden" id="token" name="token">
+                            </form>
+                        </div>
+                    </div><?php
+                }
+                else
+                {?>
+                    <div class="cart-div-headline-info align-center font-size-2em">There is no item in the cart!</div><?php
+                }?>
             </div>
             <div class="align-center main-div-footer float-left"><?php echo $pc->Load_Footer();?></div>
         </div>

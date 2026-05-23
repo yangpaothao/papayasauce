@@ -187,8 +187,7 @@ function Main()
             window.location.href = "index.php";
         </script><?php
         exit;
-    }
-    ?>
+    }?>
     <div class="main-div">
         <div class="pro-div-data-container">
             <div class="main-logo float-left">

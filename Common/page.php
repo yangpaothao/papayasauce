@@ -1,4 +1,5 @@
 <?php
+use PapayasauceClasses\PdoClass;
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
@@ -9,6 +10,25 @@ if($temp_host != "localhost")
 {
     $_SESSION['predir'] = "/home1/gcwwkite/public_html/website_ad583fcd";
 }
+$db = new PdoClass();
+$sqlisL = "SELECT isLive, name FROM company_info";
+$resultisL = $db->PDOMiniquery($sqlisL);
+foreach($resultisL as $rsiL)
+{
+    $_SESSION['companyname'] = $rsiL['name'];
+    if($rsiL["isLive"] == true)
+    {
+        $_SESSION['isSandpro'] = "_pro";
+        $_SESSION['isLive'] = true;
+    }
+    else
+    {
+        $_SESSION['isSandpro'] = "";
+        $_SESSION['companyname'] = "";
+        $_SESSION['isLive'] = false;
+    }
+}
+//file_put_contents("./dodebug/debug.txt", 'not here '.$_SESSION['isSandpro'], FILE_APPEND);
 //Hostgator pre dir
 //date_default_timezone_set('America/Chicago'); //THIS MAKES THE WEBSITE USE THIS TIMEZONE AS THE TIME.
 //date_default_timezone_set('Australia/Sydney'); //THIS MAKES THE WEBSITE USE THIS TIMEZONE AS THE TIME.
@@ -21,7 +41,7 @@ if(!isset($_SESSION['user']) && $this_page != "verifyme.php" && $this_page != "i
         $this_page != "registration.php" && $this_page != "passwordreset.php" && $this_page != "login.php" &&
         $this_page != "cancellation.php" && $this_page != "registerguest.php" && $this_page != "paynow.php" && $this_page != "paid.php" &&
         $this_page != "smsconf.php" && $this_page = "optin_verification.php" && $this_page != "cancelpayment.php" && $this_page != "codefetch.php" && $this_page != "apifetch.php" &&
-        $this_page != "addccard.php" && $this_page != "product.php")
+        $this_page != "addccard.php" && $this_page != "product.php" && $this_page != "cart.php")
 {
     //file_put_contents("./dodebug/debug.txt", 'not here ', FILE_APPEND);
     header("Location: /index.php"); //Unless this is the main/front page, if user does not have a logged session, they will be forced to login first.
