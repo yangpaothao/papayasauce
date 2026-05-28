@@ -123,8 +123,9 @@ function Main()
             </div>
             <div class="cart-div-headline-info align-center font-size-2em">Coming soon!!!</div>
             <!--
-            <div class="div-content-holder-flex align-center"><?php /*
+            <div class="div-content-holder-flex align-center"><?php 
                 //1 month from today only
+            /*
                 $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
                 //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
                 $result = $db -> PDOMiniquery($sql);
@@ -143,8 +144,8 @@ function Main()
                 else
                 {?>
                     <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
-                } */?>-->
-            </div>
+                }*/?>
+            </div>-->
             <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
         </div>
     </div><?php

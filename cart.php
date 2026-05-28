@@ -4,10 +4,11 @@ use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\OrderClass;
+use PapayasauceClasses\EmailClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
-
+require("./Common/sendmail.php");
 if($temp_host != "localhost")
 {
     require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
@@ -20,6 +21,7 @@ $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
 $oc = new OrderClass();
+$ec = new EmailClass();
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
     $_REQUEST['cmd']();
@@ -64,6 +66,7 @@ if(count($_GET) > 0)
                     // Send the token to your backend PHP script
                     $("#token").val(result.token);
                     $("#payment_form").submit();
+                    $("#div_loader").removeClass("display-none");
                 } else {
                     alert("Please enter your card information correctly and try again.");
                     return(false);
@@ -164,7 +167,7 @@ if(count($_GET) > 0)
 <?php
 function TokenizedPayment()
 {
-    global $db, $pt, $mc, $tc, $pc, $load_headers, $ne, $sc, $sms, $oc;
+    global $db, $pt, $ec, $oc;
     if(!isset($_SESSION['companyname']))
     {
         //if session timed out, we send user to index, front page.
@@ -296,7 +299,7 @@ function TokenizedPayment()
         $thishash = sha1(date('YmdHs'));
         file_put_contents('./dodebug/debug.txt', "thishash: $thishash \n", FILE_APPEND);
         //https://developer.squareup.com/reference/sdks/web/payments/card-payments
-
+        /*
         $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
         //https://developer.squareup.com/reference/square/payments-api
         //file_put_contents('./dodebug/debug.txt', "In Pay NoW what is thisreturns: $thisreturns \n", FILE_APPEND);
@@ -339,7 +342,8 @@ function TokenizedPayment()
                     }
                 }                 
             }
-        }
+        }*/
+        $squarestatus = "COMPLETED";
         if($squarestatus == "COMPLETED")
         {
             $thisdataupdatecomplete["source_id"] = $thistoken;
@@ -354,18 +358,20 @@ function TokenizedPayment()
             {
                 $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
                 $thiscartrecnostr = implode(",", $thiscartrecno);
-                $oc->SetReceipt($thiscartrecnostr, $square_receiptno, $thissquareorderid);
-                $payment_receipt_body = $oc->ShowReceipt($db);
-
-                $payment_receipt_subject = $ne->get_paymentreceipt_subject();
-                $payment_receipt_body = $ne->get_paymentreceipt_body($thisfirstname, $thislastname, $realamount, $square_receiptno, $getservicetitle);
-                $guestname = $rs['firstname']." ".$rs['lastname'];
-                $sendto[] = array($thisemail => $guestname);
+                $oc->SetReceipt($db, $thiscartrecnostr, $square_receiptno, $thissquareorderid);
+                $payment_receipt_body = $oc->ShowReceipt();
+                $payment_receipt_subject = $ec->get_paymentreceipt_subject();
+                $guestname = $firstname." ".$lastname;
+                $sendto[] = array($email => $guestname);
+                $attachment = [];
+                $bccto = [];
+                $ccto = [];
+                $replyto = [];
                 $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
             }
+            file_put_contents("./dodebug/debug.txt", "sendstatus: $sendstatus \n", FILE_APPEND);
             $_SESSION['THISCONFIRMATION'] = $square_receiptno;
-            header("location: ./paid.php");
-
+           // header("location: ./paid.php");
         }
         else
         {
@@ -462,6 +468,9 @@ function Main()
         exit;
     }?>
     <div class="main-div">
+        <div name="div_loader" id="div_loader" class="payment-loader-container display-none">
+            <img class="payment-loader-img" src="/images/others/loading.gif" />
+        </div>
         <div class="pro-div-data-container">
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>

@@ -9,23 +9,24 @@ class OrderClass {
     private $recnostr = "";
     private $square_receiptno = "";
     private $square_order_id = "";
-    function SetReceipt($recnostr, $temp_receiptno, $temp_orderno)
+    function SetReceipt($db, $recnostr, $temp_receiptno, $temp_orderno)
     {
         $this->recnostr = $recnostr;
         $this->square_receiptno = $temp_receiptno;
         $this->square_order_id = $temp_orderno;
+        $this->db = $db;
     }
     function ShowReceipt()
     {
-        
+        $thistotal = 0;
         $body = "";
         $lineno = 1;
-        $body .= "Orders: ".$this->square_order_id."<br/>";
+        $body = "Orders: ".$this->square_order_id."</br>";
         $body .= "Confirmation: ".$this->square_receiptno."<br/><br/>";
-        $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($thiscartrecnostr) ORDER BY p.name";
+        $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($this->recnostr) ORDER BY p.name";
         //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
-        $result = $db -> PDOMiniquery($sql);
-        if($db->PDORowcount($result) > 0)
+        $result = $this->db -> PDOMiniquery($sql);
+        if($this->db ->PDORowcount($result) > 0)
         {
             $i = 1;
             foreach($result as $rs)

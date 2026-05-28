@@ -1,5 +1,5 @@
 cart.php
-Need to work on sandbox to test the mailing part and then turn it on live!
+just need to work on sending email
 
 
 

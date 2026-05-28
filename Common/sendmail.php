@@ -1,6 +1,7 @@
 <?php
+require __DIR__ . '/vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
+//use PHPMailer\PHPMailer\Exception;
 //https://github.com/PHPMailer/PHPMailer
 
 
@@ -18,14 +19,14 @@ function sendmail($sendto, $replyto, $ccto, $bccto, $subject, $body, $attachment
         $mail->isSMTP();    
         //Send using SMTP
         $mail->Mailer = "smtp";
-        $mail->Host       = 'mail.smtp2go.com';                     //Set the SMTP server to send through
+        $mail->Host       = 'papayasauce.com';                     //Set the SMTP server to send through
         $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
-        $mail->Username   = 'valetone';                     //SMTP username
-        $mail->Password   = 'vhE0Hwj632W7lBPK';                               //SMTP password
-        //$mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
-        $mail->SMTPSecure = 'TLS'; //secure transfer enabled
-        $mail->Port       = 2525;     //465 is SSL, 2525 for none SSL, TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
-        $mail->setFrom('contact@aviontracker.com', 'Mailer');
+        $mail->Username   = 'smtp@papayasauce.com';                     //SMTP username
+        $mail->Password   = 'dbd*2?q74W=J';                               //SMTP password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
+        $mail->SMTPSecure = 'SSL'; //secure transfer enabled
+        $mail->Port       = 465;     //465 is SSL, 2525 for none SSL, TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+        $mail->setFrom('noreply@papayasauce.com', 'Mailer');
         
         /*
         $mail->Host       = 'smtp-relay.brevo.com';                     //Set the SMTP server to send through
@@ -95,7 +96,7 @@ function sendmail($sendto, $replyto, $ccto, $bccto, $subject, $body, $attachment
         $mail->Subject = "$subject";
         $mail->Body    = "$body"; //<br> to break line
         $mail->AltBody = "$body";
-        //$mail->send();
+        $mail->send();
         //echo 'Message has been sent';
     } catch (Exception $e) {
         echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";

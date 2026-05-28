@@ -3493,8 +3493,8 @@ admin-service-add{
     color: black;
 }
 .payment-loader-container{
-    width: 60%; 
-    height: 92%; 
+    width: 92%; 
+    height: 96%; 
     background-color: gray; 
     opacity: .8; 
     position: fixed; 
