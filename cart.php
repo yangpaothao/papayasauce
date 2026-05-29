@@ -1,14 +1,13 @@
 <?php
-require __DIR__ . '/Common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\OrderClass;
 use PapayasauceClasses\EmailClass;
+require __DIR__ . '/Common/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
-require("./Common/sendmail.php");
 if($temp_host != "localhost")
 {
     require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
@@ -17,6 +16,8 @@ else
 {
     require_once("./Common/page.php");
 }
+require_once("./Common/sendmail.php");
+//$mail = new PHPMailer(true);
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
@@ -209,14 +210,11 @@ function TokenizedPayment()
     //We got the total from the form.  However, we want to run the total from the array to make sure it matches before we OKayed the total to be paid for security reason.
     //$_SESSION['CARTRECNOTRACKER']
     $realtotal = $oc->CalculateTotalorders($db);
-    //file_put_contents("./dodebug/debug.txt", "returndata: $returndata \n", FILE_APPEND);
-    //file_put_contents("./dodebug/debug.txt", "total $total \n", FILE_APPEND);
     //$total has a leading '$' that we need to remove.  Ex, $120.00
     if(substr($total,1) == $realtotal)
     {
         //file_put_contents("./dodebug/debug.txt", "Is Good \n", FILE_APPEND);
         //If the total coming from the form and the total from the recalculation is the same, that means it is good.
-        
         
         if($realtotal > 0)
         {
@@ -292,14 +290,14 @@ function TokenizedPayment()
         else
         {
             $thissquarecustomerid = $thissquareid;
-        }
+        }/*
         //We need to get the recno of the deposit or the single full payment.
         //We will send this payment into the portal
         //file_put_contents('./dodebug/debug.txt', "thisdate: ".date('YmdHs')." \n", FILE_APPEND);
         $thishash = sha1(date('YmdHs'));
         file_put_contents('./dodebug/debug.txt', "thishash: $thishash \n", FILE_APPEND);
         //https://developer.squareup.com/reference/sdks/web/payments/card-payments
-        /*
+        
         $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
         //https://developer.squareup.com/reference/square/payments-api
         //file_put_contents('./dodebug/debug.txt', "In Pay NoW what is thisreturns: $thisreturns \n", FILE_APPEND);
@@ -343,6 +341,7 @@ function TokenizedPayment()
                 }                 
             }
         }*/
+        //file_put_contents("./dodebug/debug.txt", "squarestatus $squarestatus \n", FILE_APPEND);
         $squarestatus = "COMPLETED";
         if($squarestatus == "COMPLETED")
         {
@@ -367,22 +366,37 @@ function TokenizedPayment()
                 $bccto = [];
                 $ccto = [];
                 $replyto = [];
+                //file_put_contents("./dodebug/debug.txt", "B4 sending \n", FILE_APPEND);
                 $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
             }
-            file_put_contents("./dodebug/debug.txt", "sendstatus: $sendstatus \n", FILE_APPEND);
-            $_SESSION['THISCONFIRMATION'] = $square_receiptno;
-           // header("location: ./paid.php");
+            if($sendstatus == "Success")
+            {
+                file_put_contents("./dodebug/debug.txt", "here sendstatus: $sendstatus \n", FILE_APPEND);
+                $_SESSION['THISCONFIRMATION'] = $square_receiptno;
+                header("location: ./paid.php");
+                exit();
+            }
+            else
+            {
+                $_SESSION['PAYMENTERROR'] = "Failed to email.";
+                header("location: ./errorpage.php");
+                exit();
+            }
         }
         else
         {
-            $thisreturns = "Cost is not valid.";
+            $_SESSION['PAYMENTERROR'] = "Cost is not valid.";
+            header("location: ./errorpage.php");
+            exit();
         }  
     }
     else
     {
-        $thisreturns = "Server is having a maintenance right now.  Your order didn't go through.  Please try again some other times.";
+        $_SESSION['PAYMENTERROR'] = "Server is having a maintenance right now.  Your order didn't go through.  Please try again some other times.";
+        header("location: ./errorpage.php");
+        exit();
     }
-    echo $thisreturns;
+
 }
 function UpdateCart()
 {

@@ -120,32 +120,36 @@ function Main()
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_events" onclick="mainTabs(this);">Events</div>-->
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_recipe" onclick="mainTabs(this);">Recipe</div>-->
                 <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center" id="div_about" onclick="mainTabs(this);">About</div>
-            </div>
-            <div class="cart-div-headline-info align-center font-size-2em">Coming soon!!!</div>
-            <!--
-            <div class="div-content-holder-flex align-center"><?php 
-                //1 month from today only
-            /*
-                $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
-                //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
-                $result = $db -> PDOMiniquery($sql);
-                if($db->PDORowcount($result) > 0)
-                {
-                    $i = 1;
-                    foreach($result as $rs)
-                    {?>
-                        <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
-                            <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?>, <?php echo $rs['name']?></div>
-                            <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
-                        </div><?php
-                        $i++;
+            </div><?php
+            if(!isset($_SESSION['user_recno']))
+            {?>
+                <div class="cart-div-headline-info align-center font-size-2em">Coming soon!!!</div><?php
+            }
+            else
+            {?>
+                <div class="div-content-holder-flex align-center"><?php 
+                    //1 month from today only
+                    $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
+                    //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
+                    $result = $db -> PDOMiniquery($sql);
+                    if($db->PDORowcount($result) > 0)
+                    {
+                        $i = 1;
+                        foreach($result as $rs)
+                        {?>
+                            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
+                                <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?>, <?php echo $rs['name']?></div>
+                                <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+                            </div><?php
+                            $i++;
+                        }
                     }
-                }
-                else
-                {?>
-                    <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
-                }*/?>
-            </div>-->
+                    else
+                    {?>
+                        <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
+                    }?>
+                </div><?php
+            }?>
             <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
         </div>
     </div><?php

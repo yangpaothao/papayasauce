@@ -32,27 +32,28 @@ class OrderClass {
             foreach($result as $rs)
             {
                 $numberofitems = $_SESSION['CARTRECNOTRACKER'][$rs['recno']];
-                $thisurl = "https://www.papayasauce.com/website_ad583fcd";
-                $thisdir = "$thisurl/images/others/products/".$rs['cname']."/".$rs['recno'];
+                //$thisurl = "https://www.papayasauce.com/website_ad583fcd";
+                //https://www.papayasauce.com/website_ad583fcd/images/others/products/Sauce/24/mini/s_Two Sister 9 oz.png
+                //$thisdir = "$thisurl/images/others/products/".$rs['cname']."/".$rs['recno'];
                 $body .= '<div class="align-right cart-div-content-holder-flex-data-container display-inline-block">';
                     $body .= '<div class="float-left cart-img-data-container">';
-                        $body .= '<div class="float-left" ><img id="large_img_container" class="img-cart-review" src="'.$thisdir.'/mini/s_'.substr($rs['attachment'],2).' onerror="this.onerror=null;this.src="https://www.papayasauce.com/website_ad583fcd/images/others/default.png"/></div>';
+                        //$body .= '<div class="float-left" ><img id="large_img_container" class="img-cart-review" src="'.$thisdir.'/mini/s_'.substr($rs['attachment'],2).'"/></div>';
                         $body .= '<div class="align-left float-left">';
                             $body .= '<table>';
                                 $body .= '<tr>';
                                     $body .= '<td class="font-color-white" colspan="2">'.$rs['name'].'</div><td>';
                                 $body .= '</tr>';
                                 $body .= '<tr>';
-                                    $body .= '<td class="font-color-white float-left align-right">Each: </td>';
-                                    $body .= '<td class="font-color-white float-left align-left" >$'.number_format($rs['price'], 2).'</td>';
+                                    $body .= '<td class="font-color-white align-right">Each: </td>';
+                                    $body .= '<td class="font-color-white align-left" >$'.number_format($rs['price'], 2).'</td>';
                                 $body .= '</tr>';
                                 $body .= '<tr>';
-                                    $body .= '<td class="font-color-white float-left align-right">Items: </td>';
-                                    $body .= '<td class="font-color-white float-left align-left">'.$numberofitems.'</td>';
+                                    $body .= '<td class="font-color-white align-right">Items: </td>';
+                                    $body .= '<td class="font-color-white align-left">'.$numberofitems.'</td>';
                                 $body .= '</tr>';
                                 $body .= '<tr>';
-                                    $body .= '<td class="font-color-white float-left align-right color-darkred"><b>Total:</b>  </td>';
-                                    $body .= '<td class="font-color-white float-left align-left color-darkred"><b>$'.number_format($numberofitems*$rs['price'], 2).'</b></td>';
+                                    $body .= '<td class="font-color-white align-right color-darkred"><b>Total:</b>  </td>';
+                                    $body .= '<td class="font-color-white align-left color-darkred"><b>$'.number_format($numberofitems*$rs['price'], 2).'</b></td>';
                                 $body .= '</tr>';
                             $body .= '</table>';
 
@@ -63,7 +64,7 @@ class OrderClass {
                 $i++;
             }
         }
-        $body .= "<div>Total: $thistotal</div>";       
+        $body .= "<div><b>Total Cost: $".number_format($thistotal,2)."</b></div>";       
         return($body);
     }
     function ShowOrderproducts($db, $thiscartrecnostr, &$thistotal)

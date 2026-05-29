@@ -3493,13 +3493,13 @@ admin-service-add{
     color: black;
 }
 .payment-loader-container{
-    width: 92%; 
-    height: 96%; 
+    width: 96%; 
+    height: 98%; 
     background-color: gray; 
     opacity: .8; 
     position: fixed; 
-    margin-top: 2%; 
-    margin-left: 20%;
+    margin-top: .5%; 
+    margin-left: 2%;
     z-index: 1111;
 }
 .api-loader-container{

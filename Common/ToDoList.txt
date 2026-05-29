@@ -1,5 +1,5 @@
-cart.php
-just need to work on sending email
+paid.php
+Need to work on allowing a button to print the receipt at the paid.php
 
 
 
