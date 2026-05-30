@@ -194,7 +194,7 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left div-loginpanel"><?php echo $pc->LoginPanel();?></div>
-            <div class="div-content-holder-flex align-center"><?php
+            <div class="div-content-holder-flex-pro align-center"><?php
                 //1 month from today only
                 $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno = ".$_SESSION['SELECTED_PRODUCT_RECNO']." AND p.isActive = true ORDER BY p.name";
                 //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);

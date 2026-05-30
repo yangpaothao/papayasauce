@@ -113,13 +113,13 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left div-loginpanel" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
-            <div class="div-main-tabs-container">
-                <div class="float-left div-main-tabs div-tab-slted cursor-pointer align-center" id="div_main" onclick="mainTabs(this);">Main</div>
+            <div class="div-main-tabs-container index-div-stripe index-stripe">
+                <div class="float-left div-main-tabs div-tab-slted cursor-pointer align-center border-right-1px-white" id="div_main" onclick="mainTabs(this);">Main</div>
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_products" onclick="mainTabs(this);">Products</div>-->
-                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center" id="div_videos" onclick="mainTabs(this);">Videos</div>
+                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center border-right-1px-white" id="div_videos" onclick="mainTabs(this);">Videos</div>
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_events" onclick="mainTabs(this);">Events</div>-->
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_recipe" onclick="mainTabs(this);">Recipe</div>-->
-                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center" id="div_about" onclick="mainTabs(this);">About</div>
+                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center border-right-1px-white" id="div_about" onclick="mainTabs(this);">About</div>
             </div><?php
             if(!isset($_SESSION['user_recno']))
             {?>

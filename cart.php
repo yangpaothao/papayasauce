@@ -232,155 +232,173 @@ function TokenizedPayment()
                 }
                 $newuserrecno = $_SESSION['user_recno'];
             }
-        }
-        if(is_null($thissquareid))
-        {
-            $thistable = "users";
-            $email = $returnpost['email'];
-            $firstname = $returnpost['firstname'];
-            $lastname = $returnpost['lastname'];
-            $phonenumber = $returnpost['phonenumber'];
-            $address1 = $returnpost['address'];
-            $address2 = $returnpost['address2'];
-            $city = $returnpost['city'];
-            $state = $returnpost['state'];
-            $zipcode = $returnpost['zipcode'];
-            $total = $returnpost['total'];
-            $thisdata = ["email" => $email, 
-                         "firstname" => $firstname,
-                         "lastname" => $lastname, 
-                         "phone_number" => $phonenumber,
-                         "address" => $address1,
-                         "address2" => $address2,
-                         "city" => $city,
-                         "state" => $state, 
-                         "zipcode" => $zipcode];
-
-            $newuserrecno = $db->PDOInsert($thistable, $thisdata);
-            
-            $thisnewcust = $pt->CreateSquareCustomer($newuserrecno, $firstname, $lastname, $email, $phonenumber, $thisaccesstoken);
-            //$thispayment is an array but 1 item in it.
-            //$sqrecord will show the returned array
-            //$sqlvalue will show the value
-            foreach($thisnewcust as $sqrecord => $sqlvalue)
+        
+            if(is_null($thissquareid))
             {
-                if(is_array($sqlvalue))
+                $thistable = "users";
+                $email = $returnpost['email'];
+                $firstname = $returnpost['firstname'];
+                $lastname = $returnpost['lastname'];
+                $phonenumber = $returnpost['phonenumber'];
+                $address1 = $returnpost['address'];
+                $address2 = $returnpost['address2'];
+                $city = $returnpost['city'];
+                $state = $returnpost['state'];
+                $zipcode = $returnpost['zipcode'];
+                $total = $returnpost['total'];
+                $thisdata = ["email" => $email, 
+                             "firstname" => $firstname,
+                             "lastname" => $lastname, 
+                             "phone_number" => $phonenumber,
+                             "address" => $address1,
+                             "address2" => $address2,
+                             "city" => $city,
+                             "state" => $state, 
+                             "zipcode" => $zipcode];
+
+                $newuserrecno = $db->PDOInsert($thistable, $thisdata);
+
+                $thisnewcust = $pt->CreateSquareCustomer($newuserrecno, $firstname, $lastname, $email, $phonenumber, $thisaccesstoken);
+                //$thispayment is an array but 1 item in it.
+                //$sqrecord will show the returned array
+                //$sqlvalue will show the value
+                foreach($thisnewcust as $sqrecord => $sqlvalue)
                 {
-                    foreach($sqlvalue as $sqrecord2 => $sqlvalue2)
+                    if(is_array($sqlvalue))
                     {
-                        //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2 \n", FILE_APPEND);
-                        if($sqrecord2 == "id")
+                        foreach($sqlvalue as $sqrecord2 => $sqlvalue2)
                         {
-                            //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2: $sqlvalue2 \n", FILE_APPEND);
-                            $thissquarecustomerid = $sqlvalue2;
+                            //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2 \n", FILE_APPEND);
+                            if($sqrecord2 == "id")
+                            {
+                                //file_put_contents('./dodebug/debug.txt', "the id is $sqrecord2: $sqlvalue2 \n", FILE_APPEND);
+                                $thissquarecustomerid = $sqlvalue2;
+                            }
                         }
                     }
                 }
-            }
-            $updatethisdata = ["squareid$tempsandpropost" => $thissquarecustomerid];
-            $thiswhere = ["recno" => $newuserrecno];
-            $db->PDOUpdate($thistable, $updatethisdata, $thiswhere);
-            
-            $thistable = "orders";
-            $insertorderdata = ["foreign_user_recno" => $newuserrecno,
-                         "products" => json_encode($_SESSION['CARTRECNOTRACKER']),
-                         "total" => $realtotal];
-            $db->PDOInsert($thistable, $insertorderdata);
-        }
-        else
-        {
-            $thissquarecustomerid = $thissquareid;
-        }/*
-        //We need to get the recno of the deposit or the single full payment.
-        //We will send this payment into the portal
-        //file_put_contents('./dodebug/debug.txt', "thisdate: ".date('YmdHs')." \n", FILE_APPEND);
-        $thishash = sha1(date('YmdHs'));
-        file_put_contents('./dodebug/debug.txt', "thishash: $thishash \n", FILE_APPEND);
-        //https://developer.squareup.com/reference/sdks/web/payments/card-payments
-        
-        $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
-        //https://developer.squareup.com/reference/square/payments-api
-        //file_put_contents('./dodebug/debug.txt', "In Pay NoW what is thisreturns: $thisreturns \n", FILE_APPEND);
-        //for the return, we will need the id, 
-        //id (payment_id in table)- 'some long number ****'
-        //status - COMPLETE or something else, look for COMPETE
-        //receipt_number (payment_confirmation in table- 'R23bs'
-        //receipt_url - a url to view the receipt
-        foreach($thisreturnsarray as $key => $value)
-        {
-            if(is_array($value))
-            {
-                foreach($value as $key1 => $value1)
-                {
-                    if($key1 == "id")
-                    {
-                        $thisdataupdatecomplete['payment_id'] = $value1;
-                    }
-                    if($key1 == "status")
-                    {
-                        $squarestatus = $value1;
-                    }
-                    if($key1 == "receipt_number")
-                    {
-                        $square_receiptno = $value1;
-                        $thisdataupdatecomplete['payment_confirmation'] = $value1;
-                    }
-                    if($key1 == "receipt_url")
-                    {
-                        $thisdataupdatecomplete['receipt_url'] = $value1;
-                    }
-                    if($key1 == "location_id")
-                    {
-                        $thisdataupdatecomplete['location_id'] = $value1;
-                    }
-                    if($key1 == "order_id")
-                    {
-                        $thisdataupdatecomplete['order_id'] = $value1;
-                        $thissquareorderid = $value1;
-                    }
-                }                 
-            }
-        }*/
-        //file_put_contents("./dodebug/debug.txt", "squarestatus $squarestatus \n", FILE_APPEND);
-        $squarestatus = "COMPLETED";
-        if($squarestatus == "COMPLETED")
-        {
-            $thisdataupdatecomplete["source_id"] = $thistoken;
-            $thisdataupdatecomplete['isPaid'] = true;
-            $thisdataupdatecomplete['date'] = date('Y-m-d H:i:s');
-            $thiswhere = ["recno" => $newuserrecno];
-            
-            $thistable = "orders";
-            $thisupdate = $db->PDOUpdate($thistable, $thisdataupdatecomplete, $thiswhere);
-            //file_put_contents("./dodebug/debug.txt", "$thisupdate \n", FILE_APPEND);
-            if($thisupdate == "Success")
-            {
-                $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
-                $thiscartrecnostr = implode(",", $thiscartrecno);
-                $oc->SetReceipt($db, $thiscartrecnostr, $square_receiptno, $thissquareorderid);
-                $payment_receipt_body = $oc->ShowReceipt();
-                $payment_receipt_subject = $ec->get_paymentreceipt_subject();
-                $guestname = $firstname." ".$lastname;
-                $sendto[] = array($email => $guestname);
-                $attachment = [];
-                $bccto = [];
-                $ccto = [];
-                $replyto = [];
-                //file_put_contents("./dodebug/debug.txt", "B4 sending \n", FILE_APPEND);
-                $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
-            }
-            if($sendstatus == "Success")
-            {
-                file_put_contents("./dodebug/debug.txt", "here sendstatus: $sendstatus \n", FILE_APPEND);
-                $_SESSION['THISCONFIRMATION'] = $square_receiptno;
-                header("location: ./paid.php");
-                exit();
+                $updatethisdata = ["squareid$tempsandpropost" => $thissquarecustomerid];
+                $thiswhere = ["recno" => $newuserrecno];
+                $db->PDOUpdate($thistable, $updatethisdata, $thiswhere); 
             }
             else
             {
-                $_SESSION['PAYMENTERROR'] = "Failed to email.";
-                header("location: ./errorpage.php");
-                exit();
+                $thissquarecustomerid = $thissquareid;
+            }
+            $thistable = "orders";
+            $insertorderdata = ["foreign_user_recno" => $newuserrecno,
+                        "products" => json_encode($_SESSION['CARTRECNOTRACKER']),
+                        "total" => $realtotal];
+            $thisorderrecno = $db->PDOInsert($thistable, $insertorderdata);
+            //We need to get the recno of the deposit or the single full payment.
+            //We will send this payment into the portal
+            //file_put_contents('./dodebug/debug.txt', "thisdate: ".date('YmdHs')." \n", FILE_APPEND);
+            $thishash = sha1(date('YmdHs'));
+            //file_put_contents('./dodebug/debug.txt', "thishash: $thishash \n", FILE_APPEND);
+            //https://developer.squareup.com/reference/sdks/web/payments/card-payments
+
+            /*
+             * If you pass a dollar value like 10.50 directly, Square reads it as an integer and processes it as 10 cents ($0.10).
+             */
+            $realtotal = (int)round($realtotal * 100); 
+            $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
+            //https://developer.squareup.com/reference/square/payments-api
+            //file_put_contents('./dodebug/debug.txt', "In Pay NoW what is thisreturns: $thisreturns \n", FILE_APPEND);
+            //for the return, we will need the id, 
+            //id (payment_id in table)- 'some long number ****'
+            //status - COMPLETE or something else, look for COMPETE
+            //receipt_number (payment_confirmation in table- 'R23bs'
+            //receipt_url - a url to view the receipt
+            foreach($thisreturnsarray as $key => $value)
+            {
+                if(is_array($value))
+                {
+                    foreach($value as $key1 => $value1)
+                    {
+                        if($key1 == "id")
+                        {
+                            $thisdataupdatecomplete['payment_id'] = $value1;
+                        }
+                        if($key1 == "status")
+                        {
+                            $squarestatus = $value1;
+                        }
+                        if($key1 == "receipt_number")
+                        {
+                            $square_receiptno = $value1;
+                            $thisdataupdatecomplete['payment_confirmation'] = $value1;
+                        }
+                        if($key1 == "receipt_url")
+                        {
+                            $thisdataupdatecomplete['receipt_url'] = $value1;
+                            $square_receipturl = $value1;
+                        }
+                        if($key1 == "location_id")
+                        {
+                            $thisdataupdatecomplete['location_id'] = $value1;
+                            $square_locationid = $value1;
+                        }
+                        if($key1 == "order_id")
+                        {
+                            $thisdataupdatecomplete['order_id'] = $value1;
+                            $thissquareorderid = $value1;
+                        }
+                    }                 
+                }
+            }
+            //file_put_contents("./dodebug/debug.txt", "squarestatus $squarestatus \n", FILE_APPEND);
+            //$squarestatus = "COMPLETED";
+            if($squarestatus == "COMPLETED")
+            {
+                $thisdataupdatecomplete["source_id"] = $thistoken;
+                $thisdataupdatecomplete["receipt_url"] = $square_receipturl;
+                $thisdataupdatecomplete["location_id"] = $square_locationid;
+                $thisdataupdatecomplete["order_id"] = $thissquareorderid;
+                $thisdataupdatecomplete["payment_confirmation"] = $square_receiptno; //Confirmation#
+                $thisdataupdatecomplete['isPaid'] = true;
+                $thisdataupdatecomplete['date'] = date('Y-m-d H:i:s');
+                $thiswhere = ["recno" => $thisorderrecno];
+
+                $thistable = "orders";
+                $thisupdate = $db->PDOUpdate($thistable, $thisdataupdatecomplete, $thiswhere);
+                //file_put_contents("./dodebug/debug.txt", "$thisupdate \n", FILE_APPEND);
+                if($thisupdate == "Success")
+                {
+                    $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
+                    $thiscartrecnostr = implode(",", $thiscartrecno);
+                    $oc->SetReceipt($db, $thiscartrecnostr, $square_receiptno, $thissquareorderid, $square_receipturl);
+                    $payment_receipt_body = $oc->ShowReceipt();
+                    $payment_receipt_subject = $ec->get_paymentreceipt_subject();
+                    $guestname = $firstname." ".$lastname;
+                    $sendto[] = array($email => $guestname);
+                    $attachment = [];
+                    $bccto = [];
+                    $ccto = [];
+                    $replyto = [];
+                    //file_put_contents("./dodebug/debug.txt", "B4 sending \n", FILE_APPEND);
+                    $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
+                }
+                if($sendstatus == "Success")
+                {
+                    //file_put_contents("./dodebug/debug.txt", "here sendstatus: $sendstatus \n", FILE_APPEND);
+                    $_SESSION['THISCONFIRMATION'] = $square_receiptno;
+                    header("location: ./paid.php");
+                    exit();
+                }
+                else
+                {
+                    $_SESSION['PAYMENTERROR'] = "Failed to email.";
+                    header("location: ./errorpage.php");
+                    exit();
+                }
+            }
+            else
+            {
+                //If the card for some reason is rejected?>
+                <script type="text/javascript">
+                    alert("Payment was not able to be compelted.  Error is: <?php echo $squarestatus ?>");
+                    window.location.reload();
+                </script><?php
             }
         }
         else
@@ -520,50 +538,50 @@ function Main()
                             </script>
                             <form name="payment-form" id="payment_form" method="post">
                                 <div class="cart-div-headline-info align-center">ONE time payment only.  We do not keep any credit card information on file!</div>
-                                <table class="tbl-cart float-left">
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Email: <span class="asterisk"> * </span></td>
-                                        <td><input type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">First Name: <span class="asterisk"> * </span></td>
-                                        <td><input type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Last Name: <span class="asterisk"> * </span></td>
-                                        <td><input type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Phone#: <span class="asterisk"> * </span></td>
-                                        <td><input type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Address 1: <span class="asterisk"> * </span></td>
-                                        <td><input type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Address 2:</td>
-                                        <td><input type="text" class="cart-input" id="txt_address2" name="txt_address2" value="" placeholder="" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">City: </td>
-                                        <td><input type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">State: </td>
-                                        <td><?php
-                                            $pt->GetStates($db)->GetSelect("slt_state", '', true, false, false, true, false, true);?>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right">Zip-Code: </td>
-                                        <td><input type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
-                                    </tr>
-                                    <tr>
-                                        <td class="tbl-cart-lbl align-right"><b>Total:</b> </td>
-                                        <td><input type="text" id="txt_total" name="txt_total" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
-                                    </tr>
-                                </table>
+                                    <table class="tbl-cart float-left" style="background-color: lightgray;">
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Email: <span class="asterisk"> * </span></td>
+                                            <td><input type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">First Name: <span class="asterisk"> * </span></td>
+                                            <td><input type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Last Name: <span class="asterisk"> * </span></td>
+                                            <td><input type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Phone#: <span class="asterisk"> * </span></td>
+                                            <td><input type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Address 1: <span class="asterisk"> * </span></td>
+                                            <td><input type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Address 2:</td>
+                                            <td><input type="text" class="cart-input" id="txt_address2" name="txt_address2" value="" placeholder="" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">City: </td>
+                                            <td><input type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">State: </td>
+                                            <td><?php
+                                                $pt->GetStates($db)->GetSelect("slt_state", '', true, false, false, true, false, true);?>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Zip-Code: </td>
+                                            <td><input type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right"><b>Total:</b> </td>
+                                            <td><input type="text" id="txt_total" name="txt_total" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
+                                        </tr>
+                                    </table>
                                 <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
                                 </div>
                                 <div class="align-center" style="width: 100%;">

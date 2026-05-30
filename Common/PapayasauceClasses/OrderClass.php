@@ -9,11 +9,12 @@ class OrderClass {
     private $recnostr = "";
     private $square_receiptno = "";
     private $square_order_id = "";
-    function SetReceipt($db, $recnostr, $temp_receiptno, $temp_orderno)
+    function SetReceipt($db, $recnostr, $temp_receiptno, $temp_orderno, $temp_receipturl)
     {
         $this->recnostr = $recnostr;
         $this->square_receiptno = $temp_receiptno;
         $this->square_order_id = $temp_orderno;
+        $this->square_receipturl = $temp_receipturl;
         $this->db = $db;
     }
     function ShowReceipt()
@@ -38,6 +39,8 @@ class OrderClass {
                 $body .= '<div class="align-right cart-div-content-holder-flex-data-container display-inline-block">';
                     $body .= '<div class="float-left cart-img-data-container">';
                         //$body .= '<div class="float-left" ><img id="large_img_container" class="img-cart-review" src="'.$thisdir.'/mini/s_'.substr($rs['attachment'],2).'"/></div>';
+                    $body .= '<div class="float-left display-block" >Your statement will show "SQ *KA\'S PAPA SAUCE"</div>';
+                    $body .= '<div class="float-left display-block" ><a href="'.$this->square_receipturl.'">Click to download the receipt</a></div>';
                         $body .= '<div class="align-left float-left">';
                             $body .= '<table>';
                                 $body .= '<tr>';

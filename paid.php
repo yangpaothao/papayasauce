@@ -55,16 +55,34 @@ if(count($_GET) > 0)
 function Main()
 {
     global $pc, $db;?>
+    <script type="text/javascript">
+        window.location.href = "index.php";
+    </script>
     <div class="main-div">
-        <?php echo $pc->LoadLogo($db);?>
-        <br>
-        <div class="main-div-body">
-            <div class="align-center" style="color: black;">
-                <?php
-                //BULIT A RECEIPT HERE!!!
-                echo "Thank you for your payment.  A receipt has been sent to your email.\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
-            ?>
+        <div class="paid-div-container">
+            <div class="main-logo float-left">
+                <?php echo $pc->LoadLogo($db);
+                //We unset it so it will show zeroes on the cart, top right.
+                unset($_SESSION['TEMPCART']);
+                unset($_SESSION['CARTTOTALTRACKER']);?>
             </div>
+            <div class="float-left div-loginpanel" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
+            <div class="div-content-holder-flex align-center">
+                <div class="align-center" style="color: black; width: 100%;">
+                    <?php
+                    $showonstatement = "SQ *KA'S PAPA SAUCE";
+                    //BULIT A RECEIPT HERE!!!
+                    echo "Thank you for your payment.  A receipt has been sent to your email.  Your statement will show \"$showonstatement\",\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
+                    
+                    //At this point, we are done with $_SESSION['THISCONFIRMATION']
+                    unset($_SESSION['THISCONFIRMATION']);
+                    unset($_SESSION['CARTRECNOTRACKER']);
+                    unset($_SESSION['SELECTED_PRODUCT_RECNO']);
+                    unset($_SESSION['PAYMENTERROR']);
+                    unset($_SESSION['THISCONFIRMATION']);?>
+                </div>
+            </div>
+            <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
         </div>
     </div><?php
 }

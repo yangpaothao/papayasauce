@@ -558,6 +558,18 @@ li{
     /* Hide scrollbar for IE and older Edge */
     -ms-overflow-style: none;
 }
+.div-content-holder-flex-pro{
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    color: black;
+    width: 100%;
+    min-height: 520px;
+    height: 400px;
+    align-items: flex-start;
+    /* Hide scrollbar for IE and older Edge */
+    -ms-overflow-style: none;
+}
 .cart-div-content-holder-flex{
     display: flex;
     flex-wrap: wrap;
@@ -3886,7 +3898,7 @@ admin-service-add{
     background-image: "./images/others/redcheck.png"
 }
 .div-main-tabs-container{
-    width: 100%; 
+    width: 92%; 
     display: inline-block;
 }
 .div-main-tabs{
@@ -3966,6 +3978,11 @@ admin-service-add{
     margin: auto; 
     background-color: #f0f5f5;
 }
+.paid-div-container{
+    width: 98%; 
+    margin: auto; 
+    background-color: #f0f5f5;
+}
 .addproduct-div-container{
     width: 90%; 
     margin: auto; 
@@ -4040,7 +4057,7 @@ admin-service-add{
     overflow-x: auto;
 }
 .pro-div-data-container{
-    width: 92%; 
+    width: 98%; 
     margin: auto; 
     background-color: #f0f5f5;
 }
@@ -4129,8 +4146,33 @@ admin-service-add{
     width: 20px; 
     height: 20px;
 }
+.border-right-1px-white{
+    border-right: 1px solid white;
+}
 
+.index-div-stripe {
+  background: white;
+  border: 1px solid #ccc;
+  > h2 {
+    padding: 1rem;
+    margin: 0 0 0.5rem 0;
+  }
+  > p {
+    padding: 0 1rem;
+  }
+  /*animation: widen 10s linear alternate infinite;*/
+}
 
+.index-stripe {
+  color: white;
+  background: repeating-linear-gradient(
+    45deg,
+    #FF7431,
+    #FF7431 10px,
+    #4F8849 10px,
+    #4F8849 20px
+  );
+}
 
 
 
