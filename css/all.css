@@ -316,9 +316,9 @@ body
     margin-top: 20px;
 }
 .div-body-dashbord-createevent-container{
-    height: 600px;
-    width: 700px;
-    position: fixed;
+    min-height: auto;
+    min-width: 220px;
+    width: 40%;
 }
 .event{
     margin-top: -15px;
@@ -415,6 +415,18 @@ li{
     z-index:10;
     width: 100px;
 }
+.responsive-li-menu .responsive-ul-child-sessioned{
+    display: none;
+    position: absolute;
+    background-color: white;
+    padding: 0px;
+    color: black;
+    white-space: nowrap;
+    margin-left: -140px;
+    margin-top: -80px;
+    z-index:10;
+    width: 100px;
+}
 .responsive-li-menu .responsive-ul-child{
     display: none;
     position: absolute;
@@ -422,7 +434,7 @@ li{
     padding: 0px;
     color: black;
     white-space: nowrap;
-    margin-left: -145px;
+    margin-left: -90px;
     margin-top: -60px;
     z-index:10;
     width: 100px;
@@ -1347,15 +1359,29 @@ tbody tr:last-child {
 }
 .tbl-event-lbl{
     /*stay*/
-    width: 40%;
+    min-width: 140px;
     text-align: right;
     background-color: #393C3E; 
     color: white;
 }
 .eventinput{
-    width: 60%;
+    min-width: 240px;
     text-align: left;
     background-color: lightgray;
+}
+.eventinput-dashboard-sm-div{
+   display: flex; 
+   flex-wrap: wrap; 
+   width: 80%;
+}
+.eventinput-dashboard-txtarea-div{
+    width: 80%; 
+    min-width: 220px;
+}
+.eventinput-dashboard-note-div{
+    font-size: .8em; 
+    color: darkred; 
+    width: 80%;
 }
 .div-mgm-user-content{
     width: 100%;
@@ -3077,7 +3103,6 @@ admin-service-add{
 }
 .span-event-numbered{
     padding-right: 2px;
-    color: white;
 }
 .show-event-option-status-option-selected{
     background-color: #173346;

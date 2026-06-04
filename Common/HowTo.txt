@@ -59,12 +59,7 @@ function submitDeposit(){
     //example of creating array
     let thisArray = [{
             "cardtype": cardtype,
-            "thisamount": thisamount, 
-            "thiscard": $("#txt_cr_last4").val(), 
-            "thisexpmm": $("#txt_expiredate_mm").val(),
-            "thisexpyy": $("#txt_expiredate_yy").val(),
-            "thissecurity": $("#txt_security").val(),
-            "thisstatus": thisstatus
+            "thisamount": thisamount
         }];  
 
     const thisData = JSON.stringify(thisArray);

@@ -390,25 +390,31 @@ if(count($_GET) > 0)
             function addAttachment(){
                 //We have to go through the list of attachments to see how many we already have and then add it after it.
                 isAttachment = true;
-                if($(".event-attachments").length >= 5){
+                if($(".event-attachments").length >= 10){
                     isAttachment = false;
-                    alert("The limit for upload is 5.");
+                    alert("The limit for upload is 10.");
                 }
                 if(isAttachment == true){
                     $(".event-attachments").each(function(){
                         thisattachmentcount = $(this).prop('id').slice(-1);
                     });
-                    thisattachmentcount++;
-                    newattachment = "attachment"+thisattachmentcount;
-                    newbtn_remove_attachment = "btn_remove_attachment"+thisattachmentcount;
-                    newdiv_attachment_ele = "div_attachment_ele"+thisattachmentcount;
-                    
-                    //If we made it to here, we know we have the last number of the last attachment so we just increase by 1
-                    thisstr = '<div class="div-attachment-ele" id="'+newdiv_attachment_ele+'"><span class="span-event-numbered">'+thisattachmentcount+'</span>&nbsp;<input class="event-attachments" type="file" name="files[]" id="'+newattachment+'" />';
-                    thisstr += '&nbsp;<button class="remove-attachment" id="'+newbtn_remove_attachment+'" name="'+newbtn_remove_attachment+'" onclick="removeAttachment(this);" title="Click to remove attachment">-</button></div';
-                    $('#div_attachment_container').append(thisstr);
-                    //since we added an attachment, we want to enable the first attachment's deletion button
-                    $("#btn_remove_attachment1").show();
+                    //alert(thisattachmentcount);
+                    let thisArray = [{
+                        "this_lineno": thisattachmentcount
+                    }];  
+                    const thisData = JSON.stringify(thisArray);
+                    $.ajax({
+                        url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=AddAttachment&thisarray="+thisData,
+                        type: "POST"
+                    }).then(function(result) {
+                        alert(result);
+                        // Code here will execute *after* the AJAX request is successful
+                        $('#div_attachment_container').append(result);
+                        //since we added an attachment, we want to enable the first attachment's deletion button
+                        $("#btn_remove_attachment1").show();
+                    }).catch(function(error) {
+                        alert(error);
+                    });
                 }
                 event.preventDefault();
             }
@@ -1275,6 +1281,20 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function AddAttachment()
+{
+    global $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $lineno = $returnpost['lineno'];
+    $lineno++;
+    $newattachment = "attachment$lineno";
+    $newbtn_remove_attachment = "btn_remove_attachment$lineno";
+    $newdiv_attachment_ele = "div_attachment_ele$lineno";             
+    //If we made it to here, we know we have the last number of the last attachment so we just increase by 1
+    $thisstr = '<div class="div-attachment-ele" id="'.$newdiv_attachment_ele.'"><span class="span-event-numbered">'.$lineno.'</span>&nbsp;<input class="event-attachments" type="file" name="files[]" id="'.$newattachment.'" />';
+    $thisstr .= '&nbsp;<button class="remove-attachment" id="'.$newbtn_remove_attachment.'" name="'.$newbtn_remove_attachment.'" onclick="removeAttachment(this);" title="Click to remove attachment">-</button></div';
+    echo $thisstr;
+}
 function GetSquarecode()
 {
     global $pt;
@@ -3377,7 +3397,7 @@ function DoEvent()
             <form name="frmcreateevent" id="frmcreateevent" enctype="multipart/form-data" method="post">
                 <table id="tbl_event" class="tbl-dashbord-event">
                     <tr>
-                        <td class="tbl-event-lbl">Event Type: <span class="asterisk"> * </span></td>
+                        <td class="tbl-event-lbl">Upload Type: <span class="asterisk"> * </span></td>
                         <td class="eventinput"><?php
                             $thistable = "current_events";
                             $thisfields = array("recno","event_type");
@@ -3394,11 +3414,11 @@ function DoEvent()
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbl-event-lbl">Event Name: <span class="asterisk"> * </span></td>
-                        <td class="eventinput"><input type="text" id="this_special_event" name="this_special_event" value="" size="70" /></td>
+                        <td class="tbl-event-lbl">Name: <span class="asterisk"> * </span></td>
+                        <td class="eventinput"><input type="text" id="this_special_event" name="this_special_event" value="" /></td>
                     </tr>
                     <tr id="tr_slttype">
-                        <td class="tbl-event-lbl">Event Restriction: <span class="asterisk"> * </span></td>
+                        <td class="tbl-event-lbl">Restriction: <span class="asterisk"> * </span></td>
                         <td class="eventinput">
                             <select name="this_event_restriction" id="this_event_restriction" onchange="checkDates(this);">
                                 <option value="Select" selected>Select</option>
@@ -3407,21 +3427,40 @@ function DoEvent()
                                 <option value="Repeats">Repeats</option>
                             </select>
                         </td>
-                    </tr>                    
-                    <tr id="tr_discount">
-                        <td class="tbl-event-lbl">Discount: <span class="asterisk"> * </span></td>
-                        <td class="eventinput"><input type="checkbox" name="this_chkdiscount" id="this_chkdiscount" onchange="checkDiscount(this);" /></td>
+                    </tr>  
+                    <tr>
+                        <td class="tbl-event-lbl">Social Network:</td>
+                        <td class="eventinput">
+                            <div class="eventinput-dashboard-sm-div"><?php
+                                $isYoutube = false;
+                                $isFacebook = false;
+                                $isTikTok = false;
+                                $sql = "SELECT isYoutube, isFacebook, isTikTok FROM company_info";
+                                $result = $db->PDOMiniquery($sql);
+                                foreach($result as $rs)
+                                {
+                                    $isYoutube = $rs['isYoutube'];
+                                    $isFacebook = $rs['isFacebook'];
+                                    $isTikTok = $rs['isTikTok'];
+                                }?>
+                                <div class="float-left"><input class="align-left" type="checkbox" id="this_youtube" name="this_youtube" <?php echo ($isYoutube === true ? '' : 'disabled') ?>/>Youtube</div>                      
+                                <div class="float-left"><input class="align-left" type="checkbox" id="this_mega" name="this_mega" <?php echo ($isFacebook === true ? '' : 'disabled') ?>/>Facebook</div>
+                                <div class="float-left"><input class="align-left" type="checkbox" id="this_tiktok" name="this_tiktok" <?php echo ($isTikTok === true ? '' : 'disabled') ?>/>TikTok</div>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td class="tbl-event-lbl">Description:</td>
                         <td class="eventinput">
-                            <textarea id="this_description" resize="none" name="this_description"rows="10" cols="70"></textarea>
+                            <textarea class="eventinput-dashboard-txtarea-div" id="this_description" resize="none" name="this_description" rows="10"></textarea>
                         </td>
                     </tr>
-                    <td class="tbl-event-lbl">Note:</td>
-                        <td class="eventinput" style="font-size: .8em; color: darkred;">
-                            Only the first attachment will show up on the front page slideshow.
-                        </td>
+                    <tr>
+                        <td class="tbl-event-lbl">Note:</td>
+                            <td class="eventinput eventinput-dashboard-note-div">
+                                Only the first attachment will show up on the front page slideshow.
+                            </td>
+                    </tr
                     <tr class="tr-event" id="tr_event1">
                         <td class="tbl-event-lbl">
                             attachments: <button class="add-attachment" id="btn_add_attachment" onclick="addAttachment();" title='Click to add attachment'>+</button></td>
@@ -3429,7 +3468,7 @@ function DoEvent()
                             <div class="div-attachment-container" id="div_attachment_container">
                                 <div class="div-attachment-ele" id="div_attachment_ele1">
                                     <span class="span-event-numbered">1</span>
-                                    <input class="event-attachments" type="file" name="files[]" id="attachments" />
+                                    <input class="event-attachments" type="file" name="files[]" id="attachments1" />
                                     <button class="remove-attachment display-none" id="btn_remove_attachment1" name="btn_remove_attachment1" onclick="removeAttachment(this);" title='Click to remove attachment'>-</button>
                                 </div>
                             </div>
@@ -3597,6 +3636,9 @@ function AddCompany()
     $usthisfunc = "";
     $thisgooglemap = "";
     $thisfblink = "";
+    $isYoutube = false;
+    $isFacebook = false;
+    $isTikTok = false;
     $thisbutton = "style='display: none;'";
     $sql = "SELECT * FROM company_info";
     $result = $db ->PDOMiniquery($sql);
@@ -3620,6 +3662,9 @@ function AddCompany()
             $thiszipcode = $rs['zipcode'];
             $thislogo = $rs['mainlogo'];
             $thisfblink = $rs['facebook_link'];
+            $isYoutube = $rs['isYoutube'];
+            $isFacebook = $rs['isFacebook'];
+            $isTikTok = $rs['isTikTok'];
         }
         $usthisfunc = 'onfocus="getVal(this)" onchange="updateCompanyinfo(this, '.$thisrecno.');"';
         $thisbutton = "";
@@ -3667,10 +3712,22 @@ function AddCompany()
                 {?> 
                     <tr>
                         <td class="tbl-dashboard-company-lbl-company align-right">Active:</td>
-                        <td><input type="checkbox" class="dashboard-company-input-company float-left" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked dissabled /></td>
+                        <td><input type="checkbox" class="dashboard-company-input-company" style="height: 20px; width: 20px;" id="isActive" name="isActive" <?php echo $usthisfunc ?> checked /></td>
                     </tr>
                     <tr>
-                        <td class="tbl-dashboard-company-lbl-company">Upload Logos: </td>
+                        <td class="tbl-dashboard-company-lbl-company align-right">Youtube:</td>
+                        <td><input type="checkbox" class="dashboard-company-input-company" style="height: 20px; width: 20px;" id="isYoutube" name="isYoutube" <?php echo $usthisfunc ?>  /></td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-dashboard-company-lbl-company align-right">FaceBook:</td>
+                        <td><input type="checkbox" class="dashboard-company-input-company" style="height: 20px; width: 20px;" id="isFacebook" name="isFacebook" <?php echo $usthisfunc ?> /></td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-dashboard-company-lbl-company align-right">TikTok:</td>
+                        <td><input type="checkbox" class="dashboard-company-input-company" style="height: 20px; width: 20px;" id="isTikTok" name="isTikTok" <?php echo $usthisfunc ?> /></td>
+                    </tr>
+                    <tr>
+                        <td class="tbl-dashboard-company-lbl-company align-right">Upload Logos: </td>
                         <td  id="tduploadattachment"><img class="cursor-pointer float-left" style="height: 50px; width: 50%; min-width: 220px;" src="./images/others/dummyattach.png" onclick="dashboardAttach(this);"/><div class="align-left font-size-pt8em">jpeg, gif, png ONLY</div></td>
                     </tr>
                     <?php 
@@ -4090,17 +4147,17 @@ function Main()
                 <?php echo $load_headers->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $load_headers->LoginPanel();?></div>
-            <div class="div-main-tabs-container">
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageabout" onclick="about(this);">About</div>
+            <div class="div-main-tabs-container index-div-stripe index-stripe">
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer border-right-1px-white" id="div_manageabout" onclick="about(this);">About</div>
                 <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer" id="div_manageintro" onclick="introduction(this);">Introduction</div>   -->
                 <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_managecompany" onclick="addCompany(this);">Company</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth" id="div_manageapi_pro" onclick="manageAPI(this, 'Production');">Square Production API</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>                
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_manageguest" onclick="manageGuests(this);">Guests</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
-                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap" id="div_doevent" onclick="doEvent(this);">Create Event</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_managecompany" onclick="addCompany(this);">Company</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_pro" onclick="manageAPI(this, 'Production');">Square Production API</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>                
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageguest" onclick="manageGuests(this);">Guests</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
+                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_doevent" onclick="doEvent(this);">Create Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
             </div>
             <div class="div-content-holder-flex align-center">
                 <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>

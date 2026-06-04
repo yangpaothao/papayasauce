@@ -46,6 +46,9 @@ if(count($_GET) > 0)
             $pc->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
         ?>
         <script type="text/javascript">
+            $(document).ready(function(){
+                loadTabs($("#div_main")[0]);
+            });
             function mainTabs(obj){
                 //If we are clicking the selected tab, nothing needs to be done
                 if(!$(obj).hasClass('div-tab-slted')){
@@ -59,7 +62,23 @@ if(count($_GET) > 0)
                             $(this).addClass("div-tab-nonslted");
                         }
                     });
-                }     
+                }  
+                loadTabs(obj);
+            }
+            function loadTabs(obj){
+                let thisArray = [{
+                    "this_thistab": $(obj).text()
+                }]; 
+                const thisData = JSON.stringify(thisArray);
+                $.ajax({
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=LoadTabs&thisarray="+thisData,
+                    type: "POST"
+                }).then(function(result) {
+                    // Code here will execute *after* the AJAX request is successful
+                    $("#div_content_holder").html(result);
+                }).catch(function(error) {
+                    alert(error);
+                });
             }
             function selectedProduct(product_recno){
                 let thisArray = [{
@@ -97,6 +116,67 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function LoadTabs()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    switch($returnpost['thistab'])
+    {
+        case "Main":
+            LoadMaintab($db);
+            break;
+        case "Videos":
+            LoadVideotab($db);
+            break;
+        default:
+            LoadMaintab($db);
+            break;
+    }
+}
+function LoadVideotab($db)
+{
+    $sql = "SELECT * FROM videos WHERE isActive = true ORDER BY entry_date, name";
+    //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
+    $result = $db -> PDOMiniquery($sql);
+    if($db->PDORowcount($result) > 0)
+    {
+        $i = 1;
+        foreach($result as $rs)
+        {?>
+            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedVideo(<?php echo $rs['recno']?>);">  
+                <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;"> <?php echo $rs['name']?></div>
+                <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+            </div><?php
+            $i++;
+        }
+    }
+    else
+    {?>
+        <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
+    }
+}
+function LoadMaintab($db)
+{
+    $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
+    //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
+    $result = $db -> PDOMiniquery($sql);
+    if($db->PDORowcount($result) > 0)
+    {
+        $i = 1;
+        foreach($result as $rs)
+        {?>
+            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
+                <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?>, <?php echo $rs['name']?></div>
+                <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+            </div><?php
+            $i++;
+        }
+    }
+    else
+    {?>
+        <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
+    }
+}
 function SelectedProduct()
 {
     global $pt;
@@ -112,14 +192,14 @@ function Main()
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>
             </div>
-            <div class="float-left div-loginpanel" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
+            <div class="float-left div-loginpanel"><?php echo $pc->LoginPanel();?></div>
             <div class="div-main-tabs-container index-div-stripe index-stripe">
                 <div class="float-left div-main-tabs div-tab-slted cursor-pointer align-center border-right-1px-white" id="div_main" onclick="mainTabs(this);">Main</div>
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_products" onclick="mainTabs(this);">Products</div>-->
                 <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center border-right-1px-white" id="div_videos" onclick="mainTabs(this);">Videos</div>
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_events" onclick="mainTabs(this);">Events</div>-->
                 <!--<div class="float-left div-main-tabs cursor-pointer div-main-tab-nonslted align-center" id="div_recipe" onclick="mainTabs(this);">Recipe</div>-->
-                <div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center border-right-1px-white" id="div_about" onclick="mainTabs(this);">About</div>
+                <!--<div class="float-left div-main-tabs cursor-pointer div-tab-nonslted align-center border-right-1px-white" id="div_about" onclick="mainTabs(this);">About</div>-->
             </div><?php
             if(!isset($_SESSION['user_recno']))
             {?>
@@ -127,28 +207,7 @@ function Main()
             }
             else
             {?>
-                <div class="div-content-holder-flex align-center"><?php 
-                    //1 month from today only
-                    $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
-                    //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
-                    $result = $db -> PDOMiniquery($sql);
-                    if($db->PDORowcount($result) > 0)
-                    {
-                        $i = 1;
-                        foreach($result as $rs)
-                        {?>
-                            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
-                                <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?>, <?php echo $rs['name']?></div>
-                                <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
-                            </div><?php
-                            $i++;
-                        }
-                    }
-                    else
-                    {?>
-                        <div class="align-left cursor-pointer div-content-holder-flex-data-container" id="div_event"><img class="div-front-event" src="./images/others/no-event.png"/></div><?php 
-                    }?>
-                </div><?php
+                <div class="div-content-holder-flex align-center" id="div_content_holder"></div><?php
             }?>
             <div class="align-center main-div-footer"><?php echo $pc->Load_Footer();?></div>
         </div>

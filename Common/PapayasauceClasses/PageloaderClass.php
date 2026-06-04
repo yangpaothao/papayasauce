@@ -118,7 +118,6 @@ class PageloaderClass {
         {?>
             <img class="float-left main-logo-img" src="../images/headers/papayaheader.png" onerror="this.onerror=null; this.src='./images/headers/defaultimage.png'"><?php  
         }
-        
     }
     function LoginPanel()
     {?>
@@ -176,7 +175,7 @@ class PageloaderClass {
                             {?>
                                 <img onclick="showLoginmenu();" class="cursor-pointer responsive-main-top-icon-menu swing" title="HOME!" src="../../images/others/greenpapaya.png"/><?php
                             }?>
-                            <ul class="responsive-ul-child" id="responsive_ul_child" onmouseout="showLoginmenu();"><?php
+                            <ul class="<?php echo (isset($_SESSION['fullname']) ? 'responsive-ul-child-sessioned' : 'responsive-ul-child') ?>" id="responsive_ul_child" onmouseout="showLoginmenu();"><?php
                                 if(isset($_SESSION['fullname']))
                                 {?>                                    
                                     <li onclick="doProfile();" class="li-menu-sub">Profile</li><?php

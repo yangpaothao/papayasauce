@@ -1,5 +1,8 @@
 paid.php
-Need to work on allowing a button to print the receipt at the paid.php
+Need to work on Videos tab, 
+Need to work on user registration
+Need to work on create event tab in dashboard, need to modify code to accept upload of videos, might want to limit the size of videos.
+work on labels
 
 
 
