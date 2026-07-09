@@ -9,14 +9,18 @@ use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\EmailClass;
 use PapayasauceClasses\PersonClass;
-
+use PapayasauceClasses\UploadClass;
+use PapayasauceClasses\VideoClass;
+use PapayasauceClasses\LoadingAnimation;
 require_once("./Common/sendmail.php");
-
+$la = new LoadingAnimation();
+$vc = new VideoClass();
 $ps = new PersonClass();
 $pt = new PromptClass();
 $load_headers = new PageloaderClass();
 $db = new PdoClass();
 $ne = new EmailClass();
+$uc = new UploadClass();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
 if($temp_host != "localhost")
 {
@@ -57,7 +61,7 @@ if(count($_GET) > 0)
             $explode_page = explode("/", $temp_page); //This variable will now be an array and the page name is the last element of this array
             $this_page = end($explode_page); //this variable will hold the page name like index.php
             $load_headers->Load_Header(strtok($this_page, ".")); //by using strtok($this_page, "."), we will get just 'index'.
-            //file_put_contents("./dodebug/debug.txt", 'menuresult: '.$thisauth[0], FILE_APPEND);
+            //file_put_contents("./dodebug/debug.txt", 'temp_host: '.$temp_host, FILE_APPEND);
             //$thisauth now holds an array of 'Read', 'Write', 'Modify', and or 'Delete',
         ?>
         <script type="text/javascript">
@@ -387,6 +391,13 @@ if(count($_GET) > 0)
                     $("#main_div_body_dashboard_right_container").html(result);
                 });
             }
+            function doVideos(obj){
+                dashboardMenuslt(obj);
+                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=DoVideos', function(result){
+                    //alert(result);
+                    $("#main_div_body_dashboard_right_container").html(result);
+                });
+            }
             function addAttachment(){
                 //We have to go through the list of attachments to see how many we already have and then add it after it.
                 isAttachment = true;
@@ -407,7 +418,7 @@ if(count($_GET) > 0)
                         url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=AddAttachment&thisarray="+thisData,
                         type: "POST"
                     }).then(function(result) {
-                        alert(result);
+                        //alert(result);
                         // Code here will execute *after* the AJAX request is successful
                         $('#div_attachment_container').append(result);
                         //since we added an attachment, we want to enable the first attachment's deletion button
@@ -419,6 +430,7 @@ if(count($_GET) > 0)
                 event.preventDefault();
             }
             function submitEvent(){
+                event.preventDefault();
                 isFalse = false;
                 isAttachment = false;
                 if($("#this_event_type").val() == "Select"){
@@ -430,7 +442,7 @@ if(count($_GET) > 0)
                     $("#txt_event").focus();
                     isFalse = true;
                 }
-                if($("#this_event_restriction").val() == "Lmited"){
+                if($("#this_event_restriction").val() == "Limited"){
                     //We only check the dates if there is a date restriction on this event where we will have 2 dates to check and work with.
                     if($("#this_date").val() == ""){
                         alert("Event start date can't be emptied.  Please type in an start event date.");
@@ -457,35 +469,38 @@ if(count($_GET) > 0)
                         alert("Please select 'Yes' or 'No' for Auto Apply.");
                         isFalse = true;
                     }
-                }                
+                }              
                 if($("#txtdescription").val() == ""){
                     alert("Description can't be emptied.");
                     isFalse = true;
                 }              
                 if(isFalse == false){
+                    $("#div_loader").removeClass("display-none");
                     form_data = new FormData($('#frmcreateevent')[0]);
                     $.ajax({
                         type: 'POST',
                         url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitEvent',
                         data: form_data,
                         processData: false,
-                        contentType: false,
-                        success: function(result) {
-                            alert(result);
+                        contentType: false
+                    })
+                    .then(
+                        function(result) {
+                            //alert(result);
                             if(result != "Success"){
                                 alert(result);
-                                preventDefault();
                                 return(false);
                             }
                             else{
+                                $("#div_loader").addClass("display-none");
                                 alert("Event added successfully.");
-                                doEvent($("#div_customer")[0]);
+                                doEvent($("#div_doevent")[0]);
                             }
-                            event.preventDefault();
-                        }
+                    })
+                    .catch(function(error) {
+                        alert(error);
                     });
                 }
-                event.preventDefault();
             }
             function removeAttachment(obj, thisrecno=0, lineno = 0){
                 //alert($(obj).prop('id'));
@@ -1202,6 +1217,7 @@ if(count($_GET) > 0)
         }
         function submitDashboardattachment(thisrecno){
                 if($("#dashboardattachment").val() != ""){
+                    $("#div_loader").removeClass("display-none");
                     form_data = new FormData($('#frmsubmitattachment')[0]);
                     $.ajax({
                         type: 'POST',
@@ -1210,6 +1226,7 @@ if(count($_GET) > 0)
                         processData: false,
                         contentType: false,
                         success: function(result) {
+                            $("#div_loader").addClass("display-none");
                             if(result != "Success"){
                                 alert(result);
                                 preventDefault();
@@ -1272,6 +1289,54 @@ if(count($_GET) > 0)
                     $("#main_div_body_dashboard_right_container").html(result);
                 }); 
             }
+            function submitVideo(){
+                event.preventDefault();
+                isAttachment = false;
+                if($("#txt_name").val() == ""){
+                    alert("Name can't be emptied.  Please type in a name.");
+                    $("#txt_namet").focus();
+                    return(false);
+                    isFalse = true;
+                }   
+                if($("#txt_vlink").val() == ""){
+                    alert("LInk can't be emptied.  Please type in the youtube video link.");
+                    $("#txt_vlink").focus();
+                    return(false);
+                    isFalse = true;
+                } 
+                if($("#txt_description").val() == ""){
+                    alert("Description can't be emptied.");
+                    $("#txt_description").focus();
+                    return(false);
+                    isFalse = true;
+                }  
+                $("#div_loader").removeClass("display-none");
+                form_data = new FormData($('#frmuploadvideos')[0]);
+                $.ajax({
+                    type: 'POST',
+                    url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitVideos',
+                    data: form_data,
+                    processData: false,
+                    contentType: false
+                })
+                .then(
+                    function(result) {
+                        //alert(result);
+                        $("#div_loader").addClass("display-none");
+                        if(result != "Success"){
+                            alert(result);
+                            return(false);
+                        }
+                        else{
+
+                            alert("Event added successfully.");
+                            doEvent($("#div_dovideos")[0]);
+                        }
+                })
+                .catch(function(error) {
+                    alert(error);
+                });
+            }
         </script>
     </head>
     <body>
@@ -1281,6 +1346,57 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function DoVideos()
+{?>
+    <div class="div-body-dashbord-createevent-container">
+        <form name="frmuploadvideos" id="frmuploadvideos" enctype="multipart/form-data" method="post">
+            <table id="tbl_event" class="tbl-dashbord-event">
+                <tr>
+                    <td class="tbl-event-lbl">Name: <span class="asterisk"> * </span></td>
+                    <td class="eventinput"><input type="text" id="txt_name" name="txt_name" value="" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-event-lbl">Link: <span class="asterisk"> * </span></td>
+                    <td class="eventinput"><input type="text" id="txt_vlink" name="txt_vlink" value="" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-event-lbl">Description:</td>
+                    <td class="eventinput">
+                        <textarea class="eventinput-dashboard-txtarea-div" id="txt_description" resize="none" name="txt_description" rows="10"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <button id="btn_submit" name="btn_submit" onclick="submitVideo();">Submit</button>
+        </form>
+    </div><?php
+}
+function SubmitVideos()
+{
+   global $db, $pt, $uc;
+    $thistable = "videos";
+    $thisfield = "attachment";
+    $strattachments = "";  
+    $typeisgood = "";
+    $attachmentarray = [];
+    $thisecho = "";
+    $tempvidmb = 0;
+    //1 = IMAGETYPE_GIF
+    //2 = IMAGETYPE_JPEG
+    //3 = IMAGETYPE_PNG
+    //file_put_contents("./dodebug/debug.txt", "admin company = ".var_dump($_POST['sltevent_type'])." \n", FILE_APPEND);
+    //file_put_contents("./dodebug/debug.txt", "dashboard special_event = ".$_POST['txtspecial_event']." \n", FILE_APPEND);
+    //$thisdata = $pt ->PostIt($_POST); //PostIt is a function that will return an associative array with non-empty values and substring first 3 chars
+    $thisdata = [];
+    
+    $returnpost = $pt->AnalyzePostsubmit(); //doesn't work for some reason.
+    
+    $thisdata['name'] = $returnpost['name'];
+    $thisdata['vlink'] = $returnpost['vlink']; 
+    $thisdata['description'] = $returnpost['description'];
+    $thisdata['foreign_user_recno'] = $_SESSION['user_recno'];
+    $db ->PDOInsert($thistable, $thisdata, $_SESSION['user_recno']);
+    echo "Success";
+}
 function AddAttachment()
 {
     global $pt;
@@ -3254,11 +3370,18 @@ function ShowEvent()
 }
 function SubmitEvent()
 {
-   global $db, $pt;
-   //echo var_dump($_POST);
-    //file_put_contents("./dodebug/debug.txt", "admin company here: ".$_FILES['thisfile']["name"]." \n", FILE_APPEND);
-    $isDiscounts = false;
+   global $db, $pt, $uc, $vc, $temp_host;
     $thistable = "events";
+    $thisfield = "attachment";
+    $strattachments = "";  
+    $typeisgood = "";
+    $attachmentarray = [];
+    $thisecho = "";
+    $tempvidmb = 0;
+    $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
+    //1 = IMAGETYPE_GIF
+    //2 = IMAGETYPE_JPEG
+    //3 = IMAGETYPE_PNG
     //file_put_contents("./dodebug/debug.txt", "admin company = ".var_dump($_POST['sltevent_type'])." \n", FILE_APPEND);
     //file_put_contents("./dodebug/debug.txt", "dashboard special_event = ".$_POST['txtspecial_event']." \n", FILE_APPEND);
     //$thisdata = $pt ->PostIt($_POST); //PostIt is a function that will return an associative array with non-empty values and substring first 3 chars
@@ -3266,16 +3389,6 @@ function SubmitEvent()
     
     $returnpost = $pt->AnalyzePostsubmit(); //doesn't work for some reason.
     
-    /*
-    event_type == Promotional 
-    special_event == New Customer 
-    event_restriction == Continuous 
-    chkdiscount == on 
-    isCombo == true/false 
-    discount == 5 
-    isDollar == true/false  
-    isAuto == true/false 
-    description == test */
     $thisdata['event_type'] = $returnpost['event_type'];
     $thisdata['special_event'] = $returnpost['special_event'];
     $thisdata['event_restriction'] = $returnpost['event_restriction'];
@@ -3284,7 +3397,7 @@ function SubmitEvent()
         $thisdata['date_start'] = $returnpost['date_start'];
         $thisdata['end_date'] = $returnpost['end_date'];
     }
-    if($returnpost['chkdiscount'] == true)
+    if(isset($returnpost['chkdiscount']) && $returnpost['chkdiscount'] == true)
     {
         
         $thisdata['isCombo'] = ($returnpost['isCombo'] == 'true' ? true : false);
@@ -3300,95 +3413,79 @@ function SubmitEvent()
     {
         if(count(array_filter(($_FILES["files"]["name"]))))
         {
-            $thisfile = $_FILES["files"];
-            $thisfield = "attachment";
-            $countfiles = count($thisfile["name"]); 
-            //file_put_contents("./dodebug/debug.txt", "admin company = here \n", FILE_APPEND);
-            //Assuming we are here, we want to now handle the upload.
-            //First we want to check if './images/others/$_SESSION['media_dir']/logo/ exist, if not, we create it before we move file into it.
-            $thisdir = "./images/others/".$_SESSION['media_dir']."/event";
-            if (!file_exists($thisdir)) {
-                mkdir("./images/others/".$_SESSION['media_dir']."/event", 0777, true);
-            }
-            //Once we confirmed that it is there after, now we want to move the file or files there and also update the name of the file to the table.
-            $filepath = $thisdir;
-            //$msg = $pt ->UploadFile($thisdir, $_FILES["files"], $thistable, "attachment", $thisrecno, NULL, 'Event');
-
-            $strattachments = "";  
-            $typeisgood = "";
+            $uc->SetFile($_FILES["files"]);
+            $uc->SetTempfile();
+            $thisfile = $uc->GetFile();
+            $countfiles = $uc->CountFiles();
+            $thisdir = "./images/others/event/$thisrecno";
+            $uc->SetDir($thisdir);
+            $filepath = $uc->GetDir();
             for($i=0;$i<$countfiles;$i++)
             {
-                $filename = $thisfile['name'][$i];
-                //file_put_contents("./dodebug/debug.txt", "this filename ".$filename, FILE_APPEND);
-                $pdfMimearray = array('application/pdf', 'application/doc', 'application/docx');
-                $thismime = mime_content_type($thisfile['tmp_name'][$i]);
-                //file_put_contents("./dodebug/debug.txt", "this mine ".$thismime, FILE_APPEND);
-                //Now that we have the $filename, we can check for the file type and size and all the goodies.
-                $allowedTypes = array(IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF);
-                $detectedType = exif_imagetype($thisfile['tmp_name'][$i]);
-
-                //For from = Event and company_info, we can only accept PNG, JPEG, GIF, because we will display this images on the front page
-                //and it requires images only.
-                if(in_array($detectedType, $allowedTypes))
+                $filename = $uc->GetFilename($i);
+                $finfo = new finfo(FILEINFO_MIME_TYPE);
+                $mimeType = $finfo->file($_FILES["files"]["tmp_name"][$i]);     
+                //file_put_contents("./dodebug/debug.txt", "mimeType: ".$mimeType." \n", FILE_APPEND);
+                if ($mimeType === 'application/pdf')
                 {
-                    //We only get here if the file is PNG, JPEG, GIF, OR PDF
-                    //IMAGETYPE_PNG, IMAGETYPE_JPEG, IMAGETYPE_GIF
-                    switch($detectedType)
+                    $attachmentarray[] = $filename;
+                    $uc->MoveFile($i);
+                    $thisecho = "Success";
+                    $typeisgood = "Success";
+                }
+                elseif (str_starts_with($mimeType, 'image/'))
+                {
+                    $filetype = $uc->GetFiletype($i);
+                    //file_put_contents("./dodebug/debug.txt", "filetype: ".$filetype." \n", FILE_APPEND);
+                    if(in_array($filetype, $allowedTypes))
                     {
-                        case IMAGETYPE_PNG:
-                            break;
-                        case IMAGETYPE_JPEG:
-                            break;
-                        case IMAGETYPE_GIF:
-                            break;
-                        default:
-                            break;
-                    }
-                   if($strattachments == "")
-                    {
-                        $strattachments = $filename;
+                        $attachmentarray[] = $filename;
+                        $uc->MoveFile($i);
+                        $thisecho = "Success";
+                        $typeisgood = "Success";
                     }
                     else
                     {
-                        $strattachments .= ",$filename";
+                        $thisecho =  "Unsupported Image Type.";
+                        exit;
                     }
-                    move_uploaded_file($thisfile['tmp_name'][$i],"$filepath/$filename");
                 }
-                else
+                else 
                 {
-                    $typeisgood = "BAD";
+                    $thisecho =  "Unsupported file type.";
                 }
-
             }
-            if($typeisgood != "BAD")
+            if($typeisgood == "Success")
             {
-                $thisdata = array($thisfield => $strattachments);
+                $thisdata = array($thisfield => implode(',', $attachmentarray));
                 $thiswheres = array('recno' => $thisrecno);
-                $result = $db->PDOUPDATE($thistable, $thisdata, $thiswheres, $thisrecno);
-                //file_put_contents("../dodebug/debug.txt", "not here 1", FILE_APPEND);
+                $result = $db->PDOUPDATE($thistable, $thisdata, $thiswheres, $_SESSION['user_recno']);
                 if($result)
                 {
-                    echo 'Success';
+                    $thisecho =  'Success';
                 }
                 else
                 {
-                    echo 'Failed';
+                    $thisecho =  'Failed';
+                    exit;
                 }
             }
             else
             {
-                echo "Bad file type.  File type must be PNG, JPEG, GIF, and OR PDF.";
+                $thisecho =  "Bad file type.  File type must be PNG, JPEG, GIF, PDF.";
+                exit;
             }
         }
         else
         {
-            echo "Success";
-        }
+            $thisecho =  "Probably bad type.";
+        } 
     }
     else
     {
-        echo "Failed to insert";
+        $thisecho =  "Failed to insert";
     } 
+    echo $thisecho;
 }
 function DoEvent()
 {
@@ -3397,13 +3494,13 @@ function DoEvent()
             <form name="frmcreateevent" id="frmcreateevent" enctype="multipart/form-data" method="post">
                 <table id="tbl_event" class="tbl-dashbord-event">
                     <tr>
-                        <td class="tbl-event-lbl">Upload Type: <span class="asterisk"> * </span></td>
+                        <td class="tbl-event-lbl">Type: <span class="asterisk"> * </span></td>
                         <td class="eventinput"><?php
                             $thistable = "current_events";
                             $thisfields = array("recno","event_type");
                             $thiswheres = array("isDeleted" => false);
                             $result = $db->PDOQuery($thistable, $thisfields, $thiswheres);?>
-                            <select name="this_event_type" id="this_event_type">
+                            <select name="slt_event_type" id="this_event_type">
                                 <option>Select an event</option><?php
                             foreach($result as $rs)
                             {?>
@@ -3415,12 +3512,12 @@ function DoEvent()
                     </tr>
                     <tr>
                         <td class="tbl-event-lbl">Name: <span class="asterisk"> * </span></td>
-                        <td class="eventinput"><input type="text" id="this_special_event" name="this_special_event" value="" /></td>
+                        <td class="eventinput"><input type="text" id="txt_special_event" name="txt_special_event" value="" /></td>
                     </tr>
                     <tr id="tr_slttype">
                         <td class="tbl-event-lbl">Restriction: <span class="asterisk"> * </span></td>
                         <td class="eventinput">
-                            <select name="this_event_restriction" id="this_event_restriction" onchange="checkDates(this);">
+                            <select name="slt_event_restriction" id="slt_event_restriction" onchange="checkDates(this);">
                                 <option value="Select" selected>Select</option>
                                 <option value="Continuous">Continuous</option>
                                 <option value="Limited">Limited</option>
@@ -3428,6 +3525,10 @@ function DoEvent()
                             </select>
                         </td>
                     </tr>  
+                    <tr id="tr_discount">
+                        <td class="tbl-event-lbl">Discount: <span class="asterisk"> * </span></td>
+                        <td class="eventinput"><input type="checkbox" name="chk_chkdiscount" id="chk_chkdiscount" onchange="checkDiscount(this);" /></td>
+                    </tr>
                     <tr>
                         <td class="tbl-event-lbl">Social Network:</td>
                         <td class="eventinput">
@@ -3443,16 +3544,16 @@ function DoEvent()
                                     $isFacebook = $rs['isFacebook'];
                                     $isTikTok = $rs['isTikTok'];
                                 }?>
-                                <div class="float-left"><input class="align-left" type="checkbox" id="this_youtube" name="this_youtube" <?php echo ($isYoutube === true ? '' : 'disabled') ?>/>Youtube</div>                      
-                                <div class="float-left"><input class="align-left" type="checkbox" id="this_mega" name="this_mega" <?php echo ($isFacebook === true ? '' : 'disabled') ?>/>Facebook</div>
-                                <div class="float-left"><input class="align-left" type="checkbox" id="this_tiktok" name="this_tiktok" <?php echo ($isTikTok === true ? '' : 'disabled') ?>/>TikTok</div>
+                                <div class="float-left"><input class="align-left" type="checkbox" id="chk_youtube" name="chk_youtube" <?php echo ($isYoutube === true ? '' : 'disabled') ?>/>Youtube</div>                      
+                                <div class="float-left"><input class="align-left" type="checkbox" id="chk_mega" name="chk_mega" <?php echo ($isFacebook === true ? '' : 'disabled') ?>/>Facebook</div>
+                                <div class="float-left"><input class="align-left" type="checkbox" id="chk_tiktok" name="chk_tiktok" <?php echo ($isTikTok === true ? '' : 'disabled') ?>/>TikTok</div>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="tbl-event-lbl">Description:</td>
                         <td class="eventinput">
-                            <textarea class="eventinput-dashboard-txtarea-div" id="this_description" resize="none" name="this_description" rows="10"></textarea>
+                            <textarea class="eventinput-dashboard-txtarea-div" id="txt_description" resize="none" name="txt_description" rows="10"></textarea>
                         </td>
                     </tr>
                     <tr>
@@ -3468,7 +3569,7 @@ function DoEvent()
                             <div class="div-attachment-container" id="div_attachment_container">
                                 <div class="div-attachment-ele" id="div_attachment_ele1">
                                     <span class="span-event-numbered">1</span>
-                                    <input class="event-attachments" type="file" name="files[]" id="attachments1" />
+                                    <input class="event-attachments" type="file" name="files[]" id="attachments1" accept="video/*" />
                                     <button class="remove-attachment display-none" id="btn_remove_attachment1" name="btn_remove_attachment1" onclick="removeAttachment(this);" title='Click to remove attachment'>-</button>
                                 </div>
                             </div>
@@ -4135,10 +4236,17 @@ function ManageBarbers()
 }
 function Main()
 {
-    global $load_headers, $this_page, $db;
+    global $load_headers, $this_page, $db, $la;
     $load_headers->Load_Header($this_page);?>
 
     <div class="main-div">
+        <?php  
+            echo $la->SetLoadscreen();
+            echo $la->GetLoadscreen();
+        ?>
+        <div name="div_loader" id="div_loader" class="payment-loader-container display-none">
+            <img class="payment-loader-img" src="/images/others/loading.gif" />
+        </div>
         <script type="text/javascript">
             $("body").data('searchguest', '');
         </script>
@@ -4156,7 +4264,8 @@ function Main()
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>                
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageguest" onclick="manageGuests(this);">Guests</div>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
-                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_doevent" onclick="doEvent(this);">Create Event</div>
+                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_doevent" onclick="doEvent(this);">Events</div>
+                <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_dovideos" onclick="doVideos(this);">Videos</div>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
             </div>
             <div class="div-content-holder-flex align-center">

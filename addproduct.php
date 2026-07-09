@@ -3,6 +3,7 @@ require __DIR__ . '/Common/vendor/autoload.php';
 use PapayasauceClasses\PdoClass;
 use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
+use PapayasauceClasses\LoadingAnimation;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
@@ -18,7 +19,7 @@ else
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
-
+$la = new LoadingAnimation();
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
     $_REQUEST['cmd']();
@@ -134,6 +135,7 @@ if(count($_GET) > 0)
             }
             function submitProduct(){  
                 if(validateForm()){
+                    $("#div_loader").removeClass("display-none");
                     form_data = new FormData($('#frmproduct')[0]);
                     event.preventDefault();
                     $.ajax({
@@ -144,6 +146,7 @@ if(count($_GET) > 0)
                         contentType: false,
                         success: function(result) {
                             //alert(result);
+                            $("#div_loader").addClass("display-none");
                             if(result != "Success"){
                                 alert(result);
                                 preventDefault();
@@ -190,7 +193,7 @@ function SubmitProduct()
             $thisdata['description'] = $returnpost['description'];
             $thisdata['price'] = number_format($returnpost['price'], 2);
             $thisdata['date'] = date('Y-d-m', strtotime($returnpost['date']));
-            $thisrecno = $db ->PDOInsert($thistable, $thisdata, $_SESSION['user_recno']);
+            $thisrecno = $db ->PDOInsert($thistable, $thisdata);
             if(isset($thisrecno))
             {
                 if(count(array_filter(($_FILES["files"]["name"]))))
@@ -453,16 +456,19 @@ function SelectedProduct()
 }
 function Main()
 {
-    global $db, $pc, $pt?>
+    global $db, $pc, $pt, $la;?>
     <div class="main-div">
+        <?php  
+            echo $la->SetLoadscreen();
+            echo $la->GetLoadscreen();?>
         <div class="addproduct-div-container">
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
             <form name="frmproduct" id="frmproduct" method="post" enctype="multipart/form-data">
-                <div class="div-content-holder-flex">
-                    <table class="tbl-addproduct" id="tbl-addproduct" style="margin-top: 20px; margin-bottom: 20px;">
+                <div class="div-content-holder-flex-product">
+                    <table class="tbl-addproduct" id="tbl-addproduct" style="margin-top: 60px;">
                         <tr>
                             <td class="align-right tbl-addproduct-td-label" colspan="2"><div class="align-center addproduct-div-title font-size-2em">Add A New Product</div></td>
                         </tr>
@@ -493,7 +499,7 @@ function Main()
                         <tr>
                             <td class="align-right tbl-addproduct-td-label">Attachments:<button class="add-attachment" id="btn_add_attachment" onclick="addAttachment();" title='Click to add attachment'>+</button><span class="asterisk"> * </span></td>
                             <td class="tbl-addproduct-td-input-container align-left" style="background-color: gray;">
-                                <div style="min-height: 200px;">
+                                <div style="min-height: 180px;">
                                     <div id="div_attachment_container">                                        
                                         <div class="div-attachment-ele" id="div_attachment_ele1">
                                             <span class="span-event-numbered">1</span>

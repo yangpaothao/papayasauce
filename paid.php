@@ -70,7 +70,7 @@ function Main()
             <div class="div-content-holder-flex align-center">
                 <div class="align-center" style="color: black; width: 100%;">
                     <?php
-                    $showonstatement = "SQ *KA'S PAPA SAUCE";
+                    $showonstatement = "SQ *KA'S PAPAYA SAUCE";
                     //BULIT A RECEIPT HERE!!!
                     echo "Thank you for your payment.  A receipt has been sent to your email.  Your statement will show \"$showonstatement\",\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
                     

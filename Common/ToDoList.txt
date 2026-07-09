@@ -1,8 +1,28 @@
+need hostgator to up my upload size and post size
+php.ini
+post_max_size to 4096M /bit over 2gig
+upload_max_filesize  to 4096M /2gig
+memory_limit 10120M 
+max_execution_time 3600, tha tis 5min
+max_input_time  3600, 
+
+C:\wamp64\alias\
+php_admin_value upload_max_filesize 4096M
+php_admin_value post_max_size 4096M
+php_admin_value max_execution_time 3600
+php_admin_value max_input_time 3600
+
+
+Need to work on resize
+The video resize work on local but not on hostgator, they won't install so we will have to move to a diff site and continue this at a later time.
+
+Need to work on adding loading simulation for uploading videos or attachment
+need to work on uploading media in dashboard, uploads, when they do media, we have to insert into Video table and create a diff dir for just videos.
+
 paid.php
-Need to work on Videos tab, 
+
 Need to work on user registration
-Need to work on create event tab in dashboard, need to modify code to accept upload of videos, might want to limit the size of videos.
-work on labels
+
 
 
 

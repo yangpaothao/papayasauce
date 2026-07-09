@@ -107,6 +107,9 @@ if(count($_GET) > 0)
                     alert("ERROR");
                 }  
             }
+            function selectedVideo(vlink){
+                window.open(vlink, "_blank");
+            }
         </script>
     </head>
     <body>
@@ -143,10 +146,8 @@ function LoadVideotab($db)
         $i = 1;
         foreach($result as $rs)
         {?>
-            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedVideo(<?php echo $rs['recno']?>);">  
-                <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;"> <?php echo $rs['name']?></div>
-                <div class="float-left" style="width: 100%;"><img class="div-front-event" src="./images/others/products/<?php echo $rs['cname']?>/<?php echo $rs['recno']?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
-            </div><?php
+            <iframe width="360" height="215" src="<?php echo $rs['vlink']?>" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+            <?php
             $i++;
         }
     }

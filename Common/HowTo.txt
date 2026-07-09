@@ -86,10 +86,16 @@ function submitDeposit(){
 }
 
 To simulate a loading
+add this class use PapayasauceClasses\LoadingAnimation;
+Then
+instantiate $la = new LoadingAnimation();
+and globalize $la where you want to use
+addproduct.php
 Right below the main div, add this code
-<div name="div_loader" id="div_loader" class="payment-loader-container display-none">
-    <img class="payment-loader-img" src="/images/others/loading.gif" />
-</div>
+<?php  
+    echo $la->SetLoadscreen();
+    echo $la->GetLoadscreen();
+?>
 
 Then, in the javascript
 $("#div_loader").removeClass("display-none");
@@ -108,3 +114,7 @@ $pt->GetStates($db)->GetSelect("slt_thisstate", '', true, false, false, true, fa
 
 The $pt->GetStates($db)
     This must go to a function that will return an associate array, ex, array("one" => "two",.....)
+
+
+FFMpeg video conversion
+//PHP ffmpeg convert video to mp4, lower the size and keep quality
