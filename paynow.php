@@ -514,7 +514,7 @@ function TokenizedPayment()
                     $payment_receipt_subject = $ne->get_paymentreceipt_subject();
                     $payment_receipt_body = $ne->get_paymentreceipt_body($thisfirstname, $thislastname, $realamount, $square_receiptno, $getservicetitle);
                     $guestname = $rs['firstname']." ".$rs['lastname'];
-                    $sendto[] = array($thisemail => $guestname);
+                    $sendto[] = array($thisemail => $guestname, 'orders@papayasauce.com' => 'System');
                     $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
                     $thisreturns = "Success";
                     //NOW we will need to send a text to the guest.  Howevever, depend on if they opt-in or out so we must check this status in the user's table

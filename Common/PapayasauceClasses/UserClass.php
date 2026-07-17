@@ -1,9 +1,6 @@
 <?php
-require_once("./common/classes/pageloaderclass.php");
-require_once("common/pdocon.php");
+namespace PapayasauceClasses;
 
-$load_headers = new PageloaderClass();
-$db = new PDOCON();
 
 class UserClass
 {
@@ -14,6 +11,7 @@ class UserClass
     public $login;
     public $email;
     public $address;
+    public $address2;
     public $city;
     public $state;
     public $zipcode;
@@ -38,84 +36,43 @@ class UserClass
             echo "Success";
         }
     }
-    function set_employeenumber($employeenumber)
+    function GetEmployeenumber()
     {
-        $this->name = $employeenumber;
+        return($this->employeenumber);
     }
-    function set_firstname($firstname)
-    {
-        $this->firstname = $firstname;
-    }
-    function set_middlename($middlename)
-    {
-        $this->middlename = $middlename;
-    }
-    function set_lastname($lastname)
-    {
-        $this->lastname = $lastname;
-    }
-    function set_login($login)
-    {
-        $this->login = $login;
-    }
-    function set_email($email)
-    {
-        $this->email = $email;
-    }
-    function set_address($address)
-    {
-        $this->address = $address;
-    }
-    function set_city($city)
-    {
-        $this->city = $city;
-    }
-    function set_state($state)
-    {
-        $this->state = $state;
-    }
-    function set_zipcode($zipcode)
-    {
-        $this->zipcode = $zipcode;
-    }
-    
-    function get_employeenumber()
-    {
-        return($this->name);
-    }
-    function get_firstname()
+    function GetFirstname()
     {
         return($this->firstname);
     }
-    function get_middlename()
+    function GetMiddlename()
     {
         return($this->middlename);
     }
-    function get_lastname()
+    function GetLastname()
     {
         return($this->lastname);
     }
-    function get_login()
+    function GetLogin()
     {
         return($this->login);
     }
-    function get_email()
+    function GetEmail()
     {
         return($this->email);
     }
-    function get_address()
+    function GetAddress()
     {
         return($this->address);
     }
-    function get_city()
+    function GetCity()
     {
         return($this->city);
     }
-    function get_state()
+    function GetState()
     {
         return($this->state);
     }
-    function get_zipcode()
+    function GetZipcode()
     {
         return($this->zipcode);
     }

@@ -231,6 +231,12 @@ class EmailClass {
         
         return($subject);
     }
+    public function get_paymentreceipt_subject_order()
+    {
+        $subject = "Payment Order";
+        
+        return($subject);
+    }
     public function get_paymentreceipt_body($thisfirstname, $thislastname, $realamount, $square_receiptno,$thisservicetitle)
     {
         $body = "This is a system generated email sent to you by ".$_SESSION['companyname'].".  Please do not respond.</br></br>";

@@ -31,43 +31,6 @@ class PersonClass {
         $result = $db ->PDOMiniquery($sql);
         return($result);
     }
-    function SetBarbers($tempperson, $tempactive, $tempinactive, $tempterminated)
-    {
-        $this->realperson = $tempperson;
-        $this->isactive = $tempactive;
-        $this->inactive = $tempinactive;
-        $this->isterminated = $tempterminated;
-    }
-    public function GetBarbers($db)
-    {
-        //file_put_contents("./dodebug/debug.txt", "In GetBarbers isactive: $this->isactive\n", FILE_APPEND);
-        $sql = "SELECT recno, firstname, middlename, lastname FROM users WHERE ";
-        $sql .= "(firstname LIKE '".$this->realperson."%' OR middlename LIKE '".$this->realperson."%' OR lastname LIKE '".$this->realperson."%') ";
-        //If all the checkboxes are checked, we don't go inside this if, we just get everything that matches this search.
-        if($this->isactive != false || $this->inactive != false || $this->isterminated != false)
-        {    
-            //If we are here, that means 
-            if($this->isactive == true && $this->inactive ==  true)
-            {
-                $sql .= "AND (isActive = true OR isActive = false)";
-            }
-            else if($this->isactive == true && $this->inactive ==  false)
-            {
-                $sql .= "AND isActive = true ";
-            }
-            else if($this->isactive == false && $this->inactive == true)
-            {
-                $sql .= "AND isActive = false ";
-            }
-            if($this->isterminated == true)
-            {
-                $sql .= "AND isTerminated = true ";
-            }
-        }
-        //file_put_contents("./dodebug/debug.txt", "In GetBarbers: $sql\n", FILE_APPEND);
-        $result = $db ->PDOMiniquery($sql);
-        return($result);     
-    }
     function SetPersonno($tempperson, $tempactive, $tempbarber, $tempterminated)
     {
         $this->realperson = $tempperson;

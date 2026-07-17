@@ -345,6 +345,16 @@ body
     opacity: .97;
     z-index: 9999;
 }
+.div-body-mgm-attach-container{  
+    position: fixed;
+    top: 13%;
+    margin-top: 230px;
+    height: 330px; 
+    width: 600px; 
+    background-color: gray;
+    opacity: .97;
+    z-index: 9999;
+}
 .div-body-admin-mgmcomp-attach-sub-container{
     position: fixed;
     top: 49%;
@@ -557,6 +567,18 @@ li{
 .div-content-holder{
     width: 100%;
     height: 100%;
+}
+.mgm-div-content-holder-flex{
+    display: flex;
+    flex-wrap: wrap;
+    overflow-y: auto;
+    color: black;
+    width: 100%;
+    min-height: 550px;
+    height: 400px;
+    align-items: flex-start;
+    /* Hide scrollbar for IE and older Edge */
+    -ms-overflow-style: none;
 }
 .div-content-holder-flex{
     display: flex;
@@ -3097,6 +3119,7 @@ admin-service-add{
 .div-front-event{
     height: 340px;
     width: 240px;
+    background-color: transparent !important;
 }
 .div-front-videos{
     height: 200px;
@@ -3646,6 +3669,9 @@ admin-service-add{
 .font-size-1em{
     font-size: 1em;
 }
+.font-size-1p2em{
+    font-size: 1.2em;
+}
 .font-size-1p5em{
     font-size: 1.5em;
 }
@@ -3944,7 +3970,7 @@ admin-service-add{
 }
 .div-main-tabs{
     padding: 5px;
-    width: 5%;
+    width: 8%;
     min-width: 80px;
 }
 .div-main-tabs:hover{
@@ -3996,6 +4022,10 @@ admin-service-add{
 .dashboard-mgm-products-tabs-notslt{
     background-color: darkslategray;
 }
+.tbl-mgmproduct{
+    width: 30%; 
+    background-color: #4F8849;
+}
 .tbl-addproduct{
     width: 30%; 
     background-color: #4F8849;
@@ -4005,10 +4035,26 @@ admin-service-add{
     width: 30%;
     color: white;
 }
+.tbl-mgmproduct-td-label{
+    width: 30%;
+    color: white;
+}
+.tbl-mgmproduct-td-input-container{
+    width: 100%;
+}
+.tbl-mgmproduct-td-input-container{
+    width: 100%;
+}
 .tbl-addproduct-td-input-container{
     width: 100%;
 }
+.tbl-mgmproduct-td-input{
+    width: 98%;
+}
 .tbl-addproduct-td-input{
+    width: 98%;
+}
+.tbl-mgmproduct-td-input-txtarea{
     width: 98%;
 }
 .tbl-addproduct-td-input-txtarea{
@@ -4028,11 +4074,22 @@ admin-service-add{
     width: 90%; 
     margin: auto; 
     background-color: #f0f5f5;
-    height: 98%;
+}
+.mgmproduct-div-container{
+    width: 90%; 
+    margin: auto; 
+    background-color: #f0f5f5;
 }
 .addproduct-div-title{
     font-weight: bold;
 }
+.mgm-slt-image{
+    border: 2px solid darkblue;
+}
+.class-white{
+    color: white;
+}
+
 
 
 
@@ -4191,7 +4248,22 @@ admin-service-add{
 .border-right-1px-white{
     border-right: 1px solid white;
 }
-
+.index-about{
+    width: 93.5%;
+    height: 90%;
+    min-height: 420px;
+    min-width: 385px;
+}
+.mgmproduct-viewfile {
+  width: 300px; /* Set the size of your div */
+  height: 460px;
+  padding: 20px;
+}
+.mgmproduct-viewminiimage {
+  width: 60px; /* Set the size of your div */
+  height: 40px;
+  padding: 20px;
+}
 .index-div-stripe {
   background: white;
   border: 1px solid #ccc;

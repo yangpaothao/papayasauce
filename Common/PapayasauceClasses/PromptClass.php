@@ -1558,4 +1558,25 @@ class PromptClass
         }
         return $this;
     }
+    function ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight)
+    {
+        $destination_image = imagecreatetruecolor($new_width, $new_height);
+        imagecopyresampled($destination_image, $source_image, 0, 0, 0, 0, $new_width, $new_height, $thiswidth, $thisheight);
+        switch($detectedType)
+        {
+            case IMAGETYPE_PNG:
+                imagepng($destination_image, "$thisdir/$filename", 9);
+                break;
+            case IMAGETYPE_JPEG:
+                imagejpeg($destination_image, "$thisdir/$filename", 90);
+
+                break;
+            case IMAGETYPE_GIF:
+                imagegif($destination_image, "$thisdir/$filename", 90);
+                break;
+            default:
+                imagepng($destination_image, "$thisdir/$filename", 90);
+                break;
+        }
+    }
 }?>

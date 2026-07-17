@@ -1216,127 +1216,127 @@ if(count($_GET) > 0)
                 $("#div_body_dashboard_attach_container").remove();
         }
         function submitDashboardattachment(thisrecno){
-                if($("#dashboardattachment").val() != ""){
-                    $("#div_loader").removeClass("display-none");
-                    form_data = new FormData($('#frmsubmitattachment')[0]);
-                    $.ajax({
-                        type: 'POST',
-                        url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitDashboardattachment',
-                        data: form_data,
-                        processData: false,
-                        contentType: false,
-                        success: function(result) {
-                            $("#div_loader").addClass("display-none");
-                            if(result != "Success"){
-                                alert(result);
-                                preventDefault();
-                                return(false);
-                            }
-                            else{
-                                alert("Attachment added successfully.");
-                                addCompany($("#div_managecompany")[0]);
-                            }
-                        }
-                    });
-                }
-                else{
-                    alert("Please select a file before you attempt to submit.");
-                }
-                event.preventDefault();
-            }
-            function deleteLogo(thisimage){
-                thisArray = [{
-                "this_mainlogo": thisimage
-            }];
-            const thisData = JSON.stringify(thisArray);
-            $.ajax({
-                url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=DeleteLogo&thisarray="+thisData,
-                type: "POST"
-                }).then(function(result) {
-                    // Code here will execute *after* the AJAX request is successful
-                    alert(result);
-                    addCompany($("#div_managecompany")[0]);
-
-                }).catch(function(error) {
-                    alert(error);
-                });
-            }
-            function dashboardProducttabs(obj, thisfield){
-                //If we are clicking the selected tab, nothing needs to be done
-                if(!$(obj).hasClass('dashboard-mgm-products-tabs-slted')){
-                    //If we are here, that means what we clicked is not the selected tab so we do something
-                    $(".dashboard-mgm-products-tabs-a").each(function(){
-                        if($(obj).prop('id') == $(this).prop('id')){
-                            $(this).removeClass("dashboard-mgm-products-tabs-notslt").addClass("dashboard-mgm-products-tabs-slted");
-                        }
-                        else{
-                            $(this).removeClass("dashboard-mgm-products-tabs-slted");
-                            $(this).addClass("dashboard-mgm-products-tabs-notslt");
-                        }
-                    });
-                }
-                thisArray = [{"this_thisfield": thisfield}];
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts&thisarray='+JSON.stringify(thisArray), function(result){
-                    $("#main_div_body_dashboard_right_container").html(result);
-                });
-            }
-            function manageAPI(obj, thisfrom){
-                dashboardMenuslt(obj);
-                thisArray = [{
-                    "this_thisfrom": thisfrom
-                }];
-                $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageAPI&thisarray='+JSON.stringify(thisArray), function(result){
-                    $("#main_div_body_dashboard_right_container").html(result);
-                }); 
-            }
-            function submitVideo(){
-                event.preventDefault();
-                isAttachment = false;
-                if($("#txt_name").val() == ""){
-                    alert("Name can't be emptied.  Please type in a name.");
-                    $("#txt_namet").focus();
-                    return(false);
-                    isFalse = true;
-                }   
-                if($("#txt_vlink").val() == ""){
-                    alert("LInk can't be emptied.  Please type in the youtube video link.");
-                    $("#txt_vlink").focus();
-                    return(false);
-                    isFalse = true;
-                } 
-                if($("#txt_description").val() == ""){
-                    alert("Description can't be emptied.");
-                    $("#txt_description").focus();
-                    return(false);
-                    isFalse = true;
-                }  
+            if($("#dashboardattachment").val() != ""){
                 $("#div_loader").removeClass("display-none");
-                form_data = new FormData($('#frmuploadvideos')[0]);
+                form_data = new FormData($('#frmsubmitattachment')[0]);
                 $.ajax({
                     type: 'POST',
-                    url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitVideos',
+                    url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitDashboardattachment',
                     data: form_data,
                     processData: false,
-                    contentType: false
-                })
-                .then(
-                    function(result) {
-                        //alert(result);
+                    contentType: false,
+                    success: function(result) {
                         $("#div_loader").addClass("display-none");
                         if(result != "Success"){
                             alert(result);
+                            preventDefault();
                             return(false);
                         }
                         else{
-
-                            alert("Event added successfully.");
-                            doEvent($("#div_dovideos")[0]);
+                            alert("Attachment added successfully.");
+                            addCompany($("#div_managecompany")[0]);
                         }
-                })
-                .catch(function(error) {
-                    alert(error);
+                    }
                 });
             }
+            else{
+                alert("Please select a file before you attempt to submit.");
+            }
+            event.preventDefault();
+        }
+        function deleteLogo(thisimage){
+            thisArray = [{
+            "this_mainlogo": thisimage
+        }];
+        const thisData = JSON.stringify(thisArray);
+        $.ajax({
+            url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=DeleteLogo&thisarray="+thisData,
+            type: "POST"
+            }).then(function(result) {
+                // Code here will execute *after* the AJAX request is successful
+                alert(result);
+                addCompany($("#div_managecompany")[0]);
+
+            }).catch(function(error) {
+                alert(error);
+            });
+        }
+        function dashboardProducttabs(obj, thisfield){
+            //If we are clicking the selected tab, nothing needs to be done
+            if(!$(obj).hasClass('dashboard-mgm-products-tabs-slted')){
+                //If we are here, that means what we clicked is not the selected tab so we do something
+                $(".dashboard-mgm-products-tabs-a").each(function(){
+                    if($(obj).prop('id') == $(this).prop('id')){
+                        $(this).removeClass("dashboard-mgm-products-tabs-notslt").addClass("dashboard-mgm-products-tabs-slted");
+                    }
+                    else{
+                        $(this).removeClass("dashboard-mgm-products-tabs-slted");
+                        $(this).addClass("dashboard-mgm-products-tabs-notslt");
+                    }
+                });
+            }
+            thisArray = [{"this_thisfield": thisfield}];
+            $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageProducts&thisarray='+JSON.stringify(thisArray), function(result){
+                $("#main_div_body_dashboard_right_container").html(result);
+            });
+        }
+        function manageAPI(obj, thisfrom){
+            dashboardMenuslt(obj);
+            thisArray = [{
+                "this_thisfrom": thisfrom
+            }];
+            $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageAPI&thisarray='+JSON.stringify(thisArray), function(result){
+                $("#main_div_body_dashboard_right_container").html(result);
+            }); 
+        }
+        function submitVideo(){
+            event.preventDefault();
+            isAttachment = false;
+            if($("#txt_name").val() == ""){
+                alert("Name can't be emptied.  Please type in a name.");
+                $("#txt_namet").focus();
+                return(false);
+                isFalse = true;
+            }   
+            if($("#txt_vlink").val() == ""){
+                alert("LInk can't be emptied.  Please type in the youtube video link.");
+                $("#txt_vlink").focus();
+                return(false);
+                isFalse = true;
+            } 
+            if($("#txt_description").val() == ""){
+                alert("Description can't be emptied.");
+                $("#txt_description").focus();
+                return(false);
+                isFalse = true;
+            }  
+            $("#div_loader").removeClass("display-none");
+            form_data = new FormData($('#frmuploadvideos')[0]);
+            $.ajax({
+                type: 'POST',
+                url: '<?php echo $_SERVER['PHP_SELF']; ?>?cmd=SubmitVideos',
+                data: form_data,
+                processData: false,
+                contentType: false
+            })
+            .then(
+                function(result) {
+                    //alert(result);
+                    $("#div_loader").addClass("display-none");
+                    if(result != "Success"){
+                        alert(result);
+                        return(false);
+                    }
+                    else{
+
+                        alert("Event added successfully.");
+                        doEvent($("#div_dovideos")[0]);
+                    }
+            })
+            .catch(function(error) {
+                alert(error);
+            });
+        }
         </script>
     </head>
     <body>
@@ -3699,7 +3699,7 @@ function UpdateCompanyinfo()
     if($thismsg == "")
     {
         $thistable = "company_info";
-        if($returnpost['thisfield'] == "isActive" || $returnpost['thisfield'] == "isDeleted")
+        if($returnpost['thisfield'] == "isActive" || $returnpost['thisfield'] == "isDeleted" || $returnpost['thisfield'] == "isFacebook" || $returnpost['thisfield'] == "isYoutube")
         {
             if($returnpost['thisval'] == true)
             {
@@ -3753,6 +3753,7 @@ function AddCompany()
             $thisgooglemap = $rs['googlemap_location'];
             $thispaymentcompany = $rs['api_company'];
             $thisphonenumber = $rs['phone_number'];
+            $thisemail = $rs['email'];
             $thissmsnumber = $rs['smsnumber'];
             $thisappid = $rs['square_application_id'.$_SESSION['isSandpro']];
             $thisapiaccesstoken = $rs['square_api_access_token'.$_SESSION['isSandpro']];
@@ -3763,6 +3764,7 @@ function AddCompany()
             $thiszipcode = $rs['zipcode'];
             $thislogo = $rs['mainlogo'];
             $thisfblink = $rs['facebook_link'];
+            $thisytlink = $rs['youtube_link'];
             $isYoutube = $rs['isYoutube'];
             $isFacebook = $rs['isFacebook'];
             $isTikTok = $rs['isTikTok'];
@@ -3786,12 +3788,20 @@ function AddCompany()
                     <td><input type="text" class="dashboard-company-input-company align-left float-left" id="facebook_link" name="facebook_link" <?php echo $usthisfunc ?> value="<?php echo $thisfblink ?>" /></td>
                 </tr>
                 <tr>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Youtube Link:</td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="youtube_link" name="youtube_link" <?php echo $usthisfunc ?> value="<?php echo $thisytlink ?>" /></td>
+                </tr>
+                <tr>
                     <td class="tbl-dashboard-company-lbl-company align-right">Payment Company: </td>
                     <td><input type="text" class="dashboard-company-input-company align-left float-left" id="api_company" name="api_company" <?php echo $usthisfunc ?> value="<?php echo $thispaymentcompany ?>" /></td>
                 </tr>
                 <tr>
                     <td class="tbl-dashboard-company-lbl-company align-right">Phone No.: </td>
                     <td><input type="text" class="dashboard-company-input-company align-left float-left" id="phone_number" name="phone_number" <?php echo $usthisfunc ?> value="<?php echo $thisphonenumber ?>" /></td>
+                </tr>
+                <tr>
+                    <td class="tbl-dashboard-company-lbl-company align-right">Email: </td>
+                    <td><input type="text" class="dashboard-company-input-company align-left float-left" id="email" name="email" <?php echo $usthisfunc ?> value="<?php echo $thisemail ?>" /></td>
                 </tr>
                 <tr>
                     <td class="tbl-dashboard-company-lbl-company align-right">Address: </td>
@@ -4046,7 +4056,7 @@ function ManageProducts()
                             <td class="td-num-rows align-right"><?php echo $i ?>.</td>
                             <td class="align-left" style="padding-left: 10px;" title="<?php echo $rs['name'] ?>"><?php echo strlen($rs['name']) > 30 ? substr($rs['name'], 0, 30)."..." : $rs['name'] ?></td>
                             <td class="align-right">$<?php echo number_format($rs['price'], 2) ?></td>
-                            <td><?php echo empty($rs['attachments']) ? '' : $isattachment ?></td>
+                            <td><?php echo empty($rs['attachment']) ? '' : $isattachment ?></td>
                             <td><?php echo ($rs['isActive'] == true ? "$isactive" : "$isdeleted" ) ?></td>
                         </tr><?php
                         $i++;

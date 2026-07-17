@@ -176,7 +176,7 @@ function AddCart()
 function MiniImgslt(){
     global $pt;
     $returnpost = $pt->AnalyzePosts();
-    echo "./images/others/products/".$returnpost['thiscatename']."/".$returnpost['thisrecno']."/large/l_".substr($returnpost['thisattachment'],2);
+    echo "./images/others/products/".$returnpost['thiscatename']."/".$returnpost['thisrecno']."/large/".$returnpost['thisattachment'];
 }
 function Main()
 {
@@ -216,7 +216,7 @@ function Main()
                                             //file_put_contents("./dodebug/debug.txt", 'selected?? '.substr($rs['attachment'],2)." == ".substr($fileinfo->getFilename(),2), FILE_APPEND);
                                             //We had to substr because the name is the same but we have a pre str added and this pre str are 'l-' and 's_', they are not he same.  By substr
                                             //it will make them the same and therefore meet our filtration.
-                                            if(substr($rs['attachment'],2) == substr($fileinfo->getFilename(), 2))
+                                            if($rs['slt_attachment'] == $fileinfo->getFilename())
                                             {
                                                 $thisbordercolor = "product-selected-bdr";
                                             }
@@ -230,7 +230,7 @@ function Main()
                                 </div>
                             </div>
                             <div>
-                                <div class="float-left" ><img id="large_img_container" class="div-front-event" src="<?php echo $thisdir ?>/large/<?php echo $rs['attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
+                                <div class="float-left" ><img id="large_img_container" class="div-front-event" src="<?php echo $thisdir ?>/large/<?php echo $rs['slt_attachment'] ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
                             </div>
                             <div class="float-left pro-img-data-container">
                                 <div><?php echo $rs['name'] ?></div>

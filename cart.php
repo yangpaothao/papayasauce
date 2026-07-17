@@ -4,6 +4,8 @@ use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\OrderClass;
 use PapayasauceClasses\EmailClass;
+use PapayasauceClasses\CustomerClass;
+use PapayasauceClasses\LoadingAnimation;
 require __DIR__ . '/Common/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
@@ -18,11 +20,13 @@ else
 }
 require_once("./Common/sendmail.php");
 //$mail = new PHPMailer(true);
+$ps = new CustomerClass();
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
 $oc = new OrderClass();
 $ec = new EmailClass();
+$la = new LoadingAnimation();
 if(count($_POST) > 0 && isset($_POST['cmd']))
 {
     $_REQUEST['cmd']();
@@ -68,6 +72,7 @@ if(count($_GET) > 0)
                     $("#token").val(result.token);
                     $("#payment_form").submit();
                     $("#div_loader").removeClass("display-none");
+                    //window.location.href = "paid.php";
                 } else {
                     alert("Please enter your card information correctly and try again.");
                     return(false);
@@ -168,7 +173,7 @@ if(count($_GET) > 0)
 <?php
 function TokenizedPayment()
 {
-    global $db, $pt, $ec, $oc;
+    global $db, $pt, $ec, $oc, $cs;
     if(!isset($_SESSION['companyname']))
     {
         //if session timed out, we send user to index, front page.
@@ -377,8 +382,14 @@ function TokenizedPayment()
                     $replyto = [];
                     //file_put_contents("./dodebug/debug.txt", "B4 sending \n", FILE_APPEND);
                     $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
+                    
+                    //We want to send a record of this order to our order@papayasauce.com.
+                    $sendtoorder[] = array("orders@papayasauce.com" => "Order Report");
+                    $payment_receipt_subject_order = $cs->GetPaymentorderreceipt();
+                    $payment_receipt_body_order = $cs->GetCustomerbody();
+                    $sendstatusorder = sendmail($sendtoorder, $replyto, $ccto, $bccto, $payment_receipt_subject_order, $payment_receipt_body_order, $attachment);
                 }
-                if($sendstatus == "Success")
+                if($sendstatus == "Success" && $sendstatusorder == "Success")
                 {
                     //file_put_contents("./dodebug/debug.txt", "here sendstatus: $sendstatus \n", FILE_APPEND);
                     $_SESSION['THISCONFIRMATION'] = $square_receiptno;
@@ -387,6 +398,7 @@ function TokenizedPayment()
                 }
                 else
                 {
+                    //file_put_contents("./dodebug/debug.txt", "here sendstatus: BAD \n", FILE_APPEND);
                     $_SESSION['PAYMENTERROR'] = "Failed to email.";
                     header("location: ./errorpage.php");
                     exit();
@@ -489,7 +501,7 @@ function MiniImgslt(){
 }
 function Main()
 {
-    global $db, $pc, $pt, $oc;
+    global $db, $pc, $pt, $oc, $la;
     $thistotal = 0;
     $thissandpro = $_SESSION['isSandpro'];
     if(!isset($_SESSION['SELECTED_PRODUCT_RECNO']))
@@ -499,10 +511,9 @@ function Main()
         </script><?php
         exit;
     }?>
-    <div class="main-div">
-        <div name="div_loader" id="div_loader" class="payment-loader-container display-none">
-            <img class="payment-loader-img" src="/images/others/loading.gif" />
-        </div>
+    <div class="main-div"><?php
+        echo $la->SetLoadscreen();
+        echo $la->GetLoadscreen();?>
         <div class="pro-div-data-container">
             <div class="main-logo float-left">
                 <?php echo $pc->LoadLogo($db);?>

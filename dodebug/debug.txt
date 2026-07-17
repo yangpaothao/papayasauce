@@ -1,17 +1,2 @@
-name => Ka's Simple Papaya Salad 
-vlink => https://youtu.be/9roa7MPmZ0M 
-description => A very simple but very delicious papaya salad.  My papaya is not made with fermented raw fish, it is made with avocado so even after consumption you will not have bad stomach experience.  The taste is the same but you will feel a taste of lighter, more refreshed, longer lasting taste, breath odor will be less, and even if you put the papaya salad in the refrigerator over night, it would still taste just as rich as when it was fresh.
-
-If you ever had a chance to try it out, please leave a comment below.
-
-Below is my simple recipe.  If you liked it sweeter, spicier, and or more sour, you can add more than what is listed.  Feel free to experiment with my recipe.
-
-You can get my sauce at www.papayasauce.com.
-1.  3 peppers
-2.  4 garlic cloves 
-3.  2 teaspoons of sugar
-4.  8 small baby tomatoes
-5.  1 teaspoon of fish sauce
-6.  1 teaspoon of lime
-7.  2 teaspoons of Ka's Papaya Sauce
-8.  2 handful of shredded papaya 
+sql : SELECT attachment, attachment_dir FROM products WHERE recno = 27 
+here sendstatus: Success 

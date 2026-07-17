@@ -174,7 +174,7 @@ if(count($_GET) > 0)
 <?php
 function SubmitProduct()
 {
-   global $db, $pt;
+    global $db, $pt;
     $returnpost = $pt->AnalyzePostsubmit(); //doesn't work for some reason.  
     if(date('Y-m-d', strtotime($returnpost['date'])) >= date('Y-m-d'))
     {
@@ -192,7 +192,7 @@ function SubmitProduct()
             $thisdata['name'] = $returnpost['name'];
             $thisdata['description'] = $returnpost['description'];
             $thisdata['price'] = number_format($returnpost['price'], 2);
-            $thisdata['date'] = date('Y-d-m', strtotime($returnpost['date']));
+            $thisdata['date'] = date('Y-m-d', strtotime($returnpost['date']));
             $thisrecno = $db ->PDOInsert($thistable, $thisdata);
             if(isset($thisrecno))
             {
@@ -210,21 +210,21 @@ function SubmitProduct()
                     {
                         $thiscategory = $rsca['name'];
                     }
-                    $thisdir = "./images/others/products/$thiscategory/";
+                    $thisdir = "./images/others/products/$thiscategory";
                     if (!file_exists($thisdir)) {
-                        mkdir("./images/others/products/$thiscategory", 0777, true);
+                        mkdir($thisdir, 0777, true);
                     }
-                    $thisprodir = "./images/others/products/$thiscategory/$thisrecno";
+                    $thisprodir = "$thisdir/$thisrecno";
                     if (!file_exists($thisprodir)) {
-                        mkdir("./images/others/products/$thiscategory/$thisrecno", 0777, true);
+                        mkdir("$thisdir/$thisrecno", 0777, true);
                     }
-                    $thisproimgdir = "./images/others/products/$thiscategory/$thisrecno/large";
+                    $thisproimgdir = "$thisdir/$thisrecno/large";
                     if (!file_exists($thisproimgdir)) {
                         //if we are here, that must mean this is the first time we are adding this product so we might as well just create the
                         //whole sub categories
-                        mkdir("./images/others/products/$thiscategory/$thisrecno/large", 0777, true);  //will resize to 60 x ratio
-                        mkdir("./images/others/products/$thiscategory/$thisrecno/mini", 0777, true);  //220 x ratio
-                        mkdir("./images/others/products/$thiscategory/$thisrecno/regular", 0777, true); //Will resize to 1400 x ratio
+                        mkdir("$thisdir/$thisrecno/large", 0777, true);  //will resize to 60 x ratio
+                        mkdir("$thisdir/$thisrecno/mini", 0777, true);  //220 x ratio
+                        mkdir("$thisdir/$thisrecno/regular", 0777, true); //Will resize to 1400 x ratio
                     }
                     $strattachments = "";  
                     $typeisgood = "";
@@ -296,9 +296,10 @@ function SubmitProduct()
                                     $new_width = $thiswidth;
                                     $new_height = $thisheight;
                                 }
-                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/mini/";
-                                $filename = "s_$tempfilename";
-                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                $tempminidir = "$thisdir/$thisrecno/mini";
+                                $filename = "$tempfilename";
+                                //file_put_contents("./dodebug/debug.txt", "thisdir?  $thisdir \n", FILE_APPEND);
+                                $pt->ImageHandler($source_image, $tempminidir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
                                 if($thiswidth >= 220)
                                 {
                                     $new_width = 220;
@@ -309,10 +310,10 @@ function SubmitProduct()
                                     $new_width = $thiswidth;
                                     $new_height = $thisheight;
                                 }
-                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/large/";
-                                $filename = "l_$tempfilename";
-                                $thislargefilename = "l_$tempfilename";
-                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                $templargedir = "$thisdir/$thisrecno/large";
+                                $filename = "$tempfilename";
+                                $thislargefilename[] = "$tempfilename";
+                                $pt->ImageHandler($source_image, $templargedir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
                                 if($thiswidth >= 1200)
                                 {
                                     $new_width = 1200;
@@ -324,17 +325,10 @@ function SubmitProduct()
                                     $new_width = $thiswidth;
                                     $new_height = $thisheight;
                                 }
-                                $thisdir = "./images/others/products/$thiscategory/$thisrecno/regular/";
-                                $filename = "r_$tempfilename";
-                                ImageHandler($source_image, $thisdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
+                                $tempregdir = "$thisdir/$thisrecno/regular";
+                                $filename = "$tempfilename";
+                                $pt->ImageHandler($source_image, $tempregdir, $filename, $detectedType, $new_width, $new_height, $thiswidth, $thisheight);
                                 //file_put_contents("./dodebug/debug.txt", "Success \n", FILE_APPEND);
-                                
-                                $thistable = "products";
-                                $thisdata = ['attachment' => $thislargefilename];
-                                $thiswhere = ['recno' => $thisrecno];
-                                $db->PDOUpdate($thistable, $thisdata, $thiswhere, $_SESSION['user_recno']);
-                                    
-                                echo "Success";
                             } 
                             else 
                             {
@@ -347,9 +341,17 @@ function SubmitProduct()
                         }
                     }
                 }
-                else
+                $thistable = "products";
+                $thisdata = ['attachment' => implode(",", $thislargefilename), 'attachment_dir' => $thisdir];
+                $thiswhere = ['recno' => $thisrecno];
+                $result = $db->PDOUpdate($thistable, $thisdata, $thiswhere, $_SESSION['user_recno']);
+                if($result == "Success")
                 {
                     echo "Success";
+                }
+                else
+                {
+                    echo "Failed to update attachment.";
                 }
             }
             else
@@ -466,9 +468,9 @@ function Main()
                 <?php echo $pc->LoadLogo($db);?>
             </div>
             <div class="float-left" style="width: 7%;"><?php echo $pc->LoginPanel();?></div>
-            <form name="frmproduct" id="frmproduct" method="post" enctype="multipart/form-data">
-                <div class="div-content-holder-flex-product">
-                    <table class="tbl-addproduct" id="tbl-addproduct" style="margin-top: 60px;">
+            <div class="div-content-holder-flex"">
+                <form name="frmproduct" id="frmproduct" method="post" enctype="multipart/form-data">
+                    <table class="tbl-addproduct float-left" id="tbl-addproduct" style="min-width: 390px;">
                         <tr>
                             <td class="align-right tbl-addproduct-td-label" colspan="2"><div class="align-center addproduct-div-title font-size-2em">Add A New Product</div></td>
                         </tr>
@@ -502,7 +504,7 @@ function Main()
                                 <div style="min-height: 180px;">
                                     <div id="div_attachment_container">                                        
                                         <div class="div-attachment-ele" id="div_attachment_ele1">
-                                            <span class="span-event-numbered">1</span>
+                                            <span class="span-event-numbered" style="color: white;">1</span>
                                             <input class="event-attachments" type="file" name="files[]" id="attachments1" />
                                             <button class="remove-attachment display-none" id="btn_remove_attachment1" name="btn_remove_attachment1" onclick="removeAttachment(this);" title='Click to remove attachment'>-</button>
                                         </div>
@@ -514,8 +516,8 @@ function Main()
                             <td colspan="2" class="align-center"><button name="btnsubmit" id="btnsubmit" onclick="submitProduct();">Submit</button></td>
                         </tr>
                     </table>
-                </div>
-            </form>   
+                </form>   
+            </div>
             <div class="align-center" style="height: 5%;"><?php echo $pc->Load_Footer();?></div>
         </div>
         

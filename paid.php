@@ -55,9 +55,6 @@ if(count($_GET) > 0)
 function Main()
 {
     global $pc, $db;?>
-    <script type="text/javascript">
-        window.location.href = "index.php";
-    </script>
     <div class="main-div">
         <div class="paid-div-container">
             <div class="main-logo float-left">
@@ -71,8 +68,12 @@ function Main()
                 <div class="align-center" style="color: black; width: 100%;">
                     <?php
                     $showonstatement = "SQ *KA'S PAPAYA SAUCE";
-                    //BULIT A RECEIPT HERE!!!
-                    echo "Thank you for your payment.  A receipt has been sent to your email.  Your statement will show \"$showonstatement\",\n Confirmation#: ".$_SESSION['THISCONFIRMATION'];
+                    //BULIT A RECEIPT HERE!!!?>
+                    <div>
+                        Thank you for your payment.  A receipt has been sent to your email.  Your statement will show <?php echo $showonstatement ?>,\n Confirmation#: ".<?php echo $_SESSION['THISCONFIRMATION'] ?>
+                        <br/><br/>
+                        <a href="https://squareup.com/receipt/preview/1mEf8OCqDHtbgHWaC1QK9mtr0dfZY">You can print out a receipt, please follow this link.</a>
+                    </div><?php
                     
                     //At this point, we are done with $_SESSION['THISCONFIRMATION']
                     unset($_SESSION['THISCONFIRMATION']);
