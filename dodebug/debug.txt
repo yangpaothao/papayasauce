@@ -1,2 +1,0 @@
-sql : SELECT attachment, attachment_dir FROM products WHERE recno = 27 
-here sendstatus: Success 

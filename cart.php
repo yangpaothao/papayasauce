@@ -4,7 +4,6 @@ use PapayasauceClasses\PageloaderClass;
 use PapayasauceClasses\PromptClass;
 use PapayasauceClasses\OrderClass;
 use PapayasauceClasses\EmailClass;
-use PapayasauceClasses\CustomerClass;
 use PapayasauceClasses\LoadingAnimation;
 require __DIR__ . '/Common/vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
@@ -20,7 +19,6 @@ else
 }
 require_once("./Common/sendmail.php");
 //$mail = new PHPMailer(true);
-$ps = new CustomerClass();
 $db = new PdoClass();
 $pc = new PageloaderClass();
 $pt = new PromptClass();
@@ -173,7 +171,7 @@ if(count($_GET) > 0)
 <?php
 function TokenizedPayment()
 {
-    global $db, $pt, $ec, $oc, $cs;
+    global $db, $pt, $ec, $oc;
     if(!isset($_SESSION['companyname']))
     {
         //if session timed out, we send user to index, front page.
@@ -384,10 +382,12 @@ function TokenizedPayment()
                     $sendstatus = sendmail($sendto, $replyto, $ccto, $bccto, $payment_receipt_subject, $payment_receipt_body, $attachment);
                     
                     //We want to send a record of this order to our order@papayasauce.com.
+
                     $sendtoorder[] = array("orders@papayasauce.com" => "Order Report");
-                    $payment_receipt_subject_order = $cs->GetPaymentorderreceipt();
-                    $payment_receipt_body_order = $cs->GetCustomerbody();
-                    $sendstatusorder = sendmail($sendtoorder, $replyto, $ccto, $bccto, $payment_receipt_subject_order, $payment_receipt_body_order, $attachment);
+                    $oc->SetCustomer($db, $thisorderrecno);
+                    //$payment_receipt_subject_order = $oc->GetPaymentorderreceipt();
+                    //$payment_receipt_body_order = $oc->GetCustomerbody();
+                    //$sendstatusorder = sendmail($sendtoorder, $replyto, $ccto, $bccto, $payment_receipt_subject_order, $payment_receipt_body_order, $attachment);
                 }
                 if($sendstatus == "Success" && $sendstatusorder == "Success")
                 {
