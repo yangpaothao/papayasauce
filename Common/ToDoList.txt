@@ -16,26 +16,14 @@ php_admin_value max_input_time 3600
 Need to work on resize
 The video resize work on local but not on hostgator, they won't install so we will have to move to a diff site and continue this at a later time.
 
-
-
-
-paid.php
-need to work on OrderClass, order body email
-payment_receipt_body_order = $oc->ShowOrder();
-
-paid.php is working, we just need to make sure the sentence on the screen looks good
-
 Need to work on delivery and shipping and handling cost, need to decide if it should be local only.
 Need to work on user registration
 
 
+Need to work on an order list page where we see the active orders and completed orders
 
 
 
-manageproduct.php,
-will need to wokr on eanbling edit of a product
-will include allowing user to select the main img for the index page or he firest image to display for a product
-the rest will have to be used fro the product page where user can select mini image to view in the image div
 
 
 dashboard.php

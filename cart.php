@@ -383,11 +383,11 @@ function TokenizedPayment()
                     
                     //We want to send a record of this order to our order@papayasauce.com.
 
-                    $sendtoorder[] = array("orders@papayasauce.com" => "Order Report");
+                    $sendtoorder[] = array("orders@papayasauce.com" => "Order Report", "yangpaothao@hotmail.com" => "Order Report");
                     $oc->SetCustomer($db, $thisorderrecno);
-                    //$payment_receipt_subject_order = $oc->GetPaymentorderreceipt();
-                    //$payment_receipt_body_order = $oc->GetCustomerbody();
-                    //$sendstatusorder = sendmail($sendtoorder, $replyto, $ccto, $bccto, $payment_receipt_subject_order, $payment_receipt_body_order, $attachment);
+                    $payment_receipt_subject_order = $oc->GetPaymentordersubject();
+                    $payment_receipt_body_order = $oc->GetCustomerbody();
+                    $sendstatusorder = sendmail($sendtoorder, $replyto, $ccto, $bccto, $payment_receipt_subject_order, $payment_receipt_body_order, $attachment);
                 }
                 if($sendstatus == "Success" && $sendstatusorder == "Success")
                 {

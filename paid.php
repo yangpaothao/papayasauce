@@ -5,6 +5,7 @@ use PapayasauceClasses\PageloaderClass;
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/');
 $dotenv->load();
 $temp_host = filter_input(INPUT_SERVER, 'SERVER_NAME');// will get 'localhost'
+
 if($temp_host != "localhost")
 {
     require_once("/home1/gcwwkite/public_html/website_ad583fcd/Common/page.php");
@@ -70,7 +71,7 @@ function Main()
                     $showonstatement = "SQ *KA'S PAPAYA SAUCE";
                     //BULIT A RECEIPT HERE!!!?>
                     <div>
-                        Thank you for your payment.  A receipt has been sent to your email.  Your statement will show <?php echo $showonstatement ?>,\n Confirmation#: ".<?php echo $_SESSION['THISCONFIRMATION'] ?>
+                        Thank you for your payment.  A receipt has been sent to your email.  Your statement will show <?php echo $showonstatement ?>, Confirmation#: ".<?php echo $_SESSION['THISCONFIRMATION'] ?>
                         <br/><br/>
                         <a href="https://squareup.com/receipt/preview/1mEf8OCqDHtbgHWaC1QK9mtr0dfZY">You can print out a receipt, please follow this link.</a>
                     </div><?php

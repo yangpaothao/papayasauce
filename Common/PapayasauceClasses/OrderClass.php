@@ -12,6 +12,20 @@ class OrderClass {
     public $square_receiptno = "";
     public $square_order_id = "";
     
+    public $firstname = "";
+    public $lastname = "";
+    public $address = "";
+    public $address2= "";
+    public $email = "";
+    public $phonenumber = "";
+    public $city = "";
+    public $state = "";
+    public $zipcode = "";
+    public $square_receipturl = ""; //link to download the receipt
+    public $confirmation = ""; //Confirmation number of this order
+    public $total = ""; //Total cost of order
+    public $name = []; //Name of the product
+    
     function SetReceipt($db, $recnostr, $temp_receiptno, $temp_orderno, $temp_receipturl)
     {
         $this->recnostr = $recnostr;
@@ -63,11 +77,15 @@ class OrderClass {
             $this->city = $rs['city'];
             $this->state = $rs['state'];
             $this->zipcode = $rs['zipcode'];
+            $this->square_receipturl = $rs['receipt_url'];
+            $this->confirmation = $rs['payment_confirmation'];
+            $this->total = $rs['total'];
+            $this->name[] = $rs['name'];
         }
     }
-    function GetPaymentorderreceipt()
+    function GetPaymentordersubject()
     {
-        $subject = "Payment Receipt";
+        $subject = "Order Report";
         
         return($subject);
     }
@@ -75,39 +93,47 @@ class OrderClass {
     {
         $body = '<div class="align-right cart-div-content-holder-flex-data-container display-inline-block">';
             $body .= '<div class="float-left cart-img-data-container">';
-            $body .= '<div class="float-left display-block" ><a href="'.$this->square_receipturl.'">Click to download the receipt</a></div>';
-                $body .= '<div class="align-left float-left">';
-                    $body .= '<table>';
-                        $body .= '<tr>';
-                            $body .= '<td class="font-color-white">Name:</div><td>';
-                            $body .= '<td class="font-color-white">'.$this->firstname." ".$this->lastname.'</div><td>';
-                        $body .= '</tr>';
-                        $body .= '<tr>';
-                            $body .= '<td class="font-color-white align-right">Address: </td>';
-                            $body .= '<td class="font-color-white align-left" >';
-                                $body .= '<div style="width: 100%; display: inline-block">'.$this->address.'</div>';
-                                if(!is_null($this->address2))
-                                {
-                                    $body .= '<div style="width: 100%; display: inline-block">'.$this->address2.'</div>';
-                                }
-                                $body .= '<div style="width: 100%; display: inline-block">'.$this->city.', '.$this->state.' '.$this->zipcode.'</div>';
-                            $body .= '</td>';                            
-                        $body .= '</tr>';
-                        $body .= '<tr>';
-                            $body .= '<td class="font-color-white">Email:</div><td>';
-                            $body .= '<td class="font-color-white">'.$this->email.'</div><td>';
-                        $body .= '</tr>';
-                        $body .= '<tr>';
-                            $body .= '<td class="font-color-white">Phone Number:</div><td>';
-                            $body .= '<td class="font-color-white">'.$this->phonenumber.'</div><td>';
-                        $body .= '</tr>';
-                    $body .= '</table>';
+            $body .= '<div class="float-left display-block" ><a href="'.$this->square_receipturl.'">Click to download the receipt (Confirmation#'.$this->confirmation.')</a></div>';
+            $body .= '<div>&nbsp;<div>';
+            $body .= '<div>';
+                $body .= '<div>';
+                    $body .= '<div style="text-align: right; float: left; width: 100%; display: inline-block; ">Name:&nbsp;&nbsp;  '.$this->firstname." ".$this->lastname.'<div>';
+                $body .= "</div>";
+                $body .= '<div>';
+                    $body .= '<div style="text-align: right; float: left; display: inline-block; ">Address:&nbsp;&nbsp; </div>';
+                $body .= '</div>'; 
+                $body .= '<div>';
+                    $body .= '<div style="text-align: left;  float: left;">'.$this->address.' &nbsp;&nbsp;</div>';
+                    if(!is_null($this->address2))
+                    {
+                        $body .= '<div style="float: left;">'.$this->address2.'</div>';
+                    }
+                    $body .= '<div style="float: left;">'.$this->city.', '.$this->state.' '.$this->zipcode.'</div>';
+                $body .= '</div>';                            
+                $body .= '<div>&nbsp;<div>';
+                $body .= '<div>';
+                    $body .= '<div style="text-align: right; float: left;">Email: &nbsp;&nbsp;'.$this->email.'<div>';
+                $body .= '</div>';
+                $body .= '<div>';
+                    $body .= '<div style="text-align: right; float: left;">Phone Number: &nbsp;&nbsp;'.$this->phonenumber.'<div>';
+                $body .= '</div>';
+                $body .= '<div>&nbsp;<div>';
 
+                $i=0;
+                foreach($this->name as $proname)
+                {
+                    $i++;
+                    $body .= '<div>';   
+                        $body .= '<div style="padding-right: 2px; text-align: right; float: left;">'.$i.'.&nbsp;&nbsp;  '.$proname.'<div>';
+                    $body .= '</div>';
+                }
+                $body .= '<div>';
+                    $body .= '<div style="text-align: right; float: left;">Total Cost:&nbsp;&nbsp;  $'.number_format($this->total, 2).'<div>';
                 $body .= '</div>';
             $body .= '</div>';
+            $body .= '</div>';
         $body .= '</div>';
-        $thistotal += number_format($numberofitems*$rs['price'], 2);
-        $body .= "<div><b>Total Cost: $".number_format($thistotal,2)."</b></div>";
+        return($body);
     }
     function ShowReceipt()
     {
