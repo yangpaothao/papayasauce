@@ -303,6 +303,7 @@ function TokenizedPayment()
             /*
              * If you pass a dollar value like 10.50 directly, Square reads it as an integer and processes it as 10 cents ($0.10).
              */
+            //$realtotal = (int)round($realtotal * 100); 
             $realtotal = (int)round($realtotal * 100); 
             $thisreturnsarray = $pt->MakeSquarepayment($thissquarecustomerid, $realtotal, $thishash, $thisaccesstoken, $thistoken);
             //https://developer.squareup.com/reference/square/payments-api

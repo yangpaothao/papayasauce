@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+    beStrictAboutOutputDuringTests="true"
+    failOnRisky="true"
+    failOnWarning="true"
+    colors="true"
+    cacheDirectory=".phpunit.cache"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/11.1/phpunit.xsd"
+>
+	<testsuites>
+		<testsuite name="FedEx API Test Suite">
+			<directory>
+				tests
+			</directory>
+		</testsuite>
+	</testsuites>
+
+	<source>
+		<include>
+			<directory suffix=".php">
+				src
+			</directory>
+		</include>
+	</source>
+
+    <php>
+        <!--
+            WARNING: The CLIENT_ID and CLIENT_SECRET values must be FedEx sandbox credentials!
+            If they are production credentials, you risk making real API requests by accident.
+        -->
+        <env name="CLIENT_ID" value="<CLIENT_ID>" />
+        <env name="CLIENT_SECRET" value="<CLIENT_SECRET>" />
+    </php>
+</phpunit>

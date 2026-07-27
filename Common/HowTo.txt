@@ -2,11 +2,9 @@ If website is not allow ajax, talk to hostgator and have them check the Modsecur
 
 Javascript
 function saveAbout(thisrecno){
-	thisArray = [{
-			"this_recno": thisrecno, 
-			"this_val": $("#txtarea_about").val()
-	}];
-	$.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=SaveAbout&thisarray='+JSON.stringify(thisArray), function(result){
+	thisArray = [{"this_thisrecno": thisrecno}];
+        const thisData = JSON.stringify(thisArray);
+	$.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=SaveAbout&thisarray="+thisData,
 		//alert(result);
 		if(result != 'Success'){
 			alert("Failed to update");

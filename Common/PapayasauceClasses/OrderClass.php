@@ -1,5 +1,6 @@
 <?php
 namespace PapayasauceClasses;
+use PapayasauceClasses\PromptClass;
 /**
  * Description of newDateClass
  *
@@ -36,6 +37,9 @@ class OrderClass {
     }
     function SetCustomer($db, $orderrecno)
     {
+        $pc = new PromptClass();
+        $arrayproname = [];
+        $realkeys = [];
         $this->db = $db;
         $this->orderrecno = $orderrecno;     
         
@@ -45,18 +49,13 @@ class OrderClass {
         {
             $thispro = $rsp["products"];
         }
-        //$thispro will now be {"31":"1"}
-        $explode_thispro = explode(",", $thispro);
-        foreach($explode_thispro as $proarray)
+        //$thispro will now be {"31":"1","31":"1"}
+        $explode_thispro = json_decode($thispro, true);
+        foreach($explode_thispro as $key => $value)
         {
-            //$proarray = ["pro_recno" : "# of item"] where pro_recno is the recno of table products and # of item is the number of items ordered 
-            file_put_contents("./dodebug/debug.txt", "OrderClass proarray = $proarray \n", FILE_APPEND); //proarray = {"31":"1"} 
-            $temparray = json_decode($proarray, true); //$temparray = ["31" => "1"]
-            $arraykey = array_keys($temparray); //$arraykey = (31)
-            //Now we need to get this 31 from this array into another array
-            $realkeys[] = $arraykey[0];
+            $realkeys[] = $key;        
         }
-        file_put_contents("./dodebug/debug.txt", "arraykeys = ".json_encode($realkeys)." \n", FILE_APPEND); 
+        //file_put_contents("./dodebug/debug.txt", "arraykeys = ".json_encode($realkeys)." \n", FILE_APPEND); 
         //$temparray = will not be just a single array holding just the recno,ex: $temparray = [1,2,3,...,n]
         $arraystr = implode(',', $realkeys);
         //$arraystr =  should be just a string of 1,2,3,...,n
@@ -142,6 +141,9 @@ class OrderClass {
         $lineno = 1;
         $body = "Orders: ".$this->square_order_id."</br>";
         $body .= "Confirmation: ".$this->square_receiptno."<br/><br/>";
+        $body .= '<div class="float-left display-block" >Your statement will show "SQ *KA\'S PAPA SAUCE"</div>';
+        $body .= '<div class="float-left display-block" ><a href="'.$this->square_receipturl.'">Click to download the receipt</a></div>';
+        
         $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.recno IN ($this->recnostr) ORDER BY p.name";
         //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
         $result = $this->db -> PDOMiniquery($sql);
@@ -157,8 +159,7 @@ class OrderClass {
                 $body .= '<div class="align-right cart-div-content-holder-flex-data-container display-inline-block">';
                     $body .= '<div class="float-left cart-img-data-container">';
                         //$body .= '<div class="float-left" ><img id="large_img_container" class="img-cart-review" src="'.$thisdir.'/mini/s_'.substr($rs['attachment'],2).'"/></div>';
-                    $body .= '<div class="float-left display-block" >Your statement will show "SQ *KA\'S PAPA SAUCE"</div>';
-                    $body .= '<div class="float-left display-block" ><a href="'.$this->square_receipturl.'">Click to download the receipt</a></div>';
+                    
                         $body .= '<div class="align-left float-left">';
                             $body .= '<table>';
                                 $body .= '<tr>';
@@ -185,7 +186,7 @@ class OrderClass {
                 $i++;
             }
         }
-        $body .= "<div><b>Total Cost: $".number_format($thistotal,2)."</b></div>";       
+        $body .= "<div><b>Big Total Cost: $".number_format($thistotal,2)."</b></div>";       
         return($body);
     }
     function ShowOrderbody()

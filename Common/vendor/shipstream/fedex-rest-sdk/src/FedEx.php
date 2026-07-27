@@ -1,0 +1,222 @@
+<?php
+
+declare(strict_types=1);
+
+namespace ShipStream\FedEx;
+
+use Closure;
+use InvalidArgumentException;
+use RuntimeException;
+use Saloon\Contracts\Authenticator;
+use Saloon\Http\Connector;
+use Saloon\Http\PendingRequest;
+use Saloon\Http\Request;
+use Saloon\RateLimitPlugin\Contracts\RateLimitStore;
+use Saloon\RateLimitPlugin\Stores\MemoryStore;
+use Saloon\Traits\OAuth2\ClientCredentialsGrant;
+use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
+use ShipStream\FedEx\Api\AccountRegistrationV1;
+use ShipStream\FedEx\Api\AddressValidationV1;
+use ShipStream\FedEx\Api\AuthorizationV1;
+use ShipStream\FedEx\Api\AuthorizationV1\Dto\FullSchema;
+use ShipStream\FedEx\Api\AuthorizationV1\Requests\ApiAuthorization;
+use ShipStream\FedEx\Api\ConsolidationV1;
+use ShipStream\FedEx\Api\FreightLTLV1;
+use ShipStream\FedEx\Api\GroundEODCloseV1;
+use ShipStream\FedEx\Api\LocationsSearchV1;
+use ShipStream\FedEx\Api\OpenShipV1;
+use ShipStream\FedEx\Api\PickupRequestV1;
+use ShipStream\FedEx\Api\PostalCodeValidationV1;
+use ShipStream\FedEx\Api\RatesAndTransitTimesV1;
+use ShipStream\FedEx\Api\ShipDGHazmatV1;
+use ShipStream\FedEx\Api\ShipV1;
+use ShipStream\FedEx\Api\TrackV1;
+use ShipStream\FedEx\Api\TradeDocumentsUploadV1;
+use ShipStream\FedEx\Auth\MemoryCache;
+use ShipStream\FedEx\Contracts\TokenCache;
+use ShipStream\FedEx\Contracts\TokenLock;
+use ShipStream\FedEx\Enums\Endpoint;
+use ShipStream\FedEx\Enums\GrantType;
+
+class FedEx extends Connector
+{
+    use AlwaysThrowOnErrors;
+    use ClientCredentialsGrant;
+
+    /**
+     * @param  ?Closure(PendingRequest): string  $transactionIdGenerator
+     */
+    public function __construct(
+        public string $clientId,
+        public string $clientSecret,
+        public Endpoint $endpoint = Endpoint::PROD,
+        public ?string $childKey = null,
+        public ?string $childSecret = null,
+        public ?bool $proprietaryChild = false,
+        public ?TokenCache $tokenCache = new MemoryCache(),
+        public ?TokenLock $tokenLock = null,
+        public ?RateLimitStore $rateLimitStore = new MemoryStore(),
+        public ?Closure $transactionIdGenerator = null,
+        public ?string $locale = null,
+    ) {
+        if (($this->childKey && ! $this->childSecret) || ($this->childSecret && ! $this->childKey)) {
+            throw new InvalidArgumentException('Both childKey and childSecret must be provided.');
+        }
+
+        $this->oauthConfig()->setClientId($clientId);
+        $this->oauthConfig()->setClientSecret($clientSecret);
+    }
+
+    public function resolveBaseUrl(): string
+    {
+        return $this->endpoint->value;
+    }
+
+    protected function defaultAuth(): Authenticator
+    {
+        $cacheKey = $this->tokenCacheKey();
+        $authenticator = $this->tokenCache::get($cacheKey);
+        if (! $authenticator) {
+            try {
+                $this->tokenLock?->lock($cacheKey);
+                // Re-check cache after acquiring lock in case another process already fetched the token
+                $authenticator = $this->tokenCache::get($cacheKey);
+                if (! $authenticator) {
+                    $authenticator = $this->getAccessToken();
+                    $this->tokenCache::set($cacheKey, $authenticator);
+                }
+            } finally {
+                $this->tokenLock?->unlock($cacheKey);
+            }
+        }
+
+        return $authenticator;
+    }
+
+    public function boot(PendingRequest $pendingRequest): void
+    {
+        if ($this->transactionIdGenerator) {
+            $transactionId = ($this->transactionIdGenerator)($pendingRequest);
+            if (! is_string($transactionId)) {
+                throw new RuntimeException(
+                    '$transactionIdGenerator closure must return strings, '.gettype($transactionId).' returned.'
+                );
+            }
+
+            $pendingRequest->headers()->add('x-customer-transaction-id', $transactionId);
+        }
+
+        if ($this->locale) {
+            $pendingRequest->headers()->add('x-locale', $this->locale);
+        }
+    }
+
+    public function accountRegistrationV1(): AccountRegistrationV1\Api
+    {
+        return new AccountRegistrationV1\Api($this);
+    }
+
+    public function addressValidationV1(): AddressValidationV1\Api
+    {
+        return new AddressValidationV1\Api($this);
+    }
+
+    public function authorizationV1(): AuthorizationV1\Api
+    {
+        return new AuthorizationV1\Api($this);
+    }
+
+    public function consolidationV1(): ConsolidationV1\Api
+    {
+        return new ConsolidationV1\Api($this);
+    }
+
+    public function freightLTLV1(): FreightLTLV1\Api
+    {
+        return new FreightLTLV1\Api($this);
+    }
+
+    public function groundEODCloseV1(): GroundEodCloseV1\Api
+    {
+        return new GroundEODCloseV1\Api($this);
+    }
+
+    public function locationsSearchV1(): LocationsSearchV1\Api
+    {
+        return new LocationsSearchV1\Api($this);
+    }
+
+    public function openShipV1(): OpenShipV1\Api
+    {
+        return new OpenShipV1\Api($this);
+    }
+
+    public function pickupRequestV1(): PickupRequestV1\Api
+    {
+        return new PickupRequestV1\Api($this);
+    }
+
+    public function postalCodeValidationV1(): PostalCodeValidationV1\Api
+    {
+        return new PostalCodeValidationV1\Api($this);
+    }
+
+    public function ratesTransitTimesV1(): RatesAndTransitTimesV1\Api
+    {
+        return new RatesAndTransitTimesV1\Api($this);
+    }
+
+    public function shipV1(): ShipV1\Api
+    {
+        return new ShipV1\Api($this);
+    }
+
+    public function shipDGHazmatV1(): ShipDGHazmatV1\Api
+    {
+        return new ShipDGHazmatV1\Api($this);
+    }
+
+    public function trackV1(): TrackV1\Api
+    {
+        return new TrackV1\Api($this);
+    }
+
+    public function tradeDocumentsUploadV1(): TradeDocumentsUploadV1\Api
+    {
+        return new TradeDocumentsUploadV1\Api($this);
+    }
+
+    public function tokenCacheKey(): string
+    {
+        $childKeyStr = $this->childKey ? '.'.$this->childKey : '';
+
+        $key = $this->clientId.$childKeyStr;
+
+        if ($this->endpoint->isSandbox()) {
+            $key .= '.sandbox';
+        }
+
+        return $key;
+    }
+
+    protected function resolveAccessTokenRequest(): Request
+    {
+        $args = [
+            'clientId' => $this->clientId,
+            'clientSecret' => $this->clientSecret,
+            'grantType' => GrantType::CLIENT_CREDENTIALS,
+        ];
+
+        if ($this->childKey) {
+            $args['grantType'] = $this->proprietaryChild
+                ? GrantType::PROPRIETARY_CHILD_CREDENTIALS
+                : GrantType::CHILD_CREDENTIALS;
+            $args['childKey'] = $this->childKey;
+            $args['childSecret'] = $this->childSecret;
+        }
+
+        $args['grantType'] = $args['grantType']->value;
+
+        return new ApiAuthorization(new FullSchema(...$args), $this->rateLimitStore);
+    }
+}

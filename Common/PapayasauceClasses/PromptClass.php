@@ -29,7 +29,7 @@ use Square\Exceptions\ApiException;
 use Square\OAuth\Requests\RevokeTokenRequest;
 use Square\Cards\Requests\CreateCardRequest;
 use Square\Types\Card;
-
+use PapayasauceClasses\OrderClass;
 //https://developer.squareup.com/docs/devtools/sandbox/payments
 
 //https://github.com/square/connect-php-sdk/blob/master/docs/Model/CreateCustomerRequest.md
@@ -1530,6 +1530,16 @@ class PromptClass
         return($realdata);
         //return($this->DebugAssociativearray($tempdata));
     }
+    function AnalyzeAssociatearray($temparray)
+    {
+        $newarray = [];
+        foreach($temparray as $key => $value)
+        {
+            $newarray['key'] = $key;
+            $newarray['value'] = $value;
+        }
+        return($newarray);
+    }
     function BarberOnline($db, $barberrecno)
     {
         //Return true or false if the barber is Live or Sandbox.
@@ -1578,5 +1588,124 @@ class PromptClass
                 imagepng($destination_image, "$thisdir/$filename", 90);
                 break;
         }
+    }
+    function GetProductkeystr($db, $prorecno)
+    {
+        $sqlp = "SELECT products FROM orders WHERE recno = ".$prorecno;
+        $resultp = $db->PDOMiniquery($sqlp);
+        foreach($resultp as $rsp)
+        {
+            $thispro = $rsp["products"];
+        }
+        $explode_thispro = explode(",", $thispro);
+        foreach($explode_thispro as $proarray)
+        {
+            //$proarray = ["pro_recno" : "# of item"] where pro_recno is the recno of table products and # of item is the number of items ordered 
+            //file_put_contents("./dodebug/debug.txt", "OrderClass proarray = $proarray \n", FILE_APPEND); //proarray = {"31":"1"} 
+            $temparray = json_decode($proarray, true); //$temparray = ["31" => "1"]
+            $arraykey = array_keys($temparray); //$arraykey = (31)
+            //Now we need to get this 31 from this array into another array
+            $realkeys[] = $arraykey[0];
+        }
+        $arraystr = implode(',', $realkeys);
+        return($arraystr);
+    }
+    function BuildTheproductdata($temparray)
+    {
+        //$temparray = ['name of product' => n,...] where n is the number of items for each name of product
+        $i = 0;
+        $altbg = "#F2F2F2";
+        $body = '<div>';
+        foreach($temparray as $key => $value)
+        {
+            if(is_array($value))
+            {
+                //file_put_contents("./dodebug/debug.txt", "PrompClass BuildTheproductdata in array \n", FILE_APPEND);
+                $i++;
+                if($altbg == "#F2F2F2")
+                {
+                    $altbg = "#DED3D3";
+                }
+                else
+                {
+                    $altbg = "#F2F2F2";
+                }
+                $newkeyval = $this->AnalyzeAssociatearray($value);
+                $body .= '<div class="float-left" style="display: block; width: 100%; background-color: '.$altbg.'">';
+                    $body .= '<div class="align-right float-left" style="padding-right: 5px; width: 5%;">'.$i.'.</div>';
+                    $body .= '<div class="align-left float-left" style="padding-right: 5px; width: 80%;">'.$newkeyval['key'].'</div>';
+                    $body .= '<div class="align-right float-left" style="display: block; width: 5%;">'.$newkeyval['value'].'</div>';
+                $body .= '</div>'; 
+            }
+        }
+        $body .= '</div>';
+        //file_put_contents("./dodebug/debug.txt", "PrompClass BuildTheproductdata= $body \n", FILE_APPEND);
+        return($body);
+    }
+    function BuildTheproduct($db, $temparray)
+    {
+        //$temparray = ["31" => "1"]
+        $pc = new ProductClass();
+        
+        //$rs['products'] will contain a json str in fomrat of {"recno":"1", "recno":"2"}
+        $realarray = json_decode($temparray, true);
+        $newarray = [];
+        foreach($realarray as $key => $value)
+        {
+            $pc->SetProduct($db, $key);
+            $temp_proname = $pc->GetProductname();
+            $newarray[] = [$temp_proname => $value];
+        }
+        $displaydata = $this->BuildTheproductdata($newarray);
+        return($displaydata);
+    }
+    function OrderDisplay($db)
+    {
+        //show-event-option-status-option-selected
+        //show-event-option-status-notselected 
+        $tempproarray = [];
+        
+        $sql = "SELECT o.recno, o.products, o.date, o.total, o.payment_confirmation, u.firstname, u.lastname FROM orders o INNER JOIN users u ON o.foreign_user_recno = u.recno ";
+        $sql .= "WHERE o.isPaid = true AND o.isCompleted = false";
+        $result = $db->PDOminiquery($sql);?>
+        <div id="div_show_event_data_container">
+            <table id="tblservicedata" class="tbl-modify-event">
+                <thead>
+                    <tr style="height: 40px;">
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 40px;">No.</th>
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 120px;">Name</th>
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 150px;">products</th>
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 80px;">Date</th>
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 80px;">Confirmation</th>                        
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 100px;">Total</th>
+                        <th class="align-center tbl-modify-orderdisplay-th" style="width: 100px;">Status</th>
+                    </tr>
+                </thead>
+                <tbody><?php
+                    if($db->PDOrowcount($result) > 0)
+                    {
+                        $i = 1;
+                        foreach($result as $rs)
+                        {?>
+                            <tr style="border-bottom: 1px solid;">
+                                <td class="align-right tbl-modify-orderdisplay-td"><?php echo $i ?>.</td>
+                                <td class="align-left tbl-modify-orderdisplay-td"><?php echo $rs['firstname']." ".$rs['lastname']?></td>
+                                <td class="align-left tbl-modify-orderdisplay-td"><?php echo $this->BuildTheproduct($db, $rs['products']) ?></td>
+                                <td class="align-center tbl-modify-orderdisplay-td"><?php echo empty($rs['date_start']) ? '' : date('m/d/Y', strtotime($rs['date'])) ?></td>
+                                <td class="align-left tbl-modify-orderdisplay-td"><?php echo $rs['payment_confirmation'] ?></td>
+                                <td class="align-left tbl-modify-orderdisplay-td align-right"><?php echo number_format($rs['total'], 2) ?></td>
+                                <td class="align-center tbl-modify-orderdisplay-td"><button class="cursor-pointer" name="btn_status" id="btn_status" title="Click to stage this order" onclick="stageOrder(<?php echo $rs['recno'] ?>);">Stage</button></td>
+                            </tr><?php
+                            $i++;
+                        }
+                    }
+                    else
+                    {?>
+                            <tr style="border-bottom: 1px solid;"><td colspan="8">No Data</td></tr> 
+                    <?php
+                    }?>
+                </tbody>
+            </table>
+        </div><?php 
     }
 }?>

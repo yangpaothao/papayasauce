@@ -20,7 +20,7 @@ Need to work on delivery and shipping and handling cost, need to decide if it sh
 Need to work on user registration
 
 
-Need to work on an order list page where we see the active orders and completed orders
+WILL NEED TO WORK ON FEDEX API ON PAGE stageorder.php
 
 
 

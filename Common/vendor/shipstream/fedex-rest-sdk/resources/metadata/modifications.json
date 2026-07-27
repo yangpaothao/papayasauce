@@ -1,0 +1,268 @@
+{
+    "account-registration": {
+        "1": [
+            {
+                "comment": "Remove broken example references from 400 response in address validation endpoint",
+                "action": "delete",
+                "path": "paths./registration/v2/address/keysgeneration.post.responses.400.content.application/json.examples"
+            },
+            {
+                "comment": "Remove broken example references from 400 response in PIN validation endpoint",
+                "action": "delete",
+                "path": "paths./registration/v2/pin/keysgeneration.post.responses.400.content.application/json.examples"
+            },
+            {
+                "comment": "Remove broken example references from 400 response in invoice validation endpoint",
+                "action": "delete",
+                "path": "paths./registration/v2/invoice/keysgeneration.post.responses.400.content.application/json.examples"
+            },
+            {
+                "comment": "Remove broken example references from 400 response in PIN generation endpoint",
+                "action": "delete",
+                "path": "paths./registration/v2/customerkeys/pingeneration.post.responses.400.content.application/json.examples"
+            },
+            {
+                "comment": "Set correct type of ErrorParameter key",
+                "action": "merge",
+                "path": "components.schemas.ErrorParameter.properties.key",
+                "value": {
+                    "type": "string"
+                }
+            },
+            {
+                "comment": "Set correct type of ErrorParameter value",
+                "action": "merge",
+                "path": "components.schemas.ErrorParameter.properties.value",
+                "value": {
+                    "type": "string"
+                }
+            },
+            {
+                "comment": "Set type of InvoiceDetails.amount to a string as it requires trailing zeros",
+                "action": "merge",
+                "path": "components.schemas.InvoiceDetails.properties.amount",
+                "value": {
+                    "type": "string"
+                }
+            }
+        ]
+    },
+    "address-validation": {
+        "1": [
+            {
+                "action": "delete",
+                "path": "components.schemas.CustomerMessage"
+            },
+            {
+                "action": "replace",
+                "path": "components.schemas.ResolvedAddress.properties.customerMessage.items",
+                "value": {
+                    "type": "string"
+                }
+            }
+        ]
+    },
+    "rates-transit-times": {
+        "1": [
+            {
+                "action": "merge",
+                "path": "components.schemas.Party.properties",
+                "value": {
+                    "contact": {
+                        "$ref": "#/components/schemas/Contact"
+                    }
+                }
+            }
+        ]
+    },
+    "ship": {
+        "1": [
+            {
+                "comment": "The upstream items definition here is an anyOf with two different components with identical schemas, so we're just picking one",
+                "action": "replace",
+                "path": "components.schemas.TransactionShipmentOutputVO.properties.alerts.items",
+                "value": {
+                    "$ref": "#/components/schemas/Alert_3P"
+                }
+            }, {
+                "comment": "The upstream items definition here is an anyOf with two different components with identical schemas, so we're just picking one",
+                "action": "replace",
+                "path": "components.schemas.TransactionCreateShipmentOutputVO.properties.alerts.items",
+                "value": {
+                    "$ref": "#/components/schemas/Alert_3P"
+                }
+            }, {
+                "comment": "Add missing alertType property to Alert_3P",
+                "action": "merge",
+                "path": "components.schemas.Alert_3P.properties",
+                "value": {
+                    "alertType": {
+                        "type": "string",
+                        "description": "Specifies the api alert type.",
+                        "example": "NOTE",
+                        "enum": [
+                            "NOTE",
+                            "WARNING"
+                        ]
+                    }
+                }
+            }, {
+                "comment": "Remove required fields from PartyAddress",
+                "action": "delete",
+                "path": "components.schemas.PartyAddress.required"
+            }, {
+                "comment": "Remove required fields from PartyContact",
+                "action": "delete",
+                "path": "components.schemas.PartyContact.required"
+            }, {
+                "comment": "Remove totalWeight from RequestedShipment required fields",
+                "action": "delete-array-values",
+                "path": "components.schemas.RequestedShipment.required",
+                "value": ["totalWeight"]
+            }, {
+                "comment": "Remove accountNumber from ResponsibleParty required fields",
+                "action": "delete-array-values",
+                "path": "components.schemas.ResponsiblePartyParty.required",
+                "value": ["accountNumber"]
+            }, {
+                "comment": "Remove commercialInvoice from CustomsClearanceDetail required fields",
+                "action": "delete-array-values",
+                "path": "components.schemas.CustomsClearanceDetail.required",
+                "value": ["commercialInvoice"]
+            }, {
+                "comment": "Remove tinType from TaxpayerIdentification required fields",
+                "action": "delete-array-values",
+                "path": "components.schemas.TaxpayerIdentification.required",
+                "value": ["tinType"]
+            }
+        ]
+    },
+    "ship-dg-hazmat": {
+        "1": [
+            {
+                "comment": "The type of Surcharge.amount is float, not Money",
+                "action": "replace",
+                "path": "components.schemas.Surcharge.properties.amount",
+                "value": {
+                    "description": "Specifies the Surcharge Amount.",
+                    "type": "number",
+                    "format": "double"
+                }
+            }, {
+                "comment": "The type of the BinaryBarcode.value is string, not array of strings",
+                "action": "replace",
+                "path": "components.schemas.BinaryBarcode.properties.value",
+                "value": {
+                    "type": "string",
+                    "format": "byte",
+                    "description": "The data content of this instance.<br> Example: \"value\"",
+                    "example": "value"
+                }
+            }, {
+                "comment": "The type of PackageBarcodes.binaryBarcodes is array, not string (same as ship/v1 schema)",
+                "action": "replace",
+                "path": "components.schemas.PackageBarcodes.properties.binaryBarcodes.type",
+                "value": "array"
+            }, {
+                "comment": "DangerousGoodsContainer.packingType is not actually required.",
+                "action": "delete",
+                "path": "components.schemas.DangerousGoodsContainer.required"
+            }, {
+                "comment": "HazardousCommodityDescription.reportableQuantity and packingGroup are not actually required.",
+                "action": "delete",
+                "path": "components.schemas.HazardousCommodityDescription.required"
+            }, {
+                "comment": "ResponsiblePartyParty address and contact are not actually required.",
+                "action": "delete",
+                "path": "components.schemas.ResponsiblePartyParty.required"
+            }, {
+                "comment": "Remove required fields from PartyAddress",
+                "action": "delete",
+                "path": "components.schemas.PartyAddress.required"
+            }, {
+                "comment": "Remove required fields from PartyAddress",
+                "action": "delete",
+                "path": "components.schemas.PartyAddress.required"
+            }, {
+                "comment": "Remove required fields from PartyContact",
+                "action": "delete",
+                "path": "components.schemas.PartyContact.required"
+            }
+        ]
+    },
+    "track": {
+        "1": [
+            {
+                "action": "replace",
+                "path": "paths./track/v1/notifications.post.operationId",
+                "value": "Send Notification"
+            },
+            {
+                "action": "replace",
+                "path": "paths./track/v1/tcn.post.operationId",
+                "value": "Track by TCN"
+            },
+            {
+                "comment": "Remove the locationType attribute from the required list. See https://github.com/ShipStream/fedex-rest-php-sdk/issues/3",
+                "action": "replace",
+                "path": "components.schemas.LocationDetail.required",
+                "value": [
+                    "locationContactAndAddress"
+                ]
+            }
+        ]
+    },
+    "trade-documents-upload": {
+        "1": [
+            {
+                "comment": "Define a container for FullSchema-ImageUploadServiceInputVO.properties.document. Move rules property up one level. See https://stackoverflow.com/questions/78593938/restful-fedex-trade-document-upload-api-cant-upload-signature-or-letterhead-i",
+                "action": "merge",
+                "path": "components.schemas",
+                "value": {
+                    "DocumentContainer": {
+                        "required": [
+                            "document",
+                            "rules"
+                        ],
+                        "type": "object",
+                        "properties": {
+                            "document": {
+                                "$ref": "#/components/schemas/Document"
+                            },
+                            "rules": {
+                                "$ref": "#/components/schemas/Document_rules"
+                            }
+                        },
+                        "description": "A container for the document and rules."
+                    }
+                }
+            },
+            {
+                "comment": "Wrap FullSchema-ImageUploadServiceInputVO.properties.document in DocumentContainer. Define document before attachment else error 1001 is thrown.",
+                "action": "replace",
+                "path": "components.schemas.FullSchema-ImageUploadServiceInputVO.properties",
+                "value": {
+                    "document": {
+                        "$ref": "#/components/schemas/DocumentContainer"
+                    },
+                    "attachment": {
+                        "type": "string",
+                        "description": "Input the actual image file to be uploaded.",
+                        "format": "file"
+                    }
+                }
+            },
+            {
+                "comment": "Delete moved `FullSchema-ImageUploadServiceInputVO.properties.rules` property.",
+                "action": "delete",
+                "path": "components.schemas.Document.properties.rules"
+            },
+            {
+                "comment": "Delete moved `FullSchema-ImageUploadServiceInputVO.properties.rules` from required properties.",
+                "action": "delete-array-values",
+                "path": "components.schemas.Document.required",
+                "value": ["rules"]
+            }
+        ]
+    }
+}

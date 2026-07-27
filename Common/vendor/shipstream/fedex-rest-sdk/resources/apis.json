@@ -1,0 +1,170 @@
+{
+  "account-registration": {
+    "name" : "Account Registration",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/AccountRegistrationAPI/AccountRegistration-Resource.json"
+      }
+    ]
+  },
+  "authorization": {
+    "name": "Authorization",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/APIAuthorization/APIAuthorization-Resource.json"
+      }
+    ]
+  },
+  "address-validation": {
+    "name": "Address Validation",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/AddressValidation/Addresses-Resource.json"
+      }
+    ]
+  },
+  "consolidation": {
+    "name": "Consolidation",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/ShipConsolidation/ShipConsolidation-Resource.json"
+      }
+    ]
+  },
+  "locations-search": {
+    "name": "Locations Search",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/Location/Locations-Resource.json"
+      }
+    ]
+  },
+  "freight-ltl": {
+    "name": "Freight LTL",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/LTLFreightAPI/LTLFreight-Resource.json"
+      }
+    ]
+  },
+  "global-trade": {
+    "name": "Global Trade",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/GlobalTrade/GlobalTrade-Resource.json"
+      }
+    ]
+  },
+  "ground-eod-close": {
+    "name": "Ground EOD Close",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/CloseAPI/ShipmentCloseAPI-Resource.json"
+      }
+    ]
+  },
+  "open-ship": {
+    "name": "Open Ship",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/OpenShip/OpenShipment-Resource.json"
+      }
+    ]
+  },
+  "pickup-request": {
+    "name": "Pickup Request",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/Pickup/Pickup-Resource.json"
+      }
+    ]
+  },
+  "postal-code-validation": {
+    "name": "Postal Code Validation",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/CountryAPI/ValidatePostal-Resource.json"
+      }
+    ]
+  },
+  "rates-transit-times": {
+    "name": "Rates and Transit Times",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/Rate/RateQuotes-Resource.json"
+      }
+    ]
+  },
+  "service-availability": {
+    "name": "Service Availability",
+    "versions": [
+      {
+        "version": "1",
+        "url": [
+            "https://developer.fedex.com/wirc/json/api_groups/ServiceAvailability/PackageAndServiceOptions-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/ServiceAvailability/SpecialServiceOptions-Resource.json"
+        ]
+      }
+    ]
+  },
+  "ship": {
+    "name": "Ship",
+    "versions": [
+      {
+        "version": "1",
+        "url": [
+            "https://developer.fedex.com/wirc/json/api_groups/Ship/Shipment-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Ship/Tag-Resource.json"
+        ]
+      }
+    ]
+  },
+  "ship-dg-hazmat": {
+    "name": "Ship DG Hazmat",
+    "versions": [
+      {
+        "version": "1",
+        "url": [
+          "https://developer.fedex.com/wirc/json/api_groups/ShipDGHazmatAPI/ShipDGHazmatAPI-Resource.json"
+        ]
+      }
+    ]
+  },
+  "track": {
+    "name": "Track",
+    "versions": [
+      {
+        "version": "1",
+        "url": [
+            "https://developer.fedex.com/wirc/json/api_groups/Track/AssociatedShipments-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Track/Notifications-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Track/ReferenceNumbers-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Track/TCN-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Track/TrackingDocuments-Resource.json",
+            "https://developer.fedex.com/wirc/json/api_groups/Track/TrackingNumbers-Resource.json"
+        ]
+      }
+    ]
+  },
+  "trade-documents-upload": {
+    "name": "Trade Documents Upload",
+    "versions": [
+      {
+        "version": "1",
+        "url": "https://developer.fedex.com/wirc/json/api_groups/ETDUpload/EDUDocuments-Resource.json"
+      }
+    ]
+  }
+}

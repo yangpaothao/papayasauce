@@ -1,9 +1,3 @@
-OrderClass proarray = {"31":"1"} 
-arraykeys = [31] 
-OrderClass sql = 
-SELECT 
-    o.payment_confirmation, o.receipt_url, o.total, o.date, u.firstname, u.lastname, u.address, u.address2, u.city, u.state, u.zipcode, u.email, u.phone_number, p.name 
-FROM 
-    users u INNER JOIN orders o ON u.recno = o.foreign_user_recno INNER JOIN products p 
-WHERE 
-    o.recno = 102 AND p.recno IN (31)  
+31 = 1 
+32 = 1 
+OrderClass sql = SELECT o.payment_confirmation, o.receipt_url, o.total, o.date, u.firstname, u.lastname, u.address, u.address2, u.city, u.state, u.zipcode, u.email, u.phone_number, p.name FROM users u INNER JOIN orders o ON u.recno = o.foreign_user_recno INNER JOIN products p WHERE o.recno = 131 AND p.recno IN ()  

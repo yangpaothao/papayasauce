@@ -66,7 +66,7 @@ if(count($_GET) > 0)
         ?>
         <script type="text/javascript">
             $(document).ready(function(){
-                showEvent($("#div_modifyevent")[0], thisstatus = "Active", thiseventtype = "Event");
+                orderDisplay($("#div_orderdisplay")[0]);
             });
             function dashboardMenuslt(obj){
                 $(".div-menu-dashboard").each(function(){
@@ -530,8 +530,8 @@ if(count($_GET) > 0)
                 }
                 event.preventDefault();
             }
-            function showEvent(obj, thisstatus = "Active", thiseventtype = "Event"){
-                dashboardMenuslt(obj);
+            function showEvent(obj, thisstatus, thiseventtype){
+                dashboardMenuslt(obj, thisstatus, thiseventtype);
                 $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=ShowEvent&status='+thisstatus+'&thiseventtype='+thiseventtype, function(result){
                     //alert(result);
                     $("#main_div_body_dashboard_right_container").html(result);
@@ -1337,6 +1337,27 @@ if(count($_GET) > 0)
                 alert(error);
             });
         }
+        function orderDisplay(obj, thisstatus = "Active", thiseventtype = "Event"){
+                dashboardMenuslt(obj);
+                $.post('<?=$_SERVER['PHP_SELF']; ?>', 'cmd=OrderDisplay', function(result){
+                    //alert(result);
+                    $("#main_div_body_dashboard_right_container").html(result);
+                });
+        }
+        function stageOrder(thisrecno){
+            thisArray = [{"this_thisrecno": thisrecno}];
+            const thisData = JSON.stringify(thisArray);
+            $.ajax({
+                url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=StageOrder&thisarray="+thisData,
+                type: "POST"
+            }).then(function(result) {
+                // Code here will execute *after* the AJAX request is successful
+                window.open("./stageorder.php", "_blank");
+                return(false);
+            }).catch(function(error) {
+                alert(error);
+            });
+        }
         </script>
     </head>
     <body>
@@ -1346,6 +1367,21 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function StageOrder()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    
+    $_SESSION['STAGEORDERRECNO'] = $returnpost['thisrecno'];
+    //header("Location: ./stageorder.php", "_blank");
+    //exit();
+}
+function OrderDisplay()
+{
+    global $db, $pt;
+
+    $pt->OrderDisplay($db);
+}
 function DoVideos()
 {?>
     <div class="div-body-dashbord-createevent-container">
@@ -4276,7 +4312,8 @@ function Main()
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
                 <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_doevent" onclick="doEvent(this);">Events</div>
                 <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_dovideos" onclick="doVideos(this);">Videos</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_modifyevent" onclick="showEvent(this);">Show Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_modifyevent" onclick="showEvent(this, 'Active', 'Event');">Show Event</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_orderdisplay" onclick="orderDisplay(this);">Order Display</div>
             </div>
             <div class="div-content-holder-flex align-center">
                 <div class="main-div-body-dashboard-right-container" id="main_div_body_dashboard_right_container"></div>

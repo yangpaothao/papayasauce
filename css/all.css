@@ -1343,6 +1343,10 @@ tbody tr:last-child {
     white-space: nowrap; 
     border-right: 1px solid;
 }
+.tbl-modify-orderdisplay-th{
+    white-space: nowrap; 
+    border-right: 1px solid;
+}
 .tbl-history-dashboardpay-th{
     white-space: nowrap; 
     border-right: 1px solid;
@@ -1353,6 +1357,11 @@ tbody tr:last-child {
     height: 99%;
 }
 .tbl-modify-event-td{
+    white-space: nowrap; 
+    border-right: 1px solid;
+    border-color: white;
+}
+.tbl-modify-orderdisplay-td{
     white-space: nowrap; 
     border-right: 1px solid;
     border-color: white;
