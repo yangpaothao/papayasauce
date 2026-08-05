@@ -1289,6 +1289,16 @@ if(count($_GET) > 0)
                 $("#main_div_body_dashboard_right_container").html(result);
             }); 
         }
+        function manageFedexapi(obj, thisfrom){
+            //thisfrom will be 'Production' or 'Sandbox'
+            dashboardMenuslt(obj);
+            thisArray = [{
+                "this_thisfrom": thisfrom
+            }];
+            $.post('<?php echo $_SERVER['PHP_SELF']; ?>', 'cmd=ManageFedexapi&thisarray='+JSON.stringify(thisArray), function(result){
+                $("#main_div_body_dashboard_right_container").html(result);
+            }); 
+        }
         function submitVideo(){
             event.preventDefault();
             isAttachment = false;
@@ -1367,6 +1377,111 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function ManageFedexapi()
+{
+    global $db, $pt;
+    $returnpost = $pt->AnalyzePosts();
+    $thissandpro = "";
+    $usthisfunc = "";
+    if($returnpost['thisfrom'] == "Production")
+    {
+        $thissandpro = "_pro";
+    }           
+    $temp_fedex_access_token_expire_date = "";
+    $temp_fedex_refresh_token_expires_date = "";
+    
+    $sql = "SELECT recno, fedex_access_token_expire_date$thissandpro, fedex_refresh_token_expire_date$thissandpro ";
+    $sql .= "FROM company_info";
+    $result = $db->PDOMiniquery($sql);
+    if($db->PDORowcount($result) > 0)
+    {
+        foreach($result as $rs)
+        {
+            $thisrecno = $rs['recno'];            
+
+            $temp_fedex_access_token_expire_date = !empty($rs["fedex_access_token_expire_date$thissandpro"]) ? date('m/d/Y', strtotime($rs["fedex_access_token_expire_date$thissandpro"])) : '';
+            $temp_fedex_refresh_token_expires_date = empty($rs["fedex_refresh_token_expire_date$thissandpro"]) ? '' : date('m/d/Y', strtotime($rs["fedex_refresh_token_expire_date$thissandpro"]));
+        }
+        $usthisfunc = 'onfocus="getVal(this)" onchange="updateCompanyinfo(this, '.$thisrecno.');"';
+    }
+    $thisinputsize = 'size="40"';
+    ?>
+    <div class="float-left">
+        <table id="tblservicedata" class="tbl-dashboard-company">
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Approved URL: <span class="asterisk"> * </span></td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left align-left" <?php echo $thisinputsize ?> id="fedex_approved_url" name="fedex_approved_url" <?php echo $usthisfunc ?> value="*********************************************************************" required />
+                    <div class="float-left div-check-eye align-left dashboard-company-input-img"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'fedex_approved_url', 'fedex_approved_url', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Code:</td>
+                <td>
+                    <button class="cursor-pointer dashboard-mgmbarber-renew-api-btn float-left" name="btn_get_fedexcode" id="btn_get_fedexcode" onclick="getSquarecode('<?php echo ($returnpost['thisfrom'] == "Production" ? 'Production' : 'Sandbox') ?>');">Click to get code and refresh token</button>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Application ID:</td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="fedex_application_id<?php echo $thissandpro ?>" name="fedex_application_id<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_app_id" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'fedex_application_id<?php echo $thissandpro ?>', 'fedex_application_id', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Client Secret: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="fedex_client_secret<?php echo $thissandpro ?>" name="fedex_client_secret<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye dashboard-company-input-img align-left"><img id="img_client_fedexsecret" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'fedex_client_secret<?php echo $thissandpro ?>', 'fedex_client_secret', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Access Token: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_api_access_token<?php echo $thissandpro ?>" name="square_api_access_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div id="div_mgm_barbers_pro_api_token dashboard-company-input-img" class="float-left div-check-eye"><img id="img_api_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'fedex_api_access_token<?php echo $thissandpro ?>', 'fedex_api_access_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Acc. Token Exp. Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="fedex_access_token_expire_date<?php echo $thissandpro ?>" name="fedex_access_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date("m/d/Y", strtotime($fedex_access_token_expire_date)) ?>" readonly /></td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Refresh Token: </td>
+                <td>
+                    <input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="square_refresh_token<?php echo $thissandpro ?>" name="square_refresh_token<?php echo $thissandpro ?>" <?php echo $usthisfunc ?> value="*********************************************************************" />
+                    <div class="float-left div-check-eye"><img id="img_refresh_token" class="codefetch-seeing-eye-container codefetch-seeing-eye cursor-pointer" onclick="showHidden(this, 'fedex_refresh_token<?php echo $thissandpro ?>', 'fedex_refresh_token', '<?php echo $returnpost['thisfrom']?>');" /></div>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbl-dashboard-company-lbl-api white-space-no-wrap align-right font-size-pt8em">Refresh Token Exp. Date: </td>
+                <td><input type="text" class="dashboard-company-input float-left" <?php echo $thisinputsize ?> id="fedex_fresh_token_expire<?php echo $thissandpro ?>" name="fedex_refresh_token_expire_date<?php echo $thissandpro ?>" value="<?php echo date('m/d/Y', strtotime($fedex_refresh_token_expire)) ?>" readonly /></td>
+            </tr>
+            <?php
+            if(!empty($temp_fedex_refresh_token_expires_date))
+            {?>
+                <tr>
+                    <td class="tbl-dashboard-user-lbl align-right"></td>
+                    <td class="tbl-dashboard-user-lbl-span align-center">
+                    <?php
+                        //We want to blink the button if the access code is going to expire within 1 week.
+                        $blinkingdefault = "";
+                        if(strtotime(date('m/d/Y', strtotime($temp_fedex_refresh_token_expires_date))) < strtotime(date('m/d/Y', strtotime('+1 week'))))
+                        {
+                            $blinkingdefault = "flashing-background";
+                        }
+                        $daysleft = (int)(date('d', strtotime(date('m/d/Y', strtotime($temp_fedex_refresh_token_expires_date))) - strtotime(date('m/d/Y'))));
+                        ?>
+                        <button class="cursor-pointer dashboard-mgmbarber-refresh-api-btn <?php echo $blinkingdefault ?> align-left float-left font-size-pt7em" name="btn_renew_api" id="btn_renew_api" onclick="refreshToken('<?php echo $returnpost['thisfrom'] ?>');">
+                            Refresh token expires On <?php echo date('m/d/Y', strtotime($temp_fedex_refresh_token_expires_date)) ?>.  
+                            There's <?php echo $daysleft ?> days left. Click to refresh!
+                        </button>
+                    </td>
+                </tr><?php
+            }?>
+        </table>
+    </div><?php
+}
 function StageOrder()
 {
     global $db, $pt;
@@ -4307,7 +4422,9 @@ function Main()
                 <!--<div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer div-menu-dashboard" id="div_revenues" onclick="addCompany(this);">Analyze Revenues</div>-->
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_managecompany" onclick="addCompany(this);">Company</div>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_pro" onclick="manageAPI(this, 'Production');">Square Production API</div>
-                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>                
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_manageapi_sandbox" onclick="manageAPI(this, 'Sandbox');">Square Sandbox API</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_managefedexapi_pro" onclick="manageFedexapi(this, 'Production');">FedEx Production API</div>
+                <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap div-menu-dashboard-bigwidth border-right-1px-white" id="div_managefedexapi_sandbox" onclick="manageFedexapi(this, 'Sandbox');">FedEx Sandbox API</div> 
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageguest" onclick="manageGuests(this);">Guests</div>
                 <div class="div-menu-dashboard div-tab-nonslted float-left align-center cursor-pointer white-space-no-wrap border-right-1px-white" id="div_manageservices" onclick="manageProducts(this, 'isActive');">Products</div>                                 
                 <div class="div-menu-dashboard div-tab-slted float-left align-center cursor-pointer div-menu-dashboard white-space-no-wrap border-right-1px-white" id="div_doevent" onclick="doEvent(this);">Events</div>

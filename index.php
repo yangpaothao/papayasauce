@@ -75,6 +75,7 @@ if(count($_GET) > 0)
                     type: "POST"
                 }).then(function(result) {
                     // Code here will execute *after* the AJAX request is successful
+                    //alert(result);
                     $("#div_content_holder").html(result);
                 }).catch(function(error) {
                     alert(error);
@@ -199,7 +200,8 @@ function LoadVideotab($db)
 function LoadMaintab($db)
 {
     $tempsltsrc = "";
-    $sql = "SELECT p.*, c.name as cname FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno WHERE p.isActive = true ORDER BY p.name";
+    $thisfunc = "";
+    $sql = "SELECT p.*, c.name as cname, ci.isLive FROM products p INNER JOIN category c ON p.foreign_cat_recno = c.recno INNER JOIN company_info ci WHERE p.isActive = true ORDER BY p.name";
     //file_put_contents("./dodebug/debug.txt", 'Front sql event? '.$sql, FILE_APPEND);
     $result = $db -> PDOMiniquery($sql);
     if($db->PDORowcount($result) > 0)
@@ -215,8 +217,12 @@ function LoadMaintab($db)
             {
                 $explodeatt = explode(",", $rs['attachment']);
                 $tempsltsrc = $rs['attachment_dir']."/".$rs['recno']."/large/".$explodeatt[0];
+            }
+            if($rs['isLive'] === true || (isset($_SESSION['user']) &&  $_SESSION['user'] === "Supercut"))
+            {
+                //$thisfunc = 'selectedProduct('.$rs['recno'].');';
             }?>
-            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="selectedProduct(<?php echo $rs['recno']?>);">  
+            <div class="align-left cursor-pointer div-content-holder-flex-data-container" onclick="<?php echo $thisfunc ?>">  
                 <div class="float-left white-space-no-wrap" style="width: 100%; color: white; font-weight: bold; background-color: gray; min-height: 20px;">$<?php echo number_format($rs['price'], 2) ?> (<?php echo $rs['name']?>)</div>
                 <div class="float-left" style="width: 100%;"><img class="div-front-event" src="<?php echo $tempsltsrc ?>" onerror="this.onerror=null;this.src='./images/others/default.png" /></div>
             </div><?php
@@ -255,7 +261,7 @@ function Main()
             </div><?php
             if(!isset($_SESSION['user_recno']))
             {?>
-                <div class="cart-div-headline-info align-center font-size-2em">Coming soon!!!</div><?php
+                <div class="div-content-holder-flex align-center" id="div_content_holder">Coming soon!!!</div><?php
             }
             else
             {?>

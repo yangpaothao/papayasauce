@@ -258,3 +258,23 @@ function validateNum(obj){
         return(false);
     }
 }
+function isEmpty(obj){
+    if($(obj).val() == ""){
+        alert("This field can't be empty.  Please enter an appropriate value and try again.");
+        $(obj).css('background-color', 'yellow');
+        $(obj).focus();
+        $(obj).select();
+        return(false);
+    }
+    else{
+        return(true);
+    }       
+}
+function isRadioslt(obj){
+    if($(obj).is(':checked')){
+        return(true);
+    }
+    else{
+        return(false);
+    }
+}

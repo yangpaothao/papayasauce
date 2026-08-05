@@ -623,7 +623,7 @@ li{
     color: black;
     width: 92%;
     min-height: 520px;
-    height: 400px;
+    height: 460px;
     align-items: flex-start;
     /* Hide scrollbar for IE and older Edge */
     -ms-overflow-style: none;
@@ -652,7 +652,7 @@ li{
     color: red; 
     background-color: black; 
     min-width: 320px; 
-    width: 92%; 
+    width: 100%; 
     font-weight: bold;
 }
 .div-content-holder-flex-data-container{

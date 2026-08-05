@@ -116,3 +116,37 @@ The $pt->GetStates($db)
 
 FFMpeg video conversion
 //PHP ffmpeg convert video to mp4, lower the size and keep quality
+
+
+Wrote a small javascript function to check if a text input is empty, in common.js
+isText = true;
+$('.txt-value-check').each(function(){
+                   tempid = $(this).prop('id');
+                   if(!isEmpty($("#"+tempid)[0])){
+                       //false, we get in here
+                       isText = false;
+                       return(false);
+                   }
+                });
+if(isText === false){
+                    return(false);
+                }
+
+1.  declare a class for each of the text input you want to check
+2.  That is it.
+
+To check if at least 1 radio of a group of radio is checked
+isRadio = false;
+                $('.rdoshipping').each(function(){
+                    tempid = $(this).prop('id');
+                    if(isRadioslt($("#"+tempid)[0])){
+                       //false, we get in here
+                       isRadio = true;
+                   }
+                });
+                if(isRadio === false){
+                    alert("You must select a shipping method.");
+                    return(false);
+                }
+1.  declare a class for each of the radio you want to check
+2.  That is it.

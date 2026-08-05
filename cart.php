@@ -63,6 +63,31 @@ if(count($_GET) > 0)
             });
             //https://www.google.com/search?q=square+api%2C+PHP+Payments+SDK+example&sca_esv=c84071398b66a2e1&sxsrf=ANbL-n6P1yPIAXFi1NxOlVYEJ26w5yN90w%3A1773282628177&source=hp&ei=RCWyaeeyCaaT8L0P8NLf6AM&iflsig=AFdpzrgAAAAAabIzVE98Flap9obPmHMRlH2ZxviamJPD&ved=0ahUKEwjn5IzJqJmTAxWmCbwBHXDpFz0Q4dUDCCE&uact=5&oq=square+api%2C+PHP+Payments+SDK+example&gs_lp=Egdnd3Mtd2l6IiRzcXVhcmUgYXBpLCBQSFAgUGF5bWVudHMgU0RLIGV4YW1wbGUyBRAhGKABMgUQIRigAUiOP1AAWIY-cAh4AJABAZgBhwKgAYkoqgEHMS4xNi4xMrgBA8gBAPgBAfgBApgCJKAC3ybCAgQQIxgnwgILEAAYgAQYkQIYigXCAg4QLhiABBixAxjRAxjHAcICBRAuGIAEwgILEAAYgAQYsQMYgwHCAgUQABiABMICERAuGIAEGLEDGNEDGIMBGMcBwgIIEC4YgAQYsQPCAggQABiABBixA8ICChAAGIAEGBQYhwLCAgYQABgWGB7CAgUQABjvBcICCBAAGIAEGKIEwgILEAAYgAQYhgMYigXCAgUQIRirAsICBxAhGKABGAqYAwCSBwc4LjE2LjEyoAfozQGyBwcwLjE2LjEyuAfOJsIHBzExLjIxLjTIBzCACAA&sclient=gws-wiz
             async function tokenize(payment) {
+                
+                isText = true;
+                $('.txt-value-check').each(function(){
+                   tempid = $(this).prop('id');
+                   if(!isEmpty($("#"+tempid)[0])){
+                       //false, we get in here
+                       isText = false;
+                       return(false);
+                   }
+                });
+                if(isText === false){
+                    return(false);
+                }
+                isRadio = false;
+                $('.rdoshipping').each(function(){
+                    tempid = $(this).prop('id');
+                    if(isRadioslt($("#"+tempid)[0])){
+                       //false, we get in here
+                       isRadio = true;
+                   }
+                });
+                if(isRadio === false){
+                    alert("You must select a shipping method.");
+                    return(false);
+                }
                 const result = await payment.tokenize();
                 if (result.status === 'OK') {
                     //alert(result.token);
@@ -160,6 +185,26 @@ if(count($_GET) > 0)
                     alert(error);
                 });
             }
+            function updateShipping(obj){
+                thiscost = $("#txt_total").val();
+                thisval = $(obj).val();
+                //alert(thiscost + " and "+thisval);
+                thisArray = [{
+                    "this_thisval": thisval,
+                    "this_thiscost": thiscost
+                }];
+                const thisData = JSON.stringify(thisArray);
+                $.ajax({
+                    url: "<?=$_SERVER['PHP_SELF']; ?>?cmd=UpdateShipping&thisarray="+thisData,
+                    type: "POST"
+                }).then(function(result) {
+                    //alert(result);
+                    // Code here will execute *after* the AJAX request is successful
+                    $("#txt_bigtotal").val(result);
+                }).catch(function(error) {
+                    alert(error);
+                });
+            }
         </script>
     </head>
     <body>
@@ -169,6 +214,19 @@ if(count($_GET) > 0)
     </body>
 </html>
 <?php
+function UpdateShipping()
+{
+    global $pt;
+    $returnpost = $pt->AnalyzePosts();
+    
+    //First, the order does not exist as of yet, so we dont' need to update
+    //2nd, we want to calculate the total with this shipping cost and send back to update the dom for display
+    $thiscost = substr($returnpost['thiscost'],1); //thiscost comes in as $1.00, we have to remove the '$' by substr
+    $thisval = $returnpost['thisval']; //same idea, however this contain the selected cost of the shipping
+    
+    $bigtotal = number_format((float)$thiscost + (float)$thisval, 2);
+    echo $bigtotal;
+}
 function TokenizedPayment()
 {
     global $db, $pt, $ec, $oc;
@@ -195,7 +253,26 @@ function TokenizedPayment()
     $city = $returnpost['city'];
     $state = $returnpost['state'];
     $zipcode = $returnpost['zipcode'];
-    $total = $returnpost['total'];
+    $total = $returnpost['total']; //cost
+    $bigtotal = $returnpost['bigtotal']; //bigtotal =  cost + shipping
+    $shipping = $returnpost['shipping']; //shipping cost
+    switch($shipping)
+    {
+        case "9.99":
+            $shippingmethod = "Ground";
+            break;
+        case "16.99":
+            $shippingmethod = "Express";
+            break;
+        case "21.99":
+            $shippingmethod = "2 Days";
+            break;
+        case "32.99":
+            $shippingmethod = "Over Night";
+            break;
+        default:
+            break;
+    }
     $thistoken = $_POST['token']; //We get this token after we tokenized.
     $thisstatus = "Full"; //$_POST['depofull'];
     //file_put_contents("./dodebug/debug.txt", "thisstatus = $thisstatus \n", FILE_APPEND);
@@ -216,6 +293,10 @@ function TokenizedPayment()
     //$total has a leading '$' that we need to remove.  Ex, $120.00
     if(substr($total,1) == $realtotal)
     {
+        //Now that we have verified that the $realtotal and the calculated total before shipment is the same and it is good,
+        //we will now add the shipping cost to the $realtotal
+        $realtotal = $realtotal + (float)$shipping; //$shipping
+        //$realtotal = $realtotal + 1.00; //$shipping
         //file_put_contents("./dodebug/debug.txt", "Is Good \n", FILE_APPEND);
         //If the total coming from the form and the total from the recalculation is the same, that means it is good.
         
@@ -289,9 +370,13 @@ function TokenizedPayment()
                 $thissquarecustomerid = $thissquareid;
             }
             $thistable = "orders";
+            //bigtotal is $realtotal because we have added the shipping cost to the $total.
             $insertorderdata = ["foreign_user_recno" => $newuserrecno,
                         "products" => json_encode($_SESSION['CARTRECNOTRACKER']),
-                        "total" => $realtotal];
+                        "total" => $realtotal,
+                        "bigtotal" => $realtotal,
+                        "shipping" => $shipping,
+                        "shipping_method" => $shippingmethod];
             $thisorderrecno = $db->PDOInsert($thistable, $insertorderdata);
             //We need to get the recno of the deposit or the single full payment.
             //We will send this payment into the portal
@@ -370,7 +455,7 @@ function TokenizedPayment()
                 {
                     $thiscartrecno = array_keys($_SESSION['CARTRECNOTRACKER']);
                     $thiscartrecnostr = implode(",", $thiscartrecno);
-                    $oc->SetReceipt($db, $thiscartrecnostr, $square_receiptno, $thissquareorderid, $square_receipturl);
+                    $oc->SetReceipt($db, $thiscartrecnostr, $square_receiptno, $thissquareorderid, $square_receipturl, $thisorderrecno);
                     $payment_receipt_body = $oc->ShowReceipt();
                     $payment_receipt_subject = $ec->get_paymentreceipt_subject();
                     $guestname = $firstname." ".$lastname;
@@ -535,7 +620,7 @@ function Main()
                     <div class="cart-div-pro-container float-left"><?php
                         $oc->ShowOrderproducts($db, $thiscartrecnostr, $thistotal);?>
                     </div>
-                    <div class="float-left align-left" style="width: 50%; min-width: 320px;"><?php
+                    <div class="float-left align-left" style="width: 50%; min-width: 320px; height: 520px;"><?php
                         $sqlid = "SELECT square_application_id$thissandpro, square_ev_location_id$thissandpro FROM company_info";
                         $resultid = $db->PDOMiniquery($sqlid);
                         foreach($resultid as $rsid)
@@ -548,28 +633,28 @@ function Main()
                                 $("body").data("square_application_id", "<?php echo $thisappid ?>");
                                 $("body").data("square_ev_location_id", "<?php echo $thislocationid ?>");
                             </script>
-                            <form name="payment-form" id="payment_form" method="post">
+                            <form name="payment_form" id="payment_form" method="post">
                                 <div class="cart-div-headline-info align-center">ONE time payment only.  We do not keep any credit card information on file!</div>
                                     <table class="tbl-cart float-left" style="background-color: lightgray;">
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Email: <span class="asterisk"> * </span></td>
-                                            <td><input type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
+                                            <td><input class='txt-value-check' type="text" class="cart-input email required" id="txt_email" name="txt_email" value="" onchange="validateEmail(this);" size="20" placeholder="abc@email.com" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">First Name: <span class="asterisk"> * </span></td>
-                                            <td><input type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
+                                            <td><input class='txt-value-check' type="text" class="cart-input" id="txt_firstname" name="txt_firstname" value="" required /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Last Name: <span class="asterisk"> * </span></td>
-                                            <td><input type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
+                                            <td><input class='txt-value-check' type="text" class="cart-input" id="txt_lastname" name="txt_lastname" value="" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Phone#: <span class="asterisk"> * </span></td>
-                                            <td><input type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
+                                            <td><input class='txt-value-check' type="text" id="txt_phone_number" name="txt_phonenumber" size="10" value="" placeholder="9161234567" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Address 1: <span class="asterisk"> * </span></td>
-                                            <td><input type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
+                                            <td><input class='txt-value-check' type="text" class="cart-input" id="txt_address" name="txt_address" value="" placeholder="---Shipping address---" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Address 2:</td>
@@ -577,7 +662,7 @@ function Main()
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">City: </td>
-                                            <td><input type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
+                                            <td><input class='txt-value-check' type="text" class="cart-input" id="txt_city" name="txt_city" value="" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">State: </td>
@@ -587,16 +672,35 @@ function Main()
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right">Zip-Code: </td>
-                                            <td><input type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
+                                            <td><input class='txt-value-check' type="text" id="txt_zipcode" name="txt_zipcode" size="5" value="" /></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right"></td>
+                                            <td><input class='rdoshipping' type="radio" id="rdo_ground" name="rdo_shipping" value='9.99' onclick="updateShipping(this);" /><span class='font-size-pt8em'>$9.99 (Ground - 1 to 5 business days)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right"></td>
+                                            <td><input class='rdoshipping' type="radio" id="rdo_express" name="rdo_shipping" value='16.99' onclick="updateShipping(this);" /><span class='font-size-pt8em'>$16.99 (Express - 3 business days)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right"></td>
+                                            <td><input class='rdoshipping' type="radio" id="rdo_2days" name="rdo_shipping" value='21.99' onclick="updateShipping(this);" /><span class='font-size-pt8em'>$21.99 (2 Days - 2 business days)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right"></td>
+                                            <td><input class='rdoshipping' type="radio" id="rdo_overnight" name="rdo_shipping" value='32.99' onclick="updateShipping(this);" /><span class='font-size-pt8em'>$32.99 (Overnight - Next day PM)</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="tbl-cart-lbl align-right">Cost: </td>
+                                            <td><input type="text" id="txt_total" name="txt_total" size="5" value="$<?php echo number_format($thistotal,2) ?>" /></td>
                                         </tr>
                                         <tr>
                                             <td class="tbl-cart-lbl align-right"><b>Total:</b> </td>
-                                            <td><input type="text" id="txt_total" name="txt_total" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
+                                            <td><input type="text" id="txt_bigtotal" name="txt_bigtotal" size="10" value="$<?php echo number_format($thistotal,2) ?>" /></td>
                                         </tr>
                                     </table>
-                                <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container">
-                                </div>
-                                <div class="align-center" style="width: 100%;">
+                                <div class="pay-now-div-card-holder" name="div_card_container" id="div_card_container"></div>
+                                <div class="align-center float-left" style="width: 100%;">
                                     <button type="button" name="btn_card" id="btn_card">Pay</button>
                                 </div>
                                 <input type="hidden" id="token" name="token">
